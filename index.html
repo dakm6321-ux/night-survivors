@@ -148,7 +148,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 flex flex-col items-end max-w-[290px] sm:max-w-xs w-full pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="glass-panel hover:bg-slate-800/90 active:scale-95 px-3 py-1.5 rounded-2xl border border-amber-400/40 shadow-lg flex items-center gap-2 text-xs font-extrabold text-amber-300 transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">1.8.0</span>
+        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">1.8.1</span>
         <span id="patchNotesChevron" class="text-[10px] text-slate-300">▼</span>
       </button>
 
@@ -156,15 +156,27 @@
         <div class="flex items-center justify-between border-b border-slate-700/80 pb-2">
           <span class="text-xs font-black text-white flex items-center gap-1.5">🛠️ 업데이트 내역 (패치노트)</span>
           <div class="flex items-center gap-2">
-            <span class="text-[11px] font-mono font-bold text-amber-400">v1.8.0</span>
+            <span class="text-[11px] font-mono font-bold text-amber-400">v1.8.1</span>
             <button id="closePatchNotesTopBtn" type="button" class="glass-panel hover:bg-slate-800 text-slate-300 hover:text-white px-2 py-0.5 rounded-lg text-xs font-bold transition">✕</button>
           </div>
         </div>
 
         <div class="space-y-2.5 text-[11px] leading-relaxed">
-                    <div class="bg-slate-900/90 rounded-xl p-2.5 border border-amber-500/40">
+                              <div class="bg-slate-900/90 rounded-xl p-2.5 border border-amber-500/40">
             <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
-              <span>v1.8.0</span>
+              <span>v1.8.1</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
+            </div>
+            <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
+              <li><strong>스폰 거리 전면 개편:</strong> 화면 모서리 밖 40px에서 즉시 스폰되도록 개선하여 시작 즉시 적들이 화면 안으로 진입</li>
+              <li><strong>전투 시작 즉시 14마리 초기 웨이브:</strong> 게임 시작 1초 만에 적 무리가 바로 전장에 출현</li>
+              <li><strong>초반 스폰율 대폭 상향:</strong> 초당 4.2마리 시작 ➔ 최대 28마리/초 가속으로 멈춤 없는 전투 제공</li>
+              <li><strong>장애물 슬라이딩 개선:</strong> 몬스터가 나무나 바위 뒤에 끼이지 않고 플레이어를 향해 우회 돌진</li>
+            </ul>
+          </div>
+<div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
+            <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
+              <span>v1.8.1</span>
               <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
             </div>
             <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
@@ -175,7 +187,7 @@
           </div>
 <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
             <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
-              <span>v1.8.0</span>
+              <span>v1.8.1</span>
               <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
             </div>
             <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
@@ -224,7 +236,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-mono font-bold text-amber-400 tracking-widest">
-            1.8.0
+            1.8.1
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -1026,6 +1038,13 @@
             const push = minDist - dist;
             entity.x += (dx / dist) * push;
             entity.y += (dy / dist) * push;
+            // If enemy, slide around obstacle towards player
+            if (entity.hp !== undefined && !entity.baseSpeed) {
+              const perpX = -dy / dist;
+              const perpY = dx / dist;
+              entity.x += perpX * 1.8;
+              entity.y += perpY * 1.8;
+            }
           }
         }
       }
@@ -1088,6 +1107,11 @@
         bossBanner.classList.add('hidden');
         updateHud();
         renderSkillBadges();
+
+        // Immediate starting wave of 14 enemies right around the screen
+        for (let i = 0; i < 14; i++) {
+          spawnEnemy(false);
+        }
       }
 
       // --- Helper Getters for Player Stats ---
@@ -1173,7 +1197,11 @@
       // --- Enemy Spawning ---
       function spawnEnemy(isBoss = false) {
         const zoom = viewWidth < 640 ? 0.82 : 0.76;
-        const margin = (Math.max(viewWidth, viewHeight) / zoom) * 0.54 + 60;
+        // Calculate spawn distance right along the actual screen boundary (40px outside viewport)
+        function getScreenMargin(ang, extra = 40) {
+          const edgeDist = Math.hypot((viewWidth / 2) * Math.cos(ang), (viewHeight / 2) * Math.sin(ang)) / zoom;
+          return edgeDist + extra;
+        }
 
         // 시간이 지날수록 체력과 공격력 점진적 강화 (지수/파워 스케일링)
         const difficulty = 1 + (elapsedTime / 28) + Math.pow(elapsedTime / 58, 1.58);
@@ -1197,8 +1225,9 @@
 
           for (let b = 0; b < bossSpawnCount; b++) {
             const spreadAngle = (Math.PI * 2 / bossSpawnCount) * b + (Math.random() - 0.5) * 0.35;
-            const bx = player.x + Math.cos(spreadAngle) * margin;
-            const by = player.y + Math.sin(spreadAngle) * margin;
+            const bMargin = getScreenMargin(spreadAngle, 65);
+            const bx = player.x + Math.cos(spreadAngle) * bMargin;
+            const by = player.y + Math.sin(spreadAngle) * bMargin;
 
             enemies.push({
               x: bx,
@@ -1231,8 +1260,9 @@
         }
 
         const angle = Math.random() * Math.PI * 2;
-        const ex = player.x + Math.cos(angle) * margin;
-        const ey = player.y + Math.sin(angle) * margin;
+        const regMargin = getScreenMargin(angle, 40);
+        const ex = player.x + Math.cos(angle) * regMargin;
+        const ey = player.y + Math.sin(angle) * regMargin;
 
         // 7 Diverse Regular Enemy Archetypes unlocked by time gates
         const roll = Math.random();
@@ -1856,9 +1886,9 @@
           if (obstacles[i].hitFlash > 0) obstacles[i].hitFlash -= dt;
         }
 
-        // 2. Spawn Enemies from All Sides (시간이 지날수록 스폰율 및 적 수 점진적 대폭 증가)
-        const spawnRate = Math.min(26, 1.8 + Math.pow(elapsedTime / 18, 1.45));
-        const maxEnemies = Math.min(320, 130 + Math.floor(elapsedTime * 0.85));
+        // 2. Spawn Enemies from All Sides (초반 4.2마리/초 시작 ➔ 후반 28마리/초 폭풍 스폰)
+        const spawnRate = Math.min(28, 4.2 + (elapsedTime * 0.12) + Math.pow(elapsedTime / 16, 1.4));
+        const maxEnemies = Math.min(350, 150 + Math.floor(elapsedTime * 1.2));
         spawnAccumulator += spawnRate * dt;
         while (spawnAccumulator >= 1) {
           spawnAccumulator -= 1;
@@ -1928,13 +1958,14 @@
           const dy = player.y - e.y;
           const dist = Math.hypot(dx, dy) || 1;
 
-          // Teleport far-away stragglers back near screen edge
+          // Teleport far-away stragglers back right near screen edge
           const zoom = viewWidth < 640 ? 0.82 : 0.76;
-          if (dist > (Math.max(viewWidth, viewHeight) / zoom) * 1.35 && !e.isBoss) {
+          const cullDist = (Math.max(viewWidth, viewHeight) / zoom) * 0.95;
+          if (dist > cullDist && !e.isBoss) {
             const ang = Math.random() * Math.PI * 2;
-            const m = Math.max(viewWidth, viewHeight) * 0.65;
-            e.x = player.x + Math.cos(ang) * m;
-            e.y = player.y + Math.sin(ang) * m;
+            const edgeDist = Math.hypot((viewWidth / 2) * Math.cos(ang), (viewHeight / 2) * Math.sin(ang)) / zoom;
+            e.x = player.x + Math.cos(ang) * (edgeDist + 40);
+            e.y = player.y + Math.sin(ang) * (edgeDist + 40);
             continue;
           }
 
