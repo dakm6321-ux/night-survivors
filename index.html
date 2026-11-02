@@ -144,89 +144,12 @@
   <!-- START MODAL: Main Menu, Game Guide, and Character Selection -->
   <div id="startModal" class="fixed inset-0 z-30 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md">
     
-    <!-- Top-Right Patch Notes Floating Widget on Main Screen -->
-    <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 flex flex-col items-end max-w-[290px] sm:max-w-xs w-full pointer-events-auto">
+    <!-- Top-Right Patch Notes Button on Main Screen -->
+    <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="glass-panel hover:bg-slate-800/90 active:scale-95 px-3 py-1.5 rounded-2xl border border-amber-400/40 shadow-lg flex items-center gap-2 text-xs font-extrabold text-amber-300 transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">1.8.2</span>
-        <span id="patchNotesChevron" class="text-[10px] text-slate-300">▼</span>
+        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">v2.0.0</span>
       </button>
-
-      <div id="patchNotesPanel" class="mt-2 w-full glass-panel rounded-2xl p-3.5 border border-slate-700/90 shadow-2xl text-left max-h-[48vh] overflow-y-auto space-y-3 hidden" style="touch-action: pan-y;">
-        <div class="flex items-center justify-between border-b border-slate-700/80 pb-2">
-          <span class="text-xs font-black text-white flex items-center gap-1.5">🛠️ 업데이트 내역 (패치노트)</span>
-          <div class="flex items-center gap-2">
-            <span class="text-[11px] font-mono font-bold text-amber-400">v1.8.2</span>
-            <button id="closePatchNotesTopBtn" type="button" class="glass-panel hover:bg-slate-800 text-slate-300 hover:text-white px-2 py-0.5 rounded-lg text-xs font-bold transition">✕</button>
-          </div>
-        </div>
-
-        <div class="space-y-2.5 text-[11px] leading-relaxed">
-                                        <div class="bg-slate-900/90 rounded-xl p-2.5 border border-amber-500/40">
-            <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
-              <span>v1.8.2</span>
-              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
-            </div>
-            <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
-              <li><strong>사방 전방위 웨이브 스폰 시스템:</strong> 상하좌우(동서남북) 360도 전 방향에서 지속적인 포위 웨이브로 적들이 끊임없이 출현</li>
-              <li><strong>시간 경과에 따른 웨이브 증폭:</strong> 웨이브 주기(1.15초 ➔ 0.45초) 단축 및 한 번에 몰려오는 적 수(5마리 ➔ 최대 32마리) 대폭 증가</li>
-              <li><strong>화면 경계(Ray-Box) 정밀 밀착 스폰:</strong> 화면 테두리 바로 바깥 35px에서 스폰되어 스폰 즉시 화면 안으로 쇄도</li>
-            </ul>
-          </div>
-<div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
-            <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
-              <span>v1.8.2</span>
-              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
-            </div>
-            <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
-              <li><strong>스폰 거리 전면 개편:</strong> 화면 모서리 밖 40px에서 즉시 스폰되도록 개선하여 시작 즉시 적들이 화면 안으로 진입</li>
-              <li><strong>전투 시작 즉시 14마리 초기 웨이브:</strong> 게임 시작 1초 만에 적 무리가 바로 전장에 출현</li>
-              <li><strong>초반 스폰율 대폭 상향:</strong> 초당 4.2마리 시작 ➔ 최대 28마리/초 가속으로 멈춤 없는 전투 제공</li>
-              <li><strong>장애물 슬라이딩 개선:</strong> 몬스터가 나무나 바위 뒤에 끼이지 않고 플레이어를 향해 우회 돌진</li>
-            </ul>
-          </div>
-<div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
-            <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
-              <span>v1.8.2</span>
-              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
-            </div>
-            <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
-              <li><strong>시간 경과 적 수 & 체력 대폭 증가:</strong> 생존 시간에 따라 스폰율(최대 26마리/초)과 적 최대 수(320마리), 몬스터 체력이 점진적 강화</li>
-              <li><strong>마지막 보스 처치 수 연동:</strong> 마지막 보스(황혼의 파멸 학살자)를 격파할 때마다 다음 보스 출현 시 등장하는 마리수가 +1마리씩 누적 증가 (1마리 ➔ 2마리 ➔ 3마리...)</li>
-              <li><strong>보스 다중 스폰 연출:</strong> 여러 마리 동시 출격 시 사방 포위 배치 및 전용 경고 배너 표시</li>
-            </ul>
-          </div>
-<div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
-            <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
-              <span>v1.8.2</span>
-              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
-            </div>
-            <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
-              <li><strong>뇌화겁화 번개 범위 축소:</strong> 번개 충격파(56px)를 불장판(80px)보다 좁게 집중하여 불장판이 타격 지점을 덮도록 개선</li>
-              <li><strong>단일 게임 화면 개편:</strong> 웹사이트 전체를 깔끔한 100% 풀스크린 게임 화면으로 구성</li>
-              <li><strong>인게임 '게임설명' 모달 신설:</strong> 메인 메뉴 '게임설명' 버튼 클릭 시 룰, 조작법, 조합 공식, 영웅 도감, 생존 팁을 모달에서 확인 가능</li>
-            </ul>
-          </div>
-          <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
-            <div class="font-bold text-amber-300 mb-1">v1.6.0</div>
-            <ul class="text-slate-300 space-y-0.5 list-disc list-inside">
-              <li>불장판 밸런스 조정 (지속 2.2초, DPS 완화, 최대 4개 제한)</li>
-              <li>메인 타이틀 화면 및 2단계 분기 메뉴 도입</li>
-            </ul>
-          </div>
-          <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
-            <div class="font-bold text-amber-300 mb-1">v1.5.0</div>
-            <ul class="text-slate-300 space-y-0.5 list-disc list-inside">
-              <li>경험치 파밍 개선 및 전체 자석 룬(🧲) 추가</li>
-              <li>시간대별 7종 몬스터 및 4단계 엘리트 보스 등장</li>
-            </ul>
-          </div>
-        </div>
-
-        <button id="closePatchNotesBottomBtn" type="button" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition shadow border border-slate-700">
-          패치노트 닫기 ✕
-        </button>
-      </div>
     </div>
 
     <!-- MAIN DIALOG CARD: Houses Title View, Guide View, and CharSelect View -->
@@ -247,7 +170,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-mono font-bold text-amber-400 tracking-widest">
-            1.8.2
+            2.0.0
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -394,7 +317,7 @@
             <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
               <li><strong>지형지물 엄폐:</strong> 숲속의 나무와 바위 뒤로 숨어 적들의 돌진을 분산시키고 엄폐하세요.</li>
               <li><strong>전체 자석 룬(🧲):</strong> 적 처치 시 가끔 드랍되는 자석을 먹으면 맵의 모든 보석이 즉시 흡수됩니다.</li>
-              <li><strong>지혜의 고서(📖):</strong> 경험치 획득량이 +35%씩 오르므로 초반에 빠르게 올려 레벨을 높이세요.</li>
+              <li><strong>지혜의 고서(📖) & 투지의 문장(💥):</strong> 경험치 패시브와 함께, <strong>공격력 패시브는 최대 레벨 제한 없이 무제한(+20%씩) 중첩</strong>되므로 후반 고체력 적들에 맞서 꾸준히 올려주세요.</li>
             </ul>
           </div>
 
@@ -567,6 +490,190 @@
       <button id="retryGameBtn" type="button" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.99] text-slate-950 font-black text-base shadow-lg shadow-amber-500/25 transition">
         다시 도전하기 🔄
       </button>
+    </div>
+  </div>
+
+  <!-- DEDICATED FULL PATCH NOTES POPUP MODAL -->
+  <div id="patchNotesModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="w-full max-w-lg glass-panel rounded-3xl p-5 sm:p-6 border border-slate-700 shadow-2xl flex flex-col gap-4 max-h-[92vh] overflow-y-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">📋</span>
+          <div>
+            <h2 class="text-lg sm:text-xl font-black text-white">공식 패치노트 & 업데이트 이력</h2>
+            <p class="text-[11px] text-slate-400">나이트 서바이버의 역대 모든 버전 및 상세 변경 사항</p>
+          </div>
+        </div>
+        <button id="closePatchNotesModalTopBtn" type="button" class="glass-panel hover:bg-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-bold transition">
+          닫기 ✕
+        </button>
+      </div>
+
+      <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
+      <div class="space-y-3.5 pr-1 text-xs">
+        
+        <!-- v2.0.0 -->
+        <div class="bg-slate-900/90 rounded-2xl p-4 border border-amber-500/50 space-y-2 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v2.0.0</span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[10px] font-bold">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>전용 패치노트 모달 팝업 신설:</strong> 메인 화면 상단 '패치노트' 버튼 클릭 시 전체 화면 중앙에 역대 모든 버전의 업데이트 상세 내역을 확인할 수 있는 전용 팝업 창 제공</li>
+            <li><strong>초기 출시(v1.0.0)부터 최신(v2.0.0)까지 전체 이력 지원:</strong> 누락 없이 모든 버전의 세부 변경점과 밸런스 패치 내역 수록</li>
+          </ul>
+        </div>
+
+        <!-- v1.8.2 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-cyan-300 font-mono">v1.8.2</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>사방 전방위 웨이브 스폰 시스템:</strong> 띄엄띄엄 나오던 단일 스폰을 폐지하고, 동서남북 360도 전 방향에서 떼를 지어 포위하며 쏟아져 들어오는 파상공세 웨이브 도입</li>
+            <li><strong>시간 경과에 따른 웨이브 증폭:</strong> 웨이브 주기(1.15초 ➔ 0.45초) 단축 및 한 번에 몰려오는 적 수(5마리 ➔ 최대 32마리) 대폭 증가</li>
+            <li><strong>화면 경계(Ray-Box) 정밀 밀착 스폰:</strong> 화면 테두리 바로 바깥 35px에서 스폰되어 스폰 즉시 화면 안으로 쇄도</li>
+          </ul>
+        </div>
+
+        <!-- v1.8.1 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.8.1</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>전투 시작 즉시 초기 웨이브 출격:</strong> 게임 시작과 동시에 사방에서 16마리의 몬스터가 즉시 출현하도록 개선</li>
+            <li><strong>스폰 거리 화면비율 맞춤 개선:</strong> 세로로 긴 모바일 화면에서 적이 너무 먼 곳에 스폰되어 생기던 초반 빈 화면 지연 완전 해결</li>
+            <li><strong>장애물 우회 슬라이딩:</strong> 적들이 나무나 바위 뒤에 끼이지 않고 플레이어를 향해 부드럽게 돌아오도록 AI 개선</li>
+          </ul>
+        </div>
+
+        <!-- v1.8.0 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.8.0</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>시간 경과 적 수 & 체력 대폭 증가:</strong> 생존 시간에 따라 스폰율(최대 26마리/초)과 적 최대 수(320마리), 몬스터 체력이 점진적 강화</li>
+            <li><strong>마지막 보스 처치 수 연동:</strong> 마지막 보스(황혼의 파멸 학살자)를 격파할 때마다 다음 보스 출현 시 등장하는 마리수가 +1마리씩 누적 증가 (1마리 ➔ 2마리 ➔ 3마리...)</li>
+            <li><strong>보스 다중 스폰 연출:</strong> 여러 마리 동시 출격 시 사방 포위 배치 및 전용 경고 배너 표시</li>
+          </ul>
+        </div>
+
+        <!-- v1.7.0 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.7.0</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>뇌화겁화 번개 범위 축소:</strong> 번개 충격파(56px)를 불장판(80px)보다 좁게 집중하여 불장판이 타격 지점을 덮도록 개선</li>
+            <li><strong>단일 게임 화면 개편:</strong> 웹사이트 전체를 깔끔한 100% 풀스크린 게임 화면으로 구성 (외부 스크롤 제거)</li>
+            <li><strong>인게임 '게임설명' 모달 신설:</strong> 메인 메뉴 '게임설명' 버튼 클릭 시 룰, 조작법, 조합 공식, 영웅 도감, 생존 팁을 모달에서 확인 가능</li>
+          </ul>
+        </div>
+
+        <!-- v1.6.0 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.6.0</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>불장판 밸런스 조정:</strong> 뇌화겁화 불장판의 지속시간(2.2초) 및 초당 피해량 현실화, 과도한 중첩 제한(최대 4개)</li>
+            <li><strong>메인 메뉴 2단계 분기 도입:</strong> 메인 타이틀 화면(게임 시작 / 게임설명) 분기로 클래스 선택 전 안정적 메뉴 제공</li>
+            <li><strong>전체화면 해제 버튼:</strong> 전체화면 실행 중 언제든 누를 수 있는 상단 '창모드로 복귀(✕)' 플로팅 버튼 추가</li>
+          </ul>
+        </div>
+
+        <!-- v1.5.0 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.5.0</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>레벨업 편의성 대폭 개선:</strong> 필요 경험치 추가 완화, 지혜의 고서 강화(+35%), 전체 자석 룬(🧲) 드랍 및 시간 비례 보석 가치 상승</li>
+            <li><strong>시간대별 다채로운 적 등장:</strong> 고블린, 해골 전사, 골렘, 늑대인간, 사령술사, 망령 등 7종의 몬스터 및 주기별 엘리트 보스</li>
+            <li><strong>일시정지 종합 대시보드:</strong> 보유 무기/패시브 레벨, 초월 진화 진행도, 조합 힌트 및 실시간 전투 스탯 표시</li>
+          </ul>
+        </div>
+
+        <!-- v1.4.0 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.4.0</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>초월 진화 무기 시스템:</strong> 10레벨 무기 2종 조합 시 전설 초월 무기 진화 (뇌화겁화, 성스러운 심판의 폭풍, 환영 비검술)</li>
+            <li><strong>광각 전장 시야:</strong> 줌아웃 카메라(0.76x) 적용으로 사방의 적과 지형을 넓게 확인 가능</li>
+            <li><strong>신규 경험치 패시브:</strong> 지혜의 고서 추가</li>
+          </ul>
+        </div>
+
+        <!-- v1.3.0 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.3.0</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>신규 클래스 암살자 쉐도우 추가:</strong> 가장 빠른 이동속도(235) 및 초근접 단검 찌르기 기본 공격 탑재</li>
+            <li><strong>단검 레벨업:</strong> 홀수 레벨 개수 증가 / 짝수 레벨 공격력 대폭 증가</li>
+          </ul>
+        </div>
+
+        <!-- v1.2.0 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.2.0</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>회전 성검 개편:</strong> 홀수 레벨마다 검 개수 증가, 짝수 레벨마다 회전속도 증가로 성장 로직 개편</li>
+            <li><strong>수축·팽창 회전 궤도:</strong> 근접 적 방어를 위해 성검 회전 반경이 수축과 팽창을 반복하도록 개선</li>
+          </ul>
+        </div>
+
+        <!-- v1.1.0 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.1.0</span>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>깊은 숲속 배경 테마:</strong> 이끼, 풀잎, 꽃, 버섯, 반딧불이 그래픽 추가</li>
+            <li><strong>나무·바위 장애물 충돌:</strong> 전장 곳곳에 배치된 장애물 충돌 판정 및 나무 그늘 반투명 시야 도입</li>
+          </ul>
+        </div>
+
+        <!-- v1.0.0 -->
+        <div class="bg-slate-900/70 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-400 font-mono">v1.0.0</span>
+            <span class="text-[11px] text-slate-500 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-400 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li>나이트 서바이버 최초 공식 출시</li>
+            <li>모바일 터치 가상 조이스틱 & 자동 공격 서바이벌 시스템 구현</li>
+            <li>3종 영웅 클래스(아서, 루나, 카이) 및 레벨업 3택 1 성장 시스템 구현</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="pt-2 border-t border-slate-800">
+        <button id="closePatchNotesModalBottomBtn" type="button" class="w-full py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition">
+          확인 및 닫기
+        </button>
+      </div>
     </div>
   </div>
 
@@ -779,8 +886,8 @@
           name: '투지의 문장 (공격력)',
           icon: '💥',
           category: '패시브',
-          maxLevel: 6,
-          desc: (nextLv) => `모든 무기의 최종 피해량이 +20% 증가합니다. (누적 +${nextLv * 20}%)`
+          maxLevel: 99999,
+          desc: (nextLv) => `모든 무기의 최종 피해량이 +20% 증가합니다. (누적 +${nextLv * 20}%, 무제한 레벨업 가능)`
         },
         {
           id: 'haste',
@@ -963,10 +1070,9 @@
       const pauseBtn = document.getElementById('pauseBtn');
       const startGameBtn = document.getElementById('startGameBtn');
       const togglePatchNotesBtn = document.getElementById('togglePatchNotesBtn');
-      const patchNotesPanel = document.getElementById('patchNotesPanel');
-      const patchNotesChevron = document.getElementById('patchNotesChevron');
-      const closePatchNotesTopBtn = document.getElementById('closePatchNotesTopBtn');
-      const closePatchNotesBottomBtn = document.getElementById('closePatchNotesBottomBtn');
+      const patchNotesModal = document.getElementById('patchNotesModal');
+      const closePatchNotesModalTopBtn = document.getElementById('closePatchNotesModalTopBtn');
+      const closePatchNotesModalBottomBtn = document.getElementById('closePatchNotesModalBottomBtn');
       const resumeGameBtn = document.getElementById('resumeGameBtn');
       const closePauseTopBtn = document.getElementById('closePauseTopBtn');
       const restartFromPauseBtn = document.getElementById('restartFromPauseBtn');
@@ -1228,7 +1334,8 @@
       function spawnEnemy(isBoss = false, customAngle = null) {
         const zoom = viewWidth < 640 ? 0.82 : 0.76;
         // 시간이 지날수록 체력과 공격력 점진적 강화 (지수/파워 스케일링)
-        const difficulty = 1 + (elapsedTime / 28) + Math.pow(elapsedTime / 58, 1.58);
+        // 시간이 흐를수록 적 체력/공격력 가파르게 상승 (고난이도 서바이벌 커브)
+        const difficulty = 1 + (elapsedTime / 18) + Math.pow(elapsedTime / 32, 1.82);
         const timeExpScale = Math.floor(elapsedTime / 28);
 
         if (isBoss) {
@@ -1444,13 +1551,14 @@
         enemy.hp -= dmg;
         enemy.hitFlash = 0.12;
 
-        // Slight knockback away from player
+        // Heavy, relentless advance: 적 넉백 대폭 축소 (보스 0.05, 정예 0.15, 일반 0.32)
         const dx = enemy.x - player.x;
         const dy = enemy.y - player.y;
         const dist = Math.hypot(dx, dy) || 1;
-        const kbFactor = enemy.isBoss ? 0.2 : 1;
-        enemy.x += (dx / dist) * knockback * kbFactor;
-        enemy.y += (dy / dist) * knockback * kbFactor;
+        const kbFactor = enemy.isBoss ? 0.05 : (enemy.expValue >= 8 ? 0.15 : 0.32);
+        const actualPush = Math.min(3.2, knockback * kbFactor);
+        enemy.x += (dx / dist) * actualPush;
+        enemy.y += (dy / dist) * actualPush;
 
         addFloatingText(enemy.x, enemy.y - enemy.radius, dmg, enemy.isBoss ? '#fde047' : '#f8fafc', enemy.isBoss ? 15 : 12);
 
@@ -1675,7 +1783,7 @@
                     const perpDist = Math.abs(relX * (-dirY) + relY * dirX);
                     // Very narrow hit width (12px + enemy radius)
                     if (perpDist <= 12 + e.radius * 0.75) {
-                      if (damageEnemy(e, daggerDmg, 16)) {
+                      if (damageEnemy(e, daggerDmg, 3.8)) {
                         enemies.splice(j, 1);
                       }
                     }
@@ -1750,7 +1858,7 @@
               if (e._bladeCd <= 0 && Math.hypot(e.x - bx, e.y - by) < e.radius + (hasSanctuary ? 24 : 15)) {
                 e._bladeCd = hasSanctuary ? 0.2 : 0.28;
                 const finalDmg = hasSanctuary ? bladeDmg * 1.65 : bladeDmg;
-                if (damageEnemy(e, finalDmg, hasSanctuary ? 22 : 14)) {
+                if (damageEnemy(e, finalDmg, hasSanctuary ? 4.5 : 3.5)) {
                   enemies.splice(j, 1);
                 }
                 // Sanctuary Storm shockwave on contact!
@@ -1759,7 +1867,7 @@
                   for (let k = enemies.length - 1; k >= 0; k--) {
                     const ek = enemies[k];
                     if (ek !== e && Math.hypot(ek.x - bx, ek.y - by) < 70) {
-                      if (damageEnemy(ek, finalDmg * 0.5, 15)) {
+                      if (damageEnemy(ek, finalDmg * 0.5, 3)) {
                         enemies.splice(k, 1);
                       }
                     }
@@ -1816,7 +1924,7 @@
                 for (let j = enemies.length - 1; j >= 0; j--) {
                   const e = enemies[j];
                   if (Math.hypot(e.x - tx, e.y - ty) <= aoeRadius + e.radius) {
-                    if (damageEnemy(e, strikeDmg, hasHellfire ? 18 : 8)) {
+                    if (damageEnemy(e, strikeDmg, hasHellfire ? 3.5 : 2.5)) {
                       enemies.splice(j, 1);
                     }
                   }
@@ -1837,7 +1945,7 @@
             for (let j = enemies.length - 1; j >= 0; j--) {
               const e = enemies[j];
               if (Math.hypot(e.x - player.x, e.y - player.y) <= auraRadius + e.radius) {
-                if (damageEnemy(e, auraDmg, 9)) {
+                if (damageEnemy(e, auraDmg, 2.5)) {
                   enemies.splice(j, 1);
                 }
               }
@@ -1979,7 +2087,7 @@
             if (Math.hypot(e.x - p.x, e.y - p.y) <= e.radius + p.radius) {
               p.hitSet.add(e);
               p.pierce--;
-              if (damageEnemy(e, p.damage, 12)) {
+              if (damageEnemy(e, p.damage, 3)) {
                 enemies.splice(j, 1);
               }
               if (p.pierce <= 0) {
@@ -2750,7 +2858,7 @@
       window.addEventListener('keydown', (e) => {
         keys[e.code] = true;
         if (e.code === 'Escape') {
-          if (!patchNotesPanel.classList.contains('hidden')) {
+          if (patchNotesModal && !patchNotesModal.classList.contains('hidden')) {
             closePatchNotes();
           } else if (gameState === 'PLAYING' || gameState === 'PAUSED') {
             togglePause();
@@ -2785,52 +2893,41 @@
         btn.addEventListener('pointerup', handler);
       });
 
-      function closePatchNotes() {
-        if (!patchNotesPanel.classList.contains('hidden')) {
-          patchNotesPanel.classList.add('hidden');
-          patchNotesChevron.textContent = '▼';
-        }
-      }
-
       function openPatchNotes() {
-        patchNotesPanel.classList.remove('hidden');
-        patchNotesChevron.textContent = '▲';
+        if (patchNotesModal) {
+          patchNotesModal.classList.remove('hidden');
+          patchNotesModal.classList.add('flex');
+          patchNotesModal.style.display = 'flex';
+        }
       }
 
-      function togglePatchNotes(e) {
-        if (e) {
-          e.stopPropagation();
-          e.preventDefault();
+      function closePatchNotes() {
+        if (patchNotesModal) {
+          patchNotesModal.classList.add('hidden');
+          patchNotesModal.classList.remove('flex');
+          patchNotesModal.style.display = 'none';
         }
-        if (patchNotesPanel.classList.contains('hidden')) {
+      }
+
+      if (togglePatchNotesBtn) {
+        togglePatchNotesBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
           openPatchNotes();
-        } else {
-          closePatchNotes();
-        }
-      }
-
-      togglePatchNotesBtn.addEventListener('click', togglePatchNotes);
-      if (closePatchNotesTopBtn) {
-        closePatchNotesTopBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          closePatchNotes();
-        });
-      }
-      if (closePatchNotesBottomBtn) {
-        closePatchNotesBottomBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          closePatchNotes();
         });
       }
 
-      // Close patch notes when clicking outside the panel
-      document.addEventListener('pointerdown', (e) => {
-        if (!patchNotesPanel.classList.contains('hidden')) {
-          if (!patchNotesPanel.contains(e.target) && !togglePatchNotesBtn.contains(e.target)) {
-            closePatchNotes();
-          }
-        }
-      });
+      if (closePatchNotesModalTopBtn) {
+        closePatchNotesModalTopBtn.addEventListener('click', closePatchNotes);
+      }
+      if (closePatchNotesModalBottomBtn) {
+        closePatchNotesModalBottomBtn.addEventListener('click', closePatchNotes);
+      }
+
+      if (patchNotesModal) {
+        patchNotesModal.addEventListener('pointerdown', (e) => {
+          if (e.target === patchNotesModal) closePatchNotes();
+        });
+      }
 
       function startBattle() {
         if (gameState === 'PLAYING') return;
@@ -2929,7 +3026,7 @@
               const lv = player.skills[p.id] || 0;
               let benefit = '';
               if (p.id === 'growth') benefit = `경험치 +${lv * 35}%`;
-              else if (p.id === 'might') benefit = `공격력 +${lv * 20}%`;
+              else if (p.id === 'might') benefit = `공격력 +${lv * 20}% (무한 Lv)`;
               else if (p.id === 'haste') benefit = `쿨타임 -${lv * 12}%`;
               else if (p.id === 'swift') benefit = `이속 +${lv * 12}%`;
               else if (p.id === 'magnet') benefit = `자석범위 +${lv * 35}%`;
@@ -2998,7 +3095,7 @@
               </div>
               <div class="grid grid-cols-3 gap-1.5 text-[11px] bg-slate-900/80 p-2.5 rounded-2xl border border-slate-800">
                 <div>체력: <strong class="text-emerald-400">${Math.ceil(player.hp)} / ${player.maxHp}</strong></div>
-                <div>공격력: <strong class="text-amber-400">${(getDamageMultiplier() * 100).toFixed(0)}%</strong></div>
+                <div>공격력: <strong class="text-amber-400">${(getDamageMultiplier() * 100).toFixed(0)}% (Lv.${player.skills.might || 0}/무한)</strong></div>
                 <div>쿨타임: <strong class="text-cyan-400">-${((1 - getCooldownMultiplier()) * 100).toFixed(0)}%</strong></div>
                 <div>이속: <strong class="text-slate-200">${Math.round(getMoveSpeed())}</strong></div>
                 <div>자석 반경: <strong class="text-slate-200">${Math.round(getMagnetRadius())}px</strong></div>
@@ -3043,7 +3140,7 @@
       };
     })();
 
-    // Main Menu Sub-view Navigation & Fullscreen Logic
+    // Main Menu Sub-view Navigation & Fullscreen & Dedicated Patch Notes Modal Logic
     (function () {
       const titleScreenView = document.getElementById('titleScreenView');
       const gameGuideView = document.getElementById('gameGuideView');
@@ -3056,6 +3153,48 @@
       const backToTitleFromCharBtn = document.getElementById('backToTitleFromCharBtn');
       const fullscreenToggleBtn = document.getElementById('fullscreenToggleBtn');
       const fullscreenIcon = document.getElementById('fullscreenIcon');
+
+      // Dedicated Patch Notes Popup Modal
+      const patchNotesModal = document.getElementById('patchNotesModal');
+      const togglePatchNotesBtn = document.getElementById('togglePatchNotesBtn');
+      const closePatchNotesModalTopBtn = document.getElementById('closePatchNotesModalTopBtn');
+      const closePatchNotesModalBottomBtn = document.getElementById('closePatchNotesModalBottomBtn');
+
+      function openPatchNotes() {
+        if (patchNotesModal) {
+          patchNotesModal.classList.remove('hidden');
+          patchNotesModal.classList.add('flex');
+          patchNotesModal.style.display = 'flex';
+        }
+      }
+
+      function closePatchNotes() {
+        if (patchNotesModal) {
+          patchNotesModal.classList.add('hidden');
+          patchNotesModal.classList.remove('flex');
+          patchNotesModal.style.display = 'none';
+        }
+      }
+
+      if (togglePatchNotesBtn) {
+        togglePatchNotesBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openPatchNotes();
+        });
+      }
+
+      if (closePatchNotesModalTopBtn) {
+        closePatchNotesModalTopBtn.addEventListener('click', closePatchNotes);
+      }
+      if (closePatchNotesModalBottomBtn) {
+        closePatchNotesModalBottomBtn.addEventListener('click', closePatchNotes);
+      }
+
+      if (patchNotesModal) {
+        patchNotesModal.addEventListener('pointerdown', (e) => {
+          if (e.target === patchNotesModal) closePatchNotes();
+        });
+      }
 
       function showView(view) {
         if (titleScreenView) titleScreenView.classList.add('hidden');
@@ -3105,5 +3244,5 @@
       });
     })();
   </script>
-</body>
+  </body>
 </html>
