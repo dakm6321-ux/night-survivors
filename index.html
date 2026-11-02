@@ -1,0 +1,3363 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>나이트 서바이버 (Night Survivors) - 공식 게임 포털 & 가이드</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0b130e;
+      color: #f1f5f9;
+      font-family: 'Noto Sans KR', 'Inter', sans-serif;
+    }
+    .glass-nav {
+      background: rgba(11, 19, 14, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    .glass-card {
+      background: rgba(15, 29, 20, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(74, 222, 128, 0.18);
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .upgrade-card {
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .upgrade-card:hover, .upgrade-card:active {
+      transform: translateY(-2px) scale(1.01);
+      border-color: #fbbf24;
+      box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.25);
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.35); }
+      50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.7); }
+    }
+    .levelup-badge {
+      animation: pulseGlow 1.8s infinite;
+    }
+    #gameViewport.fullscreen-mode {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 9999 !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+    }
+    #gameViewport.mobile-frame-mode {
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 740px !important;
+      border: 4px solid #334155;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950">
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="sticky top-0 z-50 glass-nav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <!-- Brand & Version -->
+      <a href="#section-play" class="flex items-center gap-2.5 group">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-amber-500 flex items-center justify-center text-xl shadow-lg shadow-emerald-900/40 group-hover:scale-105 transition">
+          ⚔️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-black text-base sm:text-lg tracking-tight text-white group-hover:text-emerald-300 transition">나이트 서바이버</span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold">v1.5.0</span>
+          </div>
+          <p class="text-[10px] text-slate-400 -mt-0.5 hidden sm:block">Night Survivors Official Portal</p>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Tabs -->
+      <nav class="hidden md:flex items-center gap-1 text-xs font-bold text-slate-300">
+        <button type="button" data-nav="play" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 text-amber-400 bg-slate-800/80 transition flex items-center gap-1.5">
+          <span>🎮</span><span>게임 플레이</span>
+        </button>
+        <button type="button" data-nav="evolution" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
+          <span>🧬</span><span>초월 진화 조합표</span>
+        </button>
+        <button type="button" data-nav="heroes" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
+          <span>🦹</span><span>영웅 & 몬스터 도감</span>
+        </button>
+        <button type="button" data-nav="guide" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
+          <span>📖</span><span>조작 가이드</span>
+        </button>
+        <button type="button" data-nav="patch" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
+          <span>📋</span><span>패치노트</span>
+        </button>
+        <button type="button" data-nav="cicd" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
+          <span>🚀</span><span>자동 배포</span>
+        </button>
+      </nav>
+
+      <!-- Action Button -->
+      <div class="flex items-center gap-2">
+        <button id="quickPlayBtn" type="button" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:from-emerald-400 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition flex items-center gap-1.5">
+          <span>전투 시작</span><span>▶</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Sub-Navigation Bar -->
+    <div class="md:hidden flex items-center gap-1 overflow-x-auto px-3 py-2 border-t border-slate-800/60 bg-slate-950/80 text-xs font-bold no-scrollbar">
+      <button type="button" data-nav="play" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">🎮 플레이</button>
+      <button type="button" data-nav="evolution" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">🧬 조합표</button>
+      <button type="button" data-nav="heroes" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">🦹 영웅·몬스터</button>
+      <button type="button" data-nav="guide" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">📖 조작법</button>
+      <button type="button" data-nav="patch" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">📋 패치노트</button>
+      <button type="button" data-nav="cicd" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">🚀 자동배포</button>
+    </div>
+  </header>
+
+  <!-- Main Portal Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
+
+    <!-- SECTION 1: Game Player Arena -->
+    <section id="section-play" class="space-y-3">
+      <!-- Player Mode & Info Toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 glass-card p-3 rounded-2xl border border-emerald-500/20">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center justify-center w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+          <span class="text-xs font-bold text-slate-200">인게임 아케이드 실행 중</span>
+          <span class="text-[11px] text-slate-400 hidden sm:inline">• 터치 드래그 가상 조이스틱 또는 WASD/방향키 지원</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="viewWideBtn" type="button" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 transition">
+            와이드 뷰
+          </button>
+          <button id="viewMobileBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-bold border border-slate-700 transition">
+            스마트폰 프레임
+          </button>
+          <button id="viewFullscreenBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 text-amber-300 hover:bg-slate-700 text-xs font-bold border border-slate-700 transition flex items-center gap-1">
+            <span>⛶</span><span>전체화면</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Playable Game Viewport Container -->
+      <div id="gameViewport" class="relative w-full h-[620px] sm:h-[720px] rounded-3xl overflow-hidden border-2 border-emerald-500/30 bg-slate-950 shadow-2xl transition-all duration-300 select-none" style="touch-action: none; -webkit-touch-callout: none; user-select: none;">
+        <!-- Main Game Canvas -->
+        <canvas id="gameCanvas" class="w-full h-full block cursor-crosshair" style="touch-action: none; -webkit-touch-callout: none; user-select: none;"></canvas>
+
+        <!-- Top HUD -->
+        <div id="hudContainer" class="absolute top-0 left-0 right-0 z-10 pointer-events-none p-2 sm:p-3 flex flex-col gap-2">
+          <!-- EXP Bar Row -->
+          <div class="w-full max-w-2xl mx-auto glass-panel rounded-full p-1 flex items-center gap-2 shadow-lg">
+            <div id="levelBadge" class="bg-amber-500 text-slate-950 font-black text-xs sm:text-sm px-2.5 py-0.5 rounded-full shrink-0 shadow">
+              LV. 1
+            </div>
+            <div class="relative flex-1 h-3 sm:h-3.5 bg-slate-800 rounded-full overflow-hidden">
+              <div id="expBarFill" class="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 transition-all duration-150" style="width: 0%;"></div>
+              <div id="expText" class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow">
+                0 / 6 EXP
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats & Controls Row -->
+          <div class="w-full max-w-2xl mx-auto flex items-center justify-between gap-2">
+            <div class="glass-panel rounded-xl px-3 py-1.5 flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-bold shadow">
+              <div class="flex items-center gap-1.5 text-amber-400">
+                <span>⏱️</span>
+                <span id="timerText" class="font-mono text-sm sm:text-base">00:00</span>
+              </div>
+              <div class="h-3 w-[1px] bg-slate-700"></div>
+              <div class="flex items-center gap-1 text-rose-400">
+                <span>💀</span>
+                <span id="killText">0</span>
+              </div>
+              <div class="h-3 w-[1px] bg-slate-700 hidden sm:block"></div>
+              <div class="hidden sm:flex items-center gap-1 text-emerald-400">
+                <span>❤️</span>
+                <span id="hpText">100 / 100</span>
+              </div>
+            </div>
+
+            <div id="skillIconsBar" class="flex items-center gap-1 overflow-x-auto max-w-[45%] sm:max-w-none py-0.5"></div>
+
+            <div class="flex items-center gap-1.5 pointer-events-auto">
+              <button id="muteBtn" type="button" class="glass-panel hover:bg-slate-800 active:scale-95 text-slate-200 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-semibold transition flex items-center gap-1 shadow" title="효과음 켜기/끄기">
+                <span id="muteIcon">🔊</span>
+              </button>
+              <button id="pauseBtn" type="button" class="glass-panel hover:bg-slate-800 active:scale-95 text-slate-200 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-semibold transition flex items-center gap-1 shadow" title="일시정지">
+                <span id="pauseIcon">⏸️</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Boss Warning Banner -->
+        <div id="bossBanner" class="absolute top-24 left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden">
+          <div class="bg-rose-950/90 border-2 border-rose-500 text-rose-200 px-5 py-2 rounded-full font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-2xl flex items-center gap-2 animate-bounce">
+            <span>⚠️</span>
+            <span id="bossBannerText">보스 몬스터 출현!</span>
+            <span>⚠️</span>
+          </div>
+        </div>
+
+        <!-- Touch Hint Overlay -->
+        <div id="touchHint" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none transition-opacity duration-500 opacity-90">
+          <div class="glass-panel rounded-full px-4 py-2 text-xs sm:text-sm text-slate-300 flex items-center gap-2 shadow-lg">
+            <span class="text-base">👆</span>
+            <span>화면을 터치 후 드래그(또는 WASD/방향키)하여 이동하세요</span>
+          </div>
+        </div>
+
+        <!-- Start / Character Selection Modal -->
+        <div id="startModal" class="absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+          <!-- Top-Right Patch Notes Floating Widget on Main Screen -->
+          <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-40 flex flex-col items-end max-w-[290px] sm:max-w-xs w-full pointer-events-auto">
+            <button id="togglePatchNotesBtn" type="button" class="glass-panel hover:bg-slate-800/90 active:scale-95 px-3 py-1.5 rounded-2xl border border-amber-400/40 shadow-lg flex items-center gap-2 text-xs font-extrabold text-amber-300 transition">
+              <span>📋 패치노트</span>
+              <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">1.5.0</span>
+              <span id="patchNotesChevron" class="text-[10px] text-slate-300">▼</span>
+            </button>
+
+            <div id="patchNotesPanel" class="mt-2 w-full glass-panel rounded-2xl p-3.5 border border-slate-700/90 shadow-2xl text-left max-h-[48vh] overflow-y-auto space-y-3 hidden" style="touch-action: pan-y;">
+              <div class="flex items-center justify-between border-b border-slate-700/80 pb-2">
+                <span class="text-xs font-black text-white flex items-center gap-1.5">🛠️ 업데이트 내역 (패치노트)</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-[11px] font-mono font-bold text-amber-400">v1.5.0</span>
+                  <button id="closePatchNotesTopBtn" type="button" class="glass-panel hover:bg-slate-800 text-slate-300 hover:text-white px-2 py-0.5 rounded-lg text-xs font-bold transition">✕</button>
+                </div>
+              </div>
+
+              <div class="space-y-2.5 text-[11px] leading-relaxed">
+                <div class="bg-slate-900/90 rounded-xl p-2.5 border border-amber-500/40">
+                  <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
+                    <span>v1.5.0</span>
+                    <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
+                  </div>
+                  <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
+                    <li><strong>레벨업 편의성 대폭 개선:</strong> 필요 경험치 추가 완화, 지혜의 고서 강화(+35%), 전체 자석 룬 드랍 및 시간 비례 보석 가치 상승</li>
+                    <li><strong>시간대별 다채로운 적 등장:</strong> 고블린, 해골 전사, 골렘, 늑대인간, 사령술사, 망령 등 7종의 몬스터 및 주기별 엘리트 보스</li>
+                    <li><strong>일시정지 종합 대시보드:</strong> 보유 무기/패시브 레벨, 초월 진화 진행도, 조합 힌트 및 실시간 전투 스탯 표시</li>
+                  </ul>
+                </div>
+                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
+                  <div class="font-bold text-amber-300 mb-1">v1.4.0</div>
+                  <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
+                    <li><strong>경험치 성장 개선:</strong> '지혜의 고서(EXP 획득 +25%)' 추가 및 레벨업 필요치 완화</li>
+                    <li><strong>초월 진화 조합:</strong> 10레벨 무기 2종 조합 시 강력한 신규 초월 무기 진화 (예: 뇌화겁화 불장판 등)</li>
+                    <li><strong>광각 전장 시야:</strong> 줌아웃 카메라 적용으로 사방의 적과 지형을 훨씬 넓게 확인 가능</li>
+                  </ul>
+                </div>
+                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
+                  <div class="font-bold text-amber-300 mb-1">v1.3.0</div>
+                  <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
+                    <li>신규 클래스 <strong>쉐도우(암살자)</strong> 추가 (빠른 이동속도)</li>
+                    <li>기본 무기 <strong>암살자의 단검(찌르기)</strong> 추가 (초근접 좁은 범위)</li>
+                    <li>단검 레벨업: 홀수 레벨 개수 증가 / 짝수 레벨 공격력 증가</li>
+                  </ul>
+                </div>
+              </div>
+
+              <button id="closePatchNotesBottomBtn" type="button" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition shadow border border-slate-700">
+                패치노트 닫기 ✕
+              </button>
+            </div>
+          </div>
+
+          <div class="w-full max-w-md glass-panel rounded-3xl p-5 sm:p-6 border border-slate-700/80 shadow-2xl flex flex-col gap-4 max-h-[92vh] overflow-y-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
+            <div class="text-center space-y-1">
+              <span class="inline-block text-[11px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                Mobile Roguelite Survival
+              </span>
+              <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                나이트 서바이버
+              </h1>
+              <div class="text-xs font-mono font-bold text-amber-400 tracking-widest">
+                1.5.0
+              </div>
+              <p class="text-xs sm:text-sm text-slate-300">
+                사방에서 몰려오는 적들을 물리치고 보석을 모아 레벨업하세요!
+              </p>
+            </div>
+
+            <!-- Character Selection -->
+            <div class="space-y-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+                영웅 클래스 선택
+              </label>
+              <div id="charList" class="grid grid-cols-1 gap-2.5">
+                <button type="button" data-char="knight" class="char-btn text-left p-3 rounded-2xl border-2 border-amber-400 bg-slate-800/90 flex items-center gap-3 transition">
+                  <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-2xl shrink-0">
+                    ⚔️
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm sm:text-base text-white">아서 (성기사)</span>
+                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold">밸런스형</span>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 마법 탄환 + 회전 성검 Lv.1 | 체력 120</p>
+                  </div>
+                </button>
+
+                <button type="button" data-char="mage" class="char-btn text-left p-3 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:bg-slate-800/70 flex items-center gap-3 transition">
+                  <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-2xl shrink-0">
+                    🔮
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm sm:text-base text-white">루나 (아크메이지)</span>
+                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold">원거리 특화</span>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 마법 탄환 Lv.2 + 자석 범위 +35% | 체력 95</p>
+                  </div>
+                </button>
+
+                <button type="button" data-char="invoker" class="char-btn text-left p-3 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:bg-slate-800/70 flex items-center gap-3 transition">
+                  <div class="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-2xl shrink-0">
+                    ⚡
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm sm:text-base text-white">카이 (번개술사)</span>
+                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-semibold">범위·기동형</span>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 마법 탄환 + 번개 낙뢰 Lv.1 | 이동속도 +15%</p>
+                  </div>
+                </button>
+
+                <button type="button" data-char="assassin" class="char-btn text-left p-3 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:bg-slate-800/70 flex items-center gap-3 transition">
+                  <div class="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-2xl shrink-0">
+                    🥷
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm sm:text-base text-white">쉐도우 (암살자)</span>
+                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-semibold">초고속 근접형</span>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 단검 찌르기 Lv.1 (초근접) | 이동속도 매우 빠름</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- How to Play Summary -->
+            <div class="rounded-2xl bg-slate-900/80 border border-slate-800 p-3 text-xs text-slate-300 space-y-1">
+              <div class="font-bold text-slate-200">💡 게임 특징 & 조작법</div>
+              <div>• <strong class="text-amber-300">자동 공격:</strong> 이동만 하면 사거리 내 적을 자동으로 공격합니다.</div>
+              <div>• <strong class="text-cyan-300">3택 1 성장:</strong> 경험치 보석을 모아 레벨업할 때마다 3가지 능력 중 하나를 선택해 진화합니다.</div>
+              <div>• <strong class="text-emerald-300">초월 진화:</strong> 10레벨 무기 2종 조합 시 최강의 초월 무기 완성!</div>
+            </div>
+
+            <button id="startGameBtn" type="button" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.99] text-slate-950 font-black text-base shadow-lg shadow-amber-500/25 transition">
+              전투 시작하기 🚀
+            </button>
+          </div>
+        </div>
+
+        <!-- Level Up (Choose 1 of 3) Modal -->
+        <div id="levelUpModal" class="absolute inset-0 z-30 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div class="w-full max-w-md glass-panel rounded-3xl p-5 border border-amber-400/40 shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto">
+            <div class="text-center space-y-1">
+              <span class="inline-block levelup-badge bg-amber-400 text-slate-950 font-black text-xs px-3 py-0.5 rounded-full uppercase tracking-wider">
+                LEVEL UP!
+              </span>
+              <h2 id="levelUpTitle" class="text-xl sm:text-2xl font-black text-white">
+                레벨 2 달성! 능력을 선택하세요
+              </h2>
+              <p class="text-xs text-slate-300">
+                세 가지 축복 중 하나를 골라 영웅을 강화하세요 (터치하여 즉시 적용)
+              </p>
+            </div>
+            <div id="upgradeChoicesContainer" class="flex flex-col gap-2.5"></div>
+          </div>
+        </div>
+
+        <!-- Pause Modal (Comprehensive Progress & Ability Dashboard) -->
+        <div id="pauseModal" class="absolute inset-0 z-30 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md">
+          <div class="w-full max-w-lg glass-panel rounded-3xl p-5 sm:p-6 border border-slate-700 shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">⏸️</span>
+                <div>
+                  <h2 class="text-lg sm:text-xl font-black text-white">전투 일시정지</h2>
+                  <p class="text-[11px] text-slate-400">현재 전투 진행도 및 획득한 능력 현황</p>
+                </div>
+              </div>
+              <button id="closePauseTopBtn" type="button" class="glass-panel hover:bg-slate-800 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 transition">
+                닫기 ✕
+              </button>
+            </div>
+
+            <div id="pauseStatsBox" class="space-y-3.5"></div>
+
+            <div class="flex gap-2 pt-2 border-t border-slate-800">
+              <button id="resumeGameBtn" type="button" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm shadow-lg shadow-amber-500/20 transition">
+                계속하기
+              </button>
+              <button id="restartFromPauseBtn" type="button" class="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition">
+                처음부터 다시 시작
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div id="gameOverModal" class="absolute inset-0 z-30 hidden items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+          <div class="w-full max-w-md glass-panel rounded-3xl p-6 border border-rose-500/40 shadow-2xl flex flex-col gap-4 text-center">
+            <div class="space-y-1">
+              <span id="gameOverBadge" class="inline-block text-xs font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                GAME OVER
+              </span>
+              <h2 id="gameOverHeading" class="text-2xl sm:text-3xl font-black text-white">
+                전투 종료!
+              </h2>
+              <p id="gameOverSubtext" class="text-xs sm:text-sm text-slate-300">
+                몰려오는 어둠의 군단에게 쓰러졌습니다.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800">
+              <div>
+                <div class="text-[11px] text-slate-400">생존 시간</div>
+                <div id="finalTimeStat" class="text-base sm:text-lg font-black text-amber-400 mt-0.5">00:00</div>
+              </div>
+              <div>
+                <div class="text-[11px] text-slate-400">달성 레벨</div>
+                <div id="finalLevelStat" class="text-base sm:text-lg font-black text-cyan-400 mt-0.5">LV. 1</div>
+              </div>
+              <div>
+                <div class="text-[11px] text-slate-400">처치한 적</div>
+                <div id="finalKillStat" class="text-base sm:text-lg font-black text-rose-400 mt-0.5">0</div>
+              </div>
+            </div>
+
+            <div class="text-left space-y-1.5">
+              <div class="text-xs font-bold text-slate-400">획득한 무기 & 능력</div>
+              <div id="finalBuildList" class="flex flex-wrap gap-1.5 bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80 min-h-[44px]"></div>
+            </div>
+
+            <button id="retryGameBtn" type="button" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.99] text-slate-950 font-black text-base shadow-lg shadow-amber-500/25 transition">
+              다시 도전하기 🔄
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Weapon & Evolution Matrix (초월 진화 조합표) -->
+    <section id="section-evolution" class="space-y-6 pt-6 border-t border-slate-800/80">
+      <div class="space-y-1">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold">
+          <span>⚡</span><span>초월 진화 시스템</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-white">무기 & 초월 진화 조합 공식</h2>
+        <p class="text-xs sm:text-sm text-slate-400">
+          연관된 두 무기를 모두 <strong>10레벨</strong>까지 육성하면 레벨업 시 전설적인 <strong>초월 진화 무기</strong>를 해금할 수 있습니다.
+        </p>
+      </div>
+
+      <!-- 3 Ultimate Evolution Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Evo 1 -->
+        <div class="glass-card rounded-2xl p-5 border-2 border-amber-400/40 relative overflow-hidden group hover:border-amber-400 transition shadow-xl">
+          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 select-none">⚡🔥</div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">⚡🔥</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[11px] font-black">초월 진화 1</span>
+          </div>
+          <h3 class="text-lg font-black text-amber-300 mb-1">뇌화겁화 (화염 낙뢰)</h3>
+          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+            벼락이 내리꽂힌 자리에 지옥의 <strong>지속 불장판</strong>이 생성되어 지나는 모든 적들을 지속 화염으로 불태우고 넉백시킵니다.
+          </p>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs font-semibold space-y-1">
+            <div class="text-[11px] text-slate-400 font-bold mb-1">필요 조합 재료:</div>
+            <div class="flex items-center justify-between text-slate-200">
+              <span>⚡ 천벌의 낙뢰</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
+            </div>
+            <div class="flex items-center justify-between text-slate-200">
+              <span>🔥 화염 신성 파동</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evo 2 -->
+        <div class="glass-card rounded-2xl p-5 border-2 border-amber-400/40 relative overflow-hidden group hover:border-amber-400 transition shadow-xl">
+          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 select-none">🗡️🛡️</div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">🗡️🛡️</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[11px] font-black">초월 진화 2</span>
+          </div>
+          <h3 class="text-lg font-black text-amber-300 mb-1">성스러운 심판의 폭풍</h3>
+          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+            황금 성검 5개가 거대한 궤도로 회전하며, 칼날이 적을 벨 때마다 폭발적인 <strong>신성 심판 충격파</strong>가 연쇄 발동합니다.
+          </p>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs font-semibold space-y-1">
+            <div class="text-[11px] text-slate-400 font-bold mb-1">필요 조합 재료:</div>
+            <div class="flex items-center justify-between text-slate-200">
+              <span>🗡️ 회전 성검</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
+            </div>
+            <div class="flex items-center justify-between text-slate-200">
+              <span>🛡️ 신성한 결계</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evo 3 -->
+        <div class="glass-card rounded-2xl p-5 border-2 border-amber-400/40 relative overflow-hidden group hover:border-amber-400 transition shadow-xl">
+          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 select-none">🔪🔹</div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">🔪🔹</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[11px] font-black">초월 진화 3</span>
+          </div>
+          <h3 class="text-lg font-black text-amber-300 mb-1">환영 비검술</h3>
+          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+            원거리 유도 탄환과 초근접 단검 찌르기가 융합되어, 사방으로 초고속 <strong>환영 비검</strong>이 난무하며 관통 폭발 검기를 뿜습니다.
+          </p>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs font-semibold space-y-1">
+            <div class="text-[11px] text-slate-400 font-bold mb-1">필요 조합 재료:</div>
+            <div class="flex items-center justify-between text-slate-200">
+              <span>🔹 마법 탄환</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
+            </div>
+            <div class="flex items-center justify-between text-slate-200">
+              <span>🔪 암살자의 단검</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Base Weapon & Passive Catalog Grid -->
+      <div class="glass-card rounded-2xl p-5 border border-slate-800">
+        <h4 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-1.5">
+          <span>⚔️</span><span>기본 무기 및 패시브 도감</span>
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
+            <div class="font-bold text-cyan-300 flex items-center justify-between">
+              <span>🔹 마법 탄환 (무기)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.10</span>
+            </div>
+            <p class="text-slate-400 text-[11px]">가장 가까운 적에게 유도 탄환 발사. 레벨업 시 탄환 수 및 관통/피해 증가.</p>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
+            <div class="font-bold text-amber-300 flex items-center justify-between">
+              <span>🗡️ 회전 성검 (무기)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.10</span>
+            </div>
+            <p class="text-slate-400 text-[11px]">수축·팽창하며 회전. 홀수 레벨 검 개수 증가, 짝수 레벨 회전속도/피해 증가.</p>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
+            <div class="font-bold text-purple-300 flex items-center justify-between">
+              <span>⚡ 천벌의 낙뢰 (무기)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.10</span>
+            </div>
+            <p class="text-slate-400 text-[11px]">무작위 주변 적에게 범위 번개 강타. 낙뢰 횟수 및 폭발 반경 증가.</p>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
+            <div class="font-bold text-rose-300 flex items-center justify-between">
+              <span>🔪 암살자의 단검 (무기)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.10</span>
+            </div>
+            <p class="text-slate-400 text-[11px]">초근접 좁은 범위 찌르기. 홀수 레벨 개수 증가, 짝수 레벨 공격력 대폭 증가.</p>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
+            <div class="font-bold text-emerald-300 flex items-center justify-between">
+              <span>📖 지혜의 고서 (패시브)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.5</span>
+            </div>
+            <p class="text-slate-400 text-[11px]">경험치 획득량 레벨당 +35% 대폭 증가 (최대 +175%). 빠른 성장의 필수 패시브.</p>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
+            <div class="font-bold text-blue-300 flex items-center justify-between">
+              <span>🧲 고대 자석석 (패시브)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.5</span>
+            </div>
+            <p class="text-slate-400 text-[11px]">보석을 끌어당기는 자석 흡수 반경 +35%씩 확장. 안전한 보석 파밍 보장.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Heroes & Bestiary (영웅 & 몬스터 도감) -->
+    <section id="section-heroes" class="space-y-6 pt-6 border-t border-slate-800/80">
+      <div class="space-y-1">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
+          <span>🦹</span><span>캐릭터 & 몬스터 도감</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-white">4인의 영웅 & 전장 몬스터</h2>
+      </div>
+
+      <!-- 4 Heroes Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card rounded-2xl p-4 border border-amber-500/30 space-y-2">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-2xl">⚔️</div>
+            <div>
+              <div class="font-black text-sm text-white">아서 (성기사)</div>
+              <div class="text-[11px] text-amber-300 font-semibold">밸런스형 탱커</div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-300 space-y-1 pt-1 border-t border-slate-800">
+            <div>체력: <strong class="text-emerald-400 font-mono">120</strong> | 이동속도: <strong class="text-slate-200 font-mono">175</strong></div>
+            <div>기본 무기: <strong>마법 탄환 + 회전 성검 Lv.1</strong></div>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 border border-cyan-500/30 space-y-2">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-2xl">🔮</div>
+            <div>
+              <div class="font-black text-sm text-white">루나 (아크메이지)</div>
+              <div class="text-[11px] text-cyan-300 font-semibold">원거리 파밍 특화</div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-300 space-y-1 pt-1 border-t border-slate-800">
+            <div>체력: <strong class="text-rose-400 font-mono">95</strong> | 자석 반경: <strong class="text-cyan-300 font-mono">+35%</strong></div>
+            <div>기본 무기: <strong>마법 탄환 Lv.2 + 자석석 Lv.1</strong></div>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 border border-purple-500/30 space-y-2">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-2xl">⚡</div>
+            <div>
+              <div class="font-black text-sm text-white">카이 (번개술사)</div>
+              <div class="text-[11px] text-purple-300 font-semibold">범위 타격 & 기동형</div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-300 space-y-1 pt-1 border-t border-slate-800">
+            <div>체력: <strong class="text-slate-200 font-mono">105</strong> | 이동속도: <strong class="text-purple-300 font-mono">198 (+15%)</strong></div>
+            <div>기본 무기: <strong>마법 탄환 + 천벌의 낙뢰 Lv.1</strong></div>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 border border-rose-500/30 space-y-2">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-2xl">🥷</div>
+            <div>
+              <div class="font-black text-sm text-white">쉐도우 (암살자)</div>
+              <div class="text-[11px] text-rose-300 font-semibold">초고속 근접 딜러</div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-300 space-y-1 pt-1 border-t border-slate-800">
+            <div>체력: <strong class="text-rose-400 font-mono">95</strong> | 이동속도: <strong class="text-rose-300 font-mono">235 (초고속)</strong></div>
+            <div>기본 무기: <strong>암살자의 단검 찌르기 Lv.1</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Controls & Guide (조작 가이드) -->
+    <section id="section-guide" class="space-y-6 pt-6 border-t border-slate-800/80">
+      <div class="space-y-1">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-bold">
+          <span>📖</span><span>플레이 가이드</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-white">조작 방법 & 핵심 생존 팁</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+          <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+            <span>📱</span><span>모바일 스마트폰 조작법</span>
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            화면의 어느 곳이든 <strong>터치 후 원하는 방향으로 드래그</strong>하면 가상 조이스틱이 즉시 나타나 영웅을 자유자재로 조종할 수 있습니다. 손을 떼면 즉시 제자리에 멈춥니다.
+          </p>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1">
+            <div>• 무기는 사거리 내 적을 <strong>100% 자동 조준 사격</strong>하므로 회피 기동에만 집중하세요.</div>
+            <div>• 레벨업 창이나 일시정지 창은 세로 스크롤을 지원하므로 편하게 스와이프할 수 있습니다.</div>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+          <h3 class="text-sm font-bold text-cyan-300 flex items-center gap-2">
+            <span>💻</span><span>PC 키보드 조작법</span>
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            <kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-amber-400 font-bold">W</kbd>
+            <kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-amber-400 font-bold">A</kbd>
+            <kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-amber-400 font-bold">S</kbd>
+            <kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-amber-400 font-bold">D</kbd> 또는 방향키로 이동할 수 있으며, 마우스로 화면을 드래그해도 이동 조작이 가능합니다.
+          </p>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1">
+            <div>• <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-200">ESC</kbd> 키를 누르면 즉시 일시정지하고 전투 능력 현황 대시보드를 열 수 있습니다.</div>
+            <div>• 나무와 바위 장애물 뒤로 숨어 적들의 탄막과 돌진을 막아내는 카이팅 플레이를 추천합니다.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: Live Patch Notes (실시간 패치노트) -->
+    <section id="section-patch" class="space-y-6 pt-6 border-t border-slate-800/80">
+      <div class="flex items-center justify-between">
+        <div class="space-y-1">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold">
+            <span>📋</span><span>업데이트 기록</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black text-white">공식 패치노트 이력</h2>
+        </div>
+        <span class="px-3 py-1 rounded-xl bg-slate-800 border border-slate-700 text-xs font-mono text-amber-400 font-bold">
+          Current: v1.5.0
+        </span>
+      </div>
+
+      <div class="space-y-3">
+        <!-- v1.5.0 -->
+        <div class="glass-card rounded-2xl p-4 border border-amber-500/40 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v1.5.0</span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400">2026.11</span>
+          </div>
+          <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+            <li><strong>레벨업 편의성 대폭 개선:</strong> 요구 경험치 추가 완화, 지혜의 고서 강화(+35%), 전체 자석 룬(🧲) 드랍 및 시간 비례 보석 가치 상승</li>
+            <li><strong>시간대별 다채로운 적 등장:</strong> 고블린, 해골 전사, 골렘, 늑대인간, 사령술사, 망령 등 7종의 몬스터 및 주기별 엘리트 보스</li>
+            <li><strong>일시정지 종합 대시보드:</strong> 보유 무기/패시브 레벨, 초월 진화 진행도, 조합 힌트 및 실시간 전투 스탯 표시</li>
+            <li><strong>버그 수정:</strong> 뇌화겁화 습득 시 렌더링 멈춤 현상 및 패치노트 모달 닫기 버그 완벽 패치</li>
+          </ul>
+        </div>
+
+        <!-- v1.4.0 -->
+        <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.4.0</span>
+            <span class="text-[11px] text-slate-400">2026.11</span>
+          </div>
+          <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
+            <li><strong>초월 진화 무기 시스템:</strong> 10레벨 무기 2종 조합 시 전설 초월 무기 진화 (뇌화겁화, 성스러운 심판의 폭풍, 환영 비검술)</li>
+            <li><strong>광각 전장 시야:</strong> 줌아웃 카메라(0.76x) 적용으로 사방의 적과 지형을 넓게 확인 가능</li>
+          </ul>
+        </div>
+
+        <!-- v1.3.0 -->
+        <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-black text-slate-200 font-mono">v1.3.0</span>
+            <span class="text-[11px] text-slate-400">2026.11</span>
+          </div>
+          <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
+            <li><strong>신규 클래스 암살자 쉐도우 추가:</strong> 가장 빠른 이동속도 및 초근접 단검 찌르기 기본 공격</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: CI/CD & Auto Deployment Guide (자동 배포 가이드) -->
+    <section id="section-cicd" class="space-y-6 pt-6 border-t border-slate-800/80">
+      <div class="space-y-1">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold">
+          <span>🚀</span><span>CI/CD 자동 배포</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-white">수정·패치 시 자동 반영 시스템 안내</h2>
+        <p class="text-xs sm:text-sm text-slate-400">
+          게임이 수정되거나 밸런스 패치될 때마다 수동 업로드 없이 웹사이트에 자동으로 빌드 및 배포되는 원리와 방법입니다.
+        </p>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="font-bold text-amber-300 text-sm flex items-center gap-1.5">
+              <span>1️⃣</span><span>단일 번들 아키텍처</span>
+            </div>
+            <p class="text-slate-300 leading-relaxed">
+              게임 엔진, 캔버스 렌더러, 포털 가이드, 패치노트가 하나의 통합 번들로 구동되어, 게임 로직이나 데이터가 수정되면 포털 전체가 즉시 자동 동기화됩니다.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="font-bold text-cyan-300 text-sm flex items-center gap-1.5">
+              <span>2️⃣</span><span>GitHub Actions CI/CD</span>
+            </div>
+            <p class="text-slate-300 leading-relaxed">
+              제공해 드리는 배포 패키지(`night_survivors_site.zip`)를 GitHub 리포지토리에 푸시하면, `.github/workflows/deploy.yml`이 코드가 바뀔 때마다 30초 내로 GitHub Pages에 자동 배포합니다.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="font-bold text-emerald-300 text-sm flex items-center gap-1.5">
+              <span>3️⃣</span><span>Vercel / Netlify 1-Click 연동</span>
+            </div>
+            <p class="text-slate-300 leading-relaxed">
+              GitHub 저장소를 Vercel이나 Netlify에 연결해두면 `git push`가 일어날 때마다 자동으로 무중단 배포(Continuous Deployment)가 완료되어 실시간 웹사이트에 즉시 반영됩니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="font-bold text-xs text-slate-200">📦 GitHub Pages 무료 호스팅 연동 3단계:</div>
+          <ol class="text-xs text-slate-400 space-y-1 list-decimal list-inside font-mono">
+            <li>GitHub에 새 리포지토리 생성 (예: <span class="text-amber-300">night-survivors</span>)</li>
+            <li>다운로드한 파일들을 리포지토리의 <span class="text-cyan-300">main</span> 브랜치로 커밋 & 푸시 (<span class="text-emerald-400">git push origin main</span>)</li>
+            <li>리포지토리 설정 <span class="text-slate-200">[Settings] → [Pages]</span>에서 Source를 <span class="text-amber-300">GitHub Actions</span>로 선택하면 끝!</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="mt-12 border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500 space-y-2">
+    <div class="flex items-center justify-center gap-2 font-bold text-slate-400">
+      <span>나이트 서바이버 (Night Survivors)</span>
+      <span>•</span>
+      <span class="text-emerald-400">Official Web Portal</span>
+      <span>•</span>
+      <span class="font-mono">v1.5.0</span>
+    </div>
+    <p>HTML5 Canvas • Web Audio API • Tailwind CSS • Standalone CI/CD Ready</p>
+  </footer>
+
+  <!-- Complete Inlined Game Engine Script -->
+  <script>
+(function () {
+      'use strict';
+
+      // --- Canvas & Sizing ---
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+      let viewWidth = window.innerWidth;
+      let viewHeight = window.innerHeight;
+
+      function resizeCanvas() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const container = document.getElementById('gameViewport') || document.body;
+        const rect = container.getBoundingClientRect();
+        viewWidth = Math.max(320, Math.floor(rect.width));
+        viewHeight = Math.max(480, Math.floor(rect.height));
+        canvas.width = Math.floor(viewWidth * dpr);
+        canvas.height = Math.floor(viewHeight * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      // --- Synthesized Web Audio System ---
+      let audioCtx = null;
+      let isMuted = false;
+
+      function ensureAudio() {
+        if (isMuted) return null;
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            audioCtx = new AudioContextClass();
+          }
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
+        }
+        return audioCtx;
+      }
+
+      function playSound(type) {
+        const actx = ensureAudio();
+        if (!actx) return;
+        const now = actx.currentTime;
+
+        try {
+          if (type === 'stab') {
+            const osc = actx.createOscillator();
+            const gain = actx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(780, now);
+            osc.frequency.exponentialRampToValueAtTime(240, now + 0.055);
+            gain.gain.setValueAtTime(0.065, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.055);
+            osc.connect(gain);
+            gain.connect(actx.destination);
+            osc.start(now);
+            osc.stop(now + 0.055);
+          } else if (type === 'shoot') {
+            const osc = actx.createOscillator();
+            const gain = actx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(520, now);
+            osc.frequency.exponentialRampToValueAtTime(180, now + 0.07);
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+            osc.connect(gain);
+            gain.connect(actx.destination);
+            osc.start(now);
+            osc.stop(now + 0.07);
+          } else if (type === 'gem') {
+            const osc = actx.createOscillator();
+            const gain = actx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(680, now);
+            osc.frequency.exponentialRampToValueAtTime(1120, now + 0.08);
+            gain.gain.setValueAtTime(0.07, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+            osc.connect(gain);
+            gain.connect(actx.destination);
+            osc.start(now);
+            osc.stop(now + 0.08);
+          } else if (type === 'thunder') {
+            const osc = actx.createOscillator();
+            const gain = actx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(260, now);
+            osc.frequency.exponentialRampToValueAtTime(55, now + 0.16);
+            gain.gain.setValueAtTime(0.09, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+            osc.connect(gain);
+            gain.connect(actx.destination);
+            osc.start(now);
+            osc.stop(now + 0.16);
+          } else if (type === 'levelup') {
+            const notes = [440, 554.37, 659.25, 880];
+            notes.forEach((freq, idx) => {
+              const osc = actx.createOscillator();
+              const gain = actx.createGain();
+              osc.type = 'triangle';
+              const startTime = now + idx * 0.07;
+              osc.frequency.setValueAtTime(freq, startTime);
+              gain.gain.setValueAtTime(0.11, startTime);
+              gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.22);
+              osc.connect(gain);
+              gain.connect(actx.destination);
+              osc.start(startTime);
+              osc.stop(startTime + 0.22);
+            });
+          } else if (type === 'gameover') {
+            const notes = [330, 293.66, 261.63, 196];
+            notes.forEach((freq, idx) => {
+              const osc = actx.createOscillator();
+              const gain = actx.createGain();
+              osc.type = 'sawtooth';
+              const startTime = now + idx * 0.12;
+              osc.frequency.setValueAtTime(freq, startTime);
+              gain.gain.setValueAtTime(0.09, startTime);
+              gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+              osc.connect(gain);
+              gain.connect(actx.destination);
+              osc.start(startTime);
+              osc.stop(startTime + 0.25);
+            });
+          }
+        } catch (err) {
+          // Ignore audio scheduling errors
+        }
+      }
+
+      // --- Upgrade Catalog (9 distinct weapons & passives) ---
+      const UPGRADE_CATALOG = [
+        {
+          id: 'daggerThrust',
+          name: '암살자의 단검 (찌르기)',
+          icon: '🔪',
+          category: '무기',
+          maxLevel: 10,
+          desc: (nextLv) => {
+            if (nextLv === 1) return '가까이 접근한 적을 향해 매우 좁은 범위의 빠른 단검 찌르기를 가합니다.';
+            if (nextLv % 2 === 1) return `홀수 레벨 보너스: 동시에 찌르는 단검 개수 +1 증가 (총 ${Math.ceil(nextLv / 2)}개, Lv.${nextLv})`;
+            return `짝수 레벨 보너스: 단검 찌르기 공격력 +20 대폭 증가 (Lv.${nextLv})`;
+          }
+        },
+        {
+          id: 'magicBolt',
+          name: '마법 탄환',
+          icon: '🔹',
+          category: '무기',
+          maxLevel: 10,
+          desc: (nextLv) => nextLv === 1
+            ? '가장 가까운 적에게 유도 마법 탄환을 발사합니다.'
+            : `탄환 발사 수 및 관통/피해량 증가 (Lv.${nextLv})`
+        },
+        {
+          id: 'orbitBlade',
+          name: '회전 성검',
+          icon: '🗡️',
+          category: '무기',
+          maxLevel: 10,
+          desc: (nextLv) => {
+            if (nextLv === 1) return '영웅 주위를 수축·팽창하며 회전하는 성검을 1개 소환합니다.';
+            if (nextLv % 2 === 1) return `홀수 레벨 보너스: 회전 성검 개수 +1 증가 (총 ${Math.ceil(nextLv / 2)}개, Lv.${nextLv})`;
+            return `짝수 레벨 보너스: 성검 회전 속도 +35% 및 피해량 증가 (Lv.${nextLv})`;
+          }
+        },
+        {
+          id: 'lightning',
+          name: '천벌의 낙뢰',
+          icon: '⚡',
+          category: '무기',
+          maxLevel: 10,
+          desc: (nextLv) => nextLv === 1
+            ? '주기적으로 무작위 적에게 강력한 범위 번개를 내리칩니다.'
+            : `낙뢰 횟수 및 폭발 반경·피해량 증가 (Lv.${nextLv})`
+        },
+        {
+          id: 'holyAura',
+          name: '신성한 결계',
+          icon: '🛡️',
+          category: '무기',
+          maxLevel: 10,
+          desc: (nextLv) => nextLv === 1
+            ? '주변 적들에게 지속적인 신성 피해를 입히고 이동을 늦춥니다.'
+            : `결계 반경 +20% 및 지속 피해량 대폭 상승 (Lv.${nextLv})`
+        },
+        {
+          id: 'novaBurst',
+          name: '화염 신성 파동',
+          icon: '🔥',
+          category: '무기',
+          maxLevel: 10,
+          desc: (nextLv) => nextLv === 1
+            ? '일정 시간마다 사방으로 퍼져나가는 화염 탄막을 방출합니다.'
+            : `방출 탄막 개수 +2 및 화염 피해량 증가 (Lv.${nextLv})`
+        },
+        {
+          id: 'growth',
+          name: '지혜의 고서 (경험치)',
+          icon: '📖',
+          category: '패시브',
+          maxLevel: 5,
+          desc: (nextLv) => `경험치 획득량이 +35% 증가합니다. (누적 +${nextLv * 35}%)`
+        },
+        {
+          id: 'might',
+          name: '투지의 문장 (공격력)',
+          icon: '💥',
+          category: '패시브',
+          maxLevel: 6,
+          desc: (nextLv) => `모든 무기의 최종 피해량이 +20% 증가합니다. (누적 +${nextLv * 20}%)`
+        },
+        {
+          id: 'haste',
+          name: '신속의 비전 (공격속도)',
+          icon: '⏳',
+          category: '패시브',
+          maxLevel: 6,
+          desc: (nextLv) => `모든 무기의 공격 주기가 12% 빨라집니다. (누적 -${nextLv * 12}%)`
+        },
+        {
+          id: 'swift',
+          name: '바람의 장화 (이동속도)',
+          icon: '👟',
+          category: '패시브',
+          maxLevel: 5,
+          desc: (nextLv) => `영웅의 이동 속도가 +12% 증가합니다. (누적 +${nextLv * 12}%)`
+        },
+        {
+          id: 'magnet',
+          name: '고대 자석석 (획득범위)',
+          icon: '🧲',
+          category: '패시브',
+          maxLevel: 5,
+          desc: (nextLv) => `경험치 보석을 끌어당기는 범위가 +35% 넓어집니다.`
+        },
+        {
+          id: 'vitality',
+          name: '생명의 성배 (체력·회복)',
+          icon: '❤️',
+          category: '패시브',
+          maxLevel: 6,
+          desc: () => `최대 체력 +30 증가 및 즉시 체력 40%를 회복합니다.`
+        }
+      ];
+
+      // --- Evolution Combinations (Unlocked when two paired weapons both reach Lv.10) ---
+      const EVOLUTIONS = [
+        {
+          id: 'hellfireThunder',
+          reqA: 'lightning',
+          reqB: 'novaBurst',
+          name: '뇌화겁화 (화염 낙뢰)',
+          icon: '⚡🔥',
+          category: '초월 진화 무기',
+          desc: '천벌의 낙뢰와 화염 파동의 궁극 융합! 거대한 벼락이 내리꽂힌 자리에 지옥의 불장판이 지속되어 적들을 불태웁니다.'
+        },
+        {
+          id: 'sanctuaryStorm',
+          reqA: 'orbitBlade',
+          reqB: 'holyAura',
+          name: '성스러운 심판의 폭풍',
+          icon: '🗡️🛡️',
+          category: '초월 진화 무기',
+          desc: '회전 성검과 신성 결계의 융합! 5개의 거대 성검이 적을 벨 때마다 폭발적인 신성 심판 파동이 연쇄 폭발합니다.'
+        },
+        {
+          id: 'phantomBlades',
+          reqA: 'magicBolt',
+          reqB: 'daggerThrust',
+          name: '환영 비검술',
+          icon: '🔪🔹',
+          category: '초월 진화 무기',
+          desc: '마법 탄환과 암살자 단검의 융합! 사방을 가르는 초고속 환영 비검들이 적을 관통하고 폭발 검기를 뿜어냅니다.'
+        }
+      ];
+
+      // --- Character Classes ---
+      const CHARACTERS = {
+        knight: {
+          name: '아서 (성기사)',
+          icon: '⚔️',
+          color: '#fbbf24',
+          hp: 120,
+          speed: 175,
+          magnetRadius: 95,
+          initialSkills: { magicBolt: 1, orbitBlade: 1 }
+        },
+        mage: {
+          name: '루나 (아크메이지)',
+          icon: '🔮',
+          color: '#38bdf8',
+          hp: 95,
+          speed: 180,
+          magnetRadius: 130,
+          initialSkills: { magicBolt: 2, magnet: 1 }
+        },
+        invoker: {
+          name: '카이 (번개술사)',
+          icon: '⚡',
+          color: '#c084fc',
+          hp: 105,
+          speed: 198,
+          magnetRadius: 105,
+          initialSkills: { magicBolt: 1, lightning: 1 }
+        },
+        assassin: {
+          name: '쉐도우 (암살자)',
+          icon: '🥷',
+          color: '#f43f5e',
+          hp: 95,
+          speed: 235,
+          magnetRadius: 105,
+          initialSkills: { daggerThrust: 1 }
+        }
+      };
+
+      // --- Game State ---
+      let selectedCharKey = 'knight';
+      let gameState = 'START'; // START | PLAYING | LEVEL_UP | PAUSED | GAME_OVER
+      let animFrameId = null;
+      let lastTimestamp = 0;
+
+      let player = null;
+      let enemies = [];
+      let projectiles = [];
+      let gems = [];
+      let floatingTexts = [];
+      let lightningBolts = [];
+      let daggerThrusts = [];
+      let fireZones = [];
+      let particles = [];
+      let worldProps = [];
+      let obstacles = [];
+      let fireflies = [];
+
+      let elapsedTime = 0;
+      let killCount = 0;
+      let spawnAccumulator = 0;
+      let nextBossTime = 45;
+      let bossCountSpawned = 0;
+
+      // Weapon cooldown timers
+      let timers = {
+        daggerThrust: 0,
+        magicBolt: 0,
+        lightning: 0,
+        holyAura: 0,
+        novaBurst: 0,
+        orbitAngle: 0
+      };
+
+      // Input state (Keyboard + Touch/Mouse Virtual Joystick)
+      const keys = {};
+      const joystick = {
+        active: false,
+        pointerId: null,
+        originX: 0,
+        originY: 0,
+        currX: 0,
+        currY: 0,
+        dx: 0,
+        dy: 0,
+        maxRadius: 55
+      };
+
+      // --- DOM Elements ---
+      const levelBadge = document.getElementById('levelBadge');
+      const expBarFill = document.getElementById('expBarFill');
+      const expText = document.getElementById('expText');
+      const timerText = document.getElementById('timerText');
+      const killText = document.getElementById('killText');
+      const hpText = document.getElementById('hpText');
+      const skillIconsBar = document.getElementById('skillIconsBar');
+      const bossBanner = document.getElementById('bossBanner');
+      const bossBannerText = document.getElementById('bossBannerText');
+      const touchHint = document.getElementById('touchHint');
+
+      const startModal = document.getElementById('startModal');
+      const levelUpModal = document.getElementById('levelUpModal');
+      const levelUpTitle = document.getElementById('levelUpTitle');
+      const upgradeChoicesContainer = document.getElementById('upgradeChoicesContainer');
+      const pauseModal = document.getElementById('pauseModal');
+      const pauseStatsBox = document.getElementById('pauseStatsBox');
+      const gameOverModal = document.getElementById('gameOverModal');
+
+      const muteBtn = document.getElementById('muteBtn');
+      const muteIcon = document.getElementById('muteIcon');
+      const pauseBtn = document.getElementById('pauseBtn');
+      const startGameBtn = document.getElementById('startGameBtn');
+      const togglePatchNotesBtn = document.getElementById('togglePatchNotesBtn');
+      const patchNotesPanel = document.getElementById('patchNotesPanel');
+      const patchNotesChevron = document.getElementById('patchNotesChevron');
+      const closePatchNotesTopBtn = document.getElementById('closePatchNotesTopBtn');
+      const closePatchNotesBottomBtn = document.getElementById('closePatchNotesBottomBtn');
+      const resumeGameBtn = document.getElementById('resumeGameBtn');
+      const closePauseTopBtn = document.getElementById('closePauseTopBtn');
+      const restartFromPauseBtn = document.getElementById('restartFromPauseBtn');
+      const retryGameBtn = document.getElementById('retryGameBtn');
+
+      // --- Initialize Forest Floor Props, Obstacles (Trees & Rocks) & Fireflies ---
+      function initWorldProps() {
+        worldProps = [];
+        obstacles = [];
+        fireflies = [];
+
+        // Ground patches (moss, dirt, grass tufts, flowers, mushrooms)
+        const propTypes = ['moss', 'dirt', 'grass', 'flower', 'mushroom'];
+        for (let i = 0; i < 420; i++) {
+          const pType = propTypes[Math.floor(Math.random() * propTypes.length)];
+          worldProps.push({
+            x: (Math.random() - 0.5) * 4400,
+            y: (Math.random() - 0.5) * 4400,
+            size: pType === 'moss' || pType === 'dirt' ? 28 + Math.random() * 55 : 5 + Math.random() * 8,
+            type: pType,
+            seed: Math.random() * Math.PI * 2
+          });
+        }
+
+        // Solid Obstacles: Trees & Rocks (avoid spawning right on top of player at 0,0)
+        const targetCount = 135;
+        let attempts = 0;
+        while (obstacles.length < targetCount && attempts < 1200) {
+          attempts++;
+          const ox = (Math.random() - 0.5) * 3800;
+          const oy = (Math.random() - 0.5) * 3800;
+          // Keep starting clearing around (0,0) open
+          if (Math.hypot(ox, oy) < 150) continue;
+
+          const isTree = Math.random() < 0.62;
+          const radius = isTree ? (18 + Math.random() * 8) : (20 + Math.random() * 14);
+          const canopyRadius = isTree ? radius * (2.1 + Math.random() * 0.35) : radius;
+
+          // Avoid overlapping other obstacles too closely
+          let overlaps = false;
+          for (let j = 0; j < obstacles.length; j++) {
+            const other = obstacles[j];
+            if (Math.hypot(ox - other.x, oy - other.y) < (radius + other.radius + 55)) {
+              overlaps = true;
+              break;
+            }
+          }
+          if (overlaps) continue;
+
+          obstacles.push({
+            x: ox,
+            y: oy,
+            radius: radius, // physical collision radius
+            canopyRadius: canopyRadius,
+            type: isTree ? (Math.random() < 0.5 ? 'oak' : 'pine') : 'rock',
+            variant: Math.floor(Math.random() * 3),
+            hitFlash: 0
+          });
+        }
+
+        // Ambient forest fireflies
+        for (let i = 0; i < 45; i++) {
+          fireflies.push({
+            offsetX: (Math.random() - 0.5) * 1200,
+            offsetY: (Math.random() - 0.5) * 1200,
+            phase: Math.random() * Math.PI * 2,
+            speed: 0.6 + Math.random() * 0.8
+          });
+        }
+      }
+
+      function resolveObstacleCollision(entity, extraPadding = 0) {
+        for (let i = 0; i < obstacles.length; i++) {
+          const ob = obstacles[i];
+          const dx = entity.x - ob.x;
+          const dy = entity.y - ob.y;
+          const minDist = entity.radius + ob.radius + extraPadding;
+          if (Math.abs(dx) > minDist || Math.abs(dy) > minDist) continue;
+          const dist = Math.hypot(dx, dy) || 0.001;
+          if (dist < minDist) {
+            const push = minDist - dist;
+            entity.x += (dx / dist) * push;
+            entity.y += (dy / dist) * push;
+          }
+        }
+      }
+
+      // --- Initialize / Reset Game ---
+      function initGame() {
+        const preset = CHARACTERS[selectedCharKey] || CHARACTERS.knight;
+        const skills = {};
+        UPGRADE_CATALOG.forEach(item => {
+          skills[item.id] = preset.initialSkills[item.id] || 0;
+        });
+
+        player = {
+          x: 0,
+          y: 0,
+          radius: 16,
+          hp: preset.hp,
+          maxHp: preset.hp,
+          baseSpeed: preset.speed,
+          baseMagnet: preset.magnetRadius,
+          color: preset.color,
+          icon: preset.icon,
+          level: 1,
+          exp: 0,
+          expToNext: 6,
+          skills: skills,
+          invulnTimer: 0,
+          facingX: 1
+        };
+
+        enemies = [];
+        projectiles = [];
+        gems = [];
+        floatingTexts = [];
+        lightningBolts = [];
+        daggerThrusts = [];
+        fireZones = [];
+        particles = [];
+        initWorldProps();
+
+        elapsedTime = 0;
+        killCount = 0;
+        spawnAccumulator = 0;
+        nextBossTime = 45;
+        bossCountSpawned = 0;
+
+        timers.daggerThrust = 0;
+        timers.magicBolt = 0;
+        timers.lightning = 0;
+        timers.holyAura = 0;
+        timers.novaBurst = 0;
+        timers.orbitAngle = 0;
+
+        joystick.active = false;
+        joystick.dx = 0;
+        joystick.dy = 0;
+
+        touchHint.classList.remove('opacity-0');
+        bossBanner.classList.add('hidden');
+        updateHud();
+        renderSkillBadges();
+      }
+
+      // --- Helper Getters for Player Stats ---
+      function getDamageMultiplier() {
+        return 1 + (player.skills.might || 0) * 0.2;
+      }
+      function getCooldownMultiplier() {
+        return Math.max(0.35, 1 - (player.skills.haste || 0) * 0.12);
+      }
+      function getMoveSpeed() {
+        return player.baseSpeed * (1 + (player.skills.swift || 0) * 0.12);
+      }
+      function getMagnetRadius() {
+        return player.baseMagnet * (1 + (player.skills.magnet || 0) * 0.35);
+      }
+      function getDaggerStats(daggerLv) {
+        // Odd levels (1, 3, 5, 7) increase dagger count: 1 -> 2 -> 3 -> 4
+        const daggerCount = Math.ceil(daggerLv / 2);
+        // Even levels (2, 4, 6, 8) increase attack damage
+        const dmgUpgrades = Math.floor(daggerLv / 2);
+        const daggerDmg = 28 + dmgUpgrades * 20;
+        // Very short & narrow thrust range
+        const thrustRange = 76;
+        return { daggerCount, daggerDmg, thrustRange };
+      }
+      function getOrbitBladeStats(bladeLv) {
+        // Odd levels (1, 3, 5, 7) increase blade count: 1 -> 2 -> 3 -> 4
+        const bladeCount = Math.ceil(bladeLv / 2);
+        // Even levels (2, 4, 6, 8) increase rotation speed
+        const speedUpgrades = Math.floor(bladeLv / 2);
+        const rotSpeed = 2.6 + speedUpgrades * 0.95;
+        // Radius oscillates between close range (minDist) and full range (maxDist)
+        const maxOrbitDist = 78 + speedUpgrades * 6;
+        const minOrbitDist = 25;
+        const pulse = 0.5 + 0.5 * Math.sin(elapsedTime * 3.4);
+        const currentOrbitDist = minOrbitDist + (maxOrbitDist - minOrbitDist) * pulse;
+        const bladeDmg = 12 + bladeLv * 4.5;
+        return { bladeCount, rotSpeed, currentOrbitDist, maxOrbitDist, minOrbitDist, bladeDmg };
+      }
+
+      // --- HUD Updates ---
+      function formatTime(sec) {
+        const total = Math.floor(sec);
+        const m = String(Math.floor(total / 60)).padStart(2, '0');
+        const s = String(total % 60).padStart(2, '0');
+        return `${m}:${s}`;
+      }
+
+      function updateHud() {
+        if (!player) return;
+        levelBadge.textContent = `LV. ${player.level}`;
+        const pct = Math.min(100, Math.floor((player.exp / player.expToNext) * 100));
+        expBarFill.style.width = `${pct}%`;
+        expText.textContent = `${player.exp} / ${player.expToNext} EXP`;
+        timerText.textContent = formatTime(elapsedTime);
+        killText.textContent = killCount.toLocaleString();
+        hpText.textContent = `${Math.ceil(player.hp)} / ${player.maxHp}`;
+      }
+
+      function renderSkillBadges() {
+        if (!player) return;
+        skillIconsBar.innerHTML = '';
+        // Evolutions first
+        EVOLUTIONS.forEach(evo => {
+          if ((player.skills[evo.id] || 0) > 0) {
+            const badge = document.createElement('div');
+            badge.className = 'glass-panel px-2 py-1 rounded-lg text-[11px] font-black flex items-center gap-1 shrink-0 border border-amber-400 bg-amber-500/20 text-amber-300 shadow';
+            badge.innerHTML = `<span>${evo.icon}</span><span>${evo.name.split(' ')[0]}</span>`;
+            skillIconsBar.appendChild(badge);
+          }
+        });
+        UPGRADE_CATALOG.forEach(item => {
+          const lv = player.skills[item.id] || 0;
+          if (lv > 0) {
+            const badge = document.createElement('div');
+            badge.className = 'glass-panel px-2 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 shrink-0 border border-slate-700/80';
+            badge.innerHTML = `<span>${item.icon}</span><span class="text-amber-300">Lv.${lv}</span>`;
+            skillIconsBar.appendChild(badge);
+          }
+        });
+      }
+
+      // --- Enemy Spawning ---
+      function spawnEnemy(isBoss = false) {
+        const angle = Math.random() * Math.PI * 2;
+        const zoom = viewWidth < 640 ? 0.82 : 0.76;
+        const margin = (Math.max(viewWidth, viewHeight) / zoom) * 0.54 + 60;
+        const ex = player.x + Math.cos(angle) * margin;
+        const ey = player.y + Math.sin(angle) * margin;
+
+        const difficulty = 1 + elapsedTime / 38;
+        const timeExpScale = Math.floor(elapsedTime / 35);
+
+        if (isBoss) {
+          bossCountSpawned++;
+          const bossTypes = [
+            { name: '숲의 침입자 거대 구울', color: '#f43f5e', outline: '#fecdd3', hp: 420, speed: 76, dmg: 22, exp: 45, radius: 28 },
+            { name: '심연의 암석 골렘 군주', color: '#8b5cf6', outline: '#fde047', hp: 950, speed: 64, dmg: 30, exp: 75, radius: 32 },
+            { name: '고대 사령 리치 드래곤', color: '#c026d3', outline: '#f0abfc', hp: 1850, speed: 84, dmg: 38, exp: 120, radius: 34 },
+            { name: '황혼의 파멸 학살자', color: '#e11d48', outline: '#fbbf24', hp: 3200, speed: 96, dmg: 48, exp: 180, radius: 36 }
+          ];
+          const bInfo = bossTypes[Math.min(bossCountSpawned - 1, bossTypes.length - 1)];
+
+          enemies.push({
+            x: ex,
+            y: ey,
+            radius: bInfo.radius,
+            hp: Math.round(bInfo.hp * difficulty),
+            maxHp: Math.round(bInfo.hp * difficulty),
+            speed: bInfo.speed,
+            damage: bInfo.dmg,
+            color: bInfo.color,
+            outline: bInfo.outline,
+            name: bInfo.name,
+            expValue: bInfo.exp,
+            isBoss: true,
+            hitFlash: 0
+          });
+          bossBannerText.textContent = `⚠️ [보스 출현] ${bInfo.name}! ⚠️`;
+          bossBanner.classList.remove('hidden');
+          setTimeout(() => {
+            bossBanner.classList.add('hidden');
+          }, 4500);
+          return;
+        }
+
+        // 7 Diverse Regular Enemy Archetypes unlocked by time gates
+        const roll = Math.random();
+        let archetype;
+
+        if (elapsedTime >= 240 && roll < 0.22) {
+          // 7. Shadow Wraith (어둠의 망령 - 빠르고 치명적)
+          archetype = {
+            name: '망령',
+            radius: 16,
+            hp: Math.round(110 * difficulty),
+            speed: 130,
+            damage: 20,
+            color: '#06b6d4',
+            outline: '#a5f3fc',
+            expValue: 24 + timeExpScale * 3
+          };
+        } else if (elapsedTime >= 180 && roll < 0.28) {
+          // 6. Necromancer (사령술사 - 높은 체력 & 보라빛 에너지)
+          archetype = {
+            name: '사령술사',
+            radius: 18,
+            hp: Math.round(130 * difficulty),
+            speed: 78,
+            damage: 18,
+            color: '#c026d3',
+            outline: '#f5d0fe',
+            expValue: 18 + timeExpScale * 2
+          };
+        } else if (elapsedTime >= 120 && roll < 0.35) {
+          // 5. Werewolf (광포한 늑대인간 - 고속 돌진)
+          archetype = {
+            name: '늑대인간',
+            radius: 16,
+            hp: Math.round(75 * difficulty),
+            speed: 140,
+            damage: 16,
+            color: '#e11d48',
+            outline: '#fda4af',
+            expValue: 12 + timeExpScale * 2
+          };
+        } else if (elapsedTime >= 80 && roll < 0.42) {
+          // 4. Rock Golem (숲의 암석 골렘 - 단단한 탱커)
+          archetype = {
+            name: '골렘',
+            radius: 21,
+            hp: Math.round(95 * difficulty),
+            speed: 56,
+            damage: 15,
+            color: '#8b5cf6',
+            outline: '#ddd6fe',
+            expValue: 8 + timeExpScale
+          };
+        } else if (elapsedTime >= 45 && roll < 0.55) {
+          // 3. Skeleton Warrior (해골 병사 - 정예 보병)
+          archetype = {
+            name: '해골',
+            radius: 15,
+            hp: Math.round(48 * difficulty),
+            speed: 84,
+            damage: 12,
+            color: '#e2e8f0',
+            outline: '#94a3b8',
+            expValue: 5 + timeExpScale
+          };
+        } else if (elapsedTime >= 20 && roll < 0.65) {
+          // 2. Forest Goblin (고블린 - 빠른 무리)
+          archetype = {
+            name: '고블린',
+            radius: 13,
+            hp: Math.round(30 * difficulty),
+            speed: 104,
+            damage: 9,
+            color: '#84cc16',
+            outline: '#bef264',
+            expValue: 3 + timeExpScale
+          };
+        } else if (roll < 0.5) {
+          // 1a. Fast Bat (박쥐 - 빠름)
+          archetype = {
+            name: '박쥐',
+            radius: 11,
+            hp: Math.round(18 * difficulty),
+            speed: 122,
+            damage: 7,
+            color: '#f97316',
+            outline: '#fed7aa',
+            expValue: 2 + timeExpScale
+          };
+        } else {
+          // 1b. Dark Slime (슬라임 - 기본)
+          archetype = {
+            name: '슬라임',
+            radius: 13,
+            hp: Math.round(24 * difficulty),
+            speed: 80,
+            damage: 8,
+            color: '#ef4444',
+            outline: '#fecaca',
+            expValue: 2 + timeExpScale
+          };
+        }
+
+        enemies.push({
+          x: ex,
+          y: ey,
+          radius: archetype.radius,
+          hp: archetype.hp,
+          maxHp: archetype.hp,
+          speed: archetype.speed * (0.92 + Math.random() * 0.16),
+          damage: archetype.damage,
+          color: archetype.color,
+          outline: archetype.outline,
+          name: archetype.name,
+          expValue: archetype.expValue,
+          isBoss: false,
+          hitFlash: 0
+        });
+      }
+
+      // --- Floating Damage & Status Numbers ---
+      function addFloatingText(x, y, text, color = '#ffffff', size = 13) {
+        if (floatingTexts.length > 45) floatingTexts.shift();
+        floatingTexts.push({
+          x: x + (Math.random() - 0.5) * 12,
+          y: y - 8,
+          text: String(text),
+          color: color,
+          size: size,
+          life: 0.65,
+          maxLife: 0.65
+        });
+      }
+
+      function addBurstParticles(x, y, color, count = 6) {
+        if (particles.length > 100) particles.splice(0, count);
+        for (let i = 0; i < count; i++) {
+          const ang = Math.random() * Math.PI * 2;
+          const spd = 40 + Math.random() * 90;
+          particles.push({
+            x,
+            y,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd,
+            radius: 2 + Math.random() * 3,
+            color,
+            life: 0.35 + Math.random() * 0.2
+          });
+        }
+      }
+
+      // --- Damage & Kill Handling ---
+      function damageEnemy(enemy, rawAmount, knockback = 10) {
+        const dmg = Math.max(1, Math.round(rawAmount * getDamageMultiplier()));
+        enemy.hp -= dmg;
+        enemy.hitFlash = 0.12;
+
+        // Slight knockback away from player
+        const dx = enemy.x - player.x;
+        const dy = enemy.y - player.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const kbFactor = enemy.isBoss ? 0.2 : 1;
+        enemy.x += (dx / dist) * knockback * kbFactor;
+        enemy.y += (dy / dist) * knockback * kbFactor;
+
+        addFloatingText(enemy.x, enemy.y - enemy.radius, dmg, enemy.isBoss ? '#fde047' : '#f8fafc', enemy.isBoss ? 15 : 12);
+
+        if (enemy.hp <= 0) {
+          killCount++;
+          addBurstParticles(enemy.x, enemy.y, enemy.color, enemy.isBoss ? 16 : 6);
+
+          // Drop EXP gem, heal potion, or vacuum rune
+          const isBoss = enemy.isBoss;
+          const dropHeal = isBoss || (Math.random() < 0.035 && player.hp < player.maxHp);
+          const dropVacuum = isBoss || Math.random() < 0.018;
+
+          if (dropVacuum && !dropHeal) {
+            gems.push({
+              x: enemy.x,
+              y: enemy.y,
+              value: 0,
+              type: 'vacuum',
+              radius: 8.5
+            });
+          } else {
+            gems.push({
+              x: enemy.x,
+              y: enemy.y,
+              value: enemy.expValue,
+              type: dropHeal ? 'heal' : 'exp',
+              radius: isBoss ? 10 : (enemy.expValue >= 10 ? 8 : (enemy.expValue >= 4 ? 6.5 : 5))
+            });
+          }
+          return true; // killed
+        }
+        return false;
+      }
+
+      // --- Level Up & 3-Choice Modal ---
+      function triggerLevelUp() {
+        playSound('levelup');
+        gameState = 'LEVEL_UP';
+        levelUpTitle.textContent = `레벨 ${player.level} 달성! 능력을 선택하세요`;
+
+        // Check for eligible weapon evolutions (both required weapons >= 10 and not yet acquired)
+        const availableEvolutions = EVOLUTIONS.filter(evo => {
+          return (player.skills[evo.reqA] || 0) >= 10 &&
+                 (player.skills[evo.reqB] || 0) >= 10 &&
+                 !player.skills[evo.id];
+        });
+
+        // Filter regular skills not yet at max level
+        const availableSkills = UPGRADE_CATALOG.filter(u => (player.skills[u.id] || 0) < u.maxLevel);
+        const shuffledSkills = availableSkills.slice().sort(() => Math.random() - 0.5);
+
+        const choices = [];
+        // Prioritize available evolutions
+        availableEvolutions.forEach(evo => {
+          if (choices.length < 3) {
+            choices.push({
+              id: evo.id,
+              name: evo.name,
+              icon: evo.icon,
+              category: '초월 진화 무기',
+              isEvolution: true,
+              maxLevel: 1,
+              desc: () => evo.desc
+            });
+          }
+        });
+
+        // Fill remaining slots with regular choices
+        for (let i = 0; choices.length < 3 && i < shuffledSkills.length; i++) {
+          choices.push(shuffledSkills[i]);
+        }
+
+        // If fewer than 3 available (late game), pad with bonus heal/gold option
+        while (choices.length < 3) {
+          choices.push({
+            id: 'bonusHeal',
+            name: '여신의 축복 (체력 완전 회복)',
+            icon: '✨',
+            category: '보너스',
+            maxLevel: 99,
+            desc: () => '즉시 체력을 60% 회복하고 최대 체력이 +15 증가합니다.'
+          });
+        }
+
+        upgradeChoicesContainer.innerHTML = '';
+        choices.forEach((choice) => {
+          const currentLv = player.skills[choice.id] || 0;
+          const nextLv = currentLv + 1;
+          const isNew = currentLv === 0 && choice.id !== 'bonusHeal';
+          const isEvo = Boolean(choice.isEvolution);
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `upgrade-card w-full text-left p-3.5 rounded-2xl flex items-center gap-3.5 focus:outline-none ${
+            isEvo
+              ? 'bg-gradient-to-r from-amber-950/80 via-purple-950/80 to-slate-900 border-2 border-amber-400 shadow-xl shadow-amber-500/20'
+              : 'bg-slate-900/90 border-2 border-slate-700/90'
+          }`;
+          btn.innerHTML = `
+            <div class="w-12 h-12 rounded-2xl ${isEvo ? 'bg-amber-500/30 border border-amber-400/60 animate-pulse' : 'bg-slate-800 border border-slate-600/60'} flex items-center justify-center text-2xl shrink-0 shadow-inner">
+              ${choice.icon}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-extrabold text-sm sm:text-base ${isEvo ? 'text-amber-300' : 'text-white'} truncate">${choice.name}</span>
+                <span class="text-[11px] font-black px-2 py-0.5 rounded-full shrink-0 ${
+                  isEvo
+                    ? 'bg-amber-400 text-slate-950 font-black animate-bounce'
+                    : (isNew
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
+                      : 'bg-amber-500/20 text-amber-300 border border-amber-400/40')
+                }">
+                  ${isEvo ? '★ 초월 진화!' : (choice.id === 'bonusHeal' ? '즉시 발동' : (isNew ? 'NEW!' : `Lv.${currentLv} → Lv.${nextLv}`))}
+                </span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1 leading-snug">
+                ${choice.desc(nextLv)}
+              </p>
+            </div>
+          `;
+          btn.addEventListener('click', () => applyUpgradeChoice(choice.id));
+          upgradeChoicesContainer.appendChild(btn);
+        });
+
+        levelUpModal.classList.remove('hidden');
+        levelUpModal.classList.add('flex');
+        levelUpModal.style.display = 'flex';
+      }
+
+      function applyUpgradeChoice(skillId) {
+        const evoMatch = EVOLUTIONS.find(e => e.id === skillId);
+        if (skillId === 'bonusHeal') {
+          player.maxHp += 15;
+          player.hp = Math.min(player.maxHp, player.hp + player.maxHp * 0.6);
+        } else {
+          player.skills[skillId] = (player.skills[skillId] || 0) + 1;
+          if (skillId === 'vitality') {
+            player.maxHp += 30;
+            player.hp = Math.min(player.maxHp, player.hp + player.maxHp * 0.4);
+          }
+        }
+
+        if (evoMatch) {
+          addFloatingText(player.x, player.y - 30, `★ 초월 진화 무기 획득: ${evoMatch.name}!`, '#fde047', 17);
+          addBurstParticles(player.x, player.y, '#f59e0b', 24);
+        } else {
+          addFloatingText(player.x, player.y - 24, '능력 강화 완료!', '#fbbf24', 15);
+        }
+
+        addFloatingText(player.x, player.y - 24, '능력 강화 완료!', '#fbbf24', 15);
+        levelUpModal.classList.add('hidden');
+        levelUpModal.classList.remove('flex');
+        levelUpModal.style.display = 'none';
+
+        renderSkillBadges();
+        updateHud();
+
+        // Check if player still has leftover EXP for another level
+        if (player.exp >= player.expToNext) {
+          player.exp -= player.expToNext;
+          player.level++;
+          player.expToNext = Math.round(player.expToNext * 1.06 + 2);
+          updateHud();
+          triggerLevelUp();
+          return;
+        }
+
+        gameState = 'PLAYING';
+        lastTimestamp = performance.now();
+      }
+
+      // --- Weapon Logic inside Update Loop ---
+      function updateWeapons(dt) {
+        const cdMult = getCooldownMultiplier();
+
+        // 0. Dagger Thrust (Assassin short-range narrow stabbing attack)
+        const daggerLv = player.skills.daggerThrust || 0;
+        if (daggerLv > 0) {
+          timers.daggerThrust -= dt;
+          if (timers.daggerThrust <= 0 && enemies.length > 0) {
+            const { daggerCount, daggerDmg, thrustRange } = getDaggerStats(daggerLv);
+            // Find enemies within close stabbing range
+            const closeEnemies = enemies
+              .filter(e => Math.hypot(e.x - player.x, e.y - player.y) <= thrustRange + e.radius + 8)
+              .sort((a, b) => Math.hypot(a.x - player.x, a.y - player.y) - Math.hypot(b.x - player.x, b.y - player.y));
+
+            if (closeEnemies.length > 0) {
+              timers.daggerThrust = Math.max(0.16, 0.38 * cdMult);
+              playSound('stab');
+
+              for (let i = 0; i < daggerCount; i++) {
+                const target = closeEnemies[i % closeEnemies.length];
+                const baseAngle = Math.atan2(target.y - player.y, target.x - player.x);
+                // If multiple daggers target the same enemy, spread their thrust angles slightly
+                const spread = i >= closeEnemies.length ? (i - (daggerCount - 1) / 2) * 0.22 : 0;
+                const angle = baseAngle + spread;
+
+                daggerThrusts.push({
+                  x: player.x,
+                  y: player.y,
+                  angle: angle,
+                  range: thrustRange,
+                  life: 0.14,
+                  maxLife: 0.14
+                });
+
+                // Narrow line hit detection along the dagger thrust vector
+                const dirX = Math.cos(angle);
+                const dirY = Math.sin(angle);
+                for (let j = enemies.length - 1; j >= 0; j--) {
+                  const e = enemies[j];
+                  const relX = e.x - player.x;
+                  const relY = e.y - player.y;
+                  const proj = relX * dirX + relY * dirY;
+                  if (proj >= -4 && proj <= thrustRange + e.radius) {
+                    const perpDist = Math.abs(relX * (-dirY) + relY * dirX);
+                    // Very narrow hit width (12px + enemy radius)
+                    if (perpDist <= 12 + e.radius * 0.75) {
+                      if (damageEnemy(e, daggerDmg, 16)) {
+                        enemies.splice(j, 1);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // 1. Magic Bolt (fires at nearest enemies)
+        const boltLv = player.skills.magicBolt || 0;
+        if (boltLv > 0) {
+          timers.magicBolt -= dt;
+          if (timers.magicBolt <= 0 && enemies.length > 0) {
+            timers.magicBolt = Math.max(0.22, (0.85 - boltLv * 0.05) * cdMult);
+            const count = Math.min(5, 1 + Math.floor(boltLv / 2));
+            const baseDamage = 14 + boltLv * 5;
+            const pierce = boltLv >= 5 ? 2 : 1;
+
+            // Sort enemies by distance to player
+            const sorted = enemies
+              .slice()
+              .sort((a, b) => Math.hypot(a.x - player.x, a.y - player.y) - Math.hypot(b.x - player.x, b.y - player.y));
+
+            const hasPhantom = Boolean(player.skills.phantomBlades);
+            const totalCount = hasPhantom ? count + 3 : count;
+            const finalDamage = hasPhantom ? baseDamage * 1.55 : baseDamage;
+            const finalPierce = hasPhantom ? pierce + 2 : pierce;
+
+            for (let i = 0; i < totalCount; i++) {
+              const target = sorted[i % sorted.length];
+              if (!target) break;
+              const dist = Math.hypot(target.x - player.x, target.y - player.y);
+              if (dist > 620) continue;
+              const baseAngle = Math.atan2(target.y - player.y, target.x - player.x);
+              const spread = (i - (totalCount - 1) / 2) * (hasPhantom ? 0.15 : 0.1);
+              const angle = baseAngle + spread;
+              projectiles.push({
+                x: player.x,
+                y: player.y,
+                vx: Math.cos(angle) * (hasPhantom ? 520 : 430),
+                vy: Math.sin(angle) * (hasPhantom ? 520 : 430),
+                radius: hasPhantom ? 7.5 : 5.5,
+                damage: finalDamage,
+                pierce: finalPierce,
+                color: hasPhantom ? '#f43f5e' : '#38bdf8',
+                isPhantom: hasPhantom,
+                life: 1.4,
+                hitSet: new Set()
+              });
+            }
+            playSound('shoot');
+          }
+        }
+
+        // 2. Orbiting Blades (odd Lv = +1 blade, even Lv = +rotSpeed, radius oscillates in & out)
+        const bladeLv = player.skills.orbitBlade || 0;
+        if (bladeLv > 0) {
+          const { bladeCount, rotSpeed, currentOrbitDist, bladeDmg } = getOrbitBladeStats(bladeLv);
+          timers.orbitAngle = (timers.orbitAngle + rotSpeed * dt) % (Math.PI * 2);
+
+          for (let i = 0; i < bladeCount; i++) {
+            const ang = timers.orbitAngle + (i * Math.PI * 2) / bladeCount;
+            const bx = player.x + Math.cos(ang) * currentOrbitDist;
+            const by = player.y + Math.sin(ang) * currentOrbitDist;
+
+            const hasSanctuary = Boolean(player.skills.sanctuaryStorm);
+            for (let j = enemies.length - 1; j >= 0; j--) {
+              const e = enemies[j];
+              e._bladeCd = Math.max(0, (e._bladeCd || 0) - dt / bladeCount);
+              if (e._bladeCd <= 0 && Math.hypot(e.x - bx, e.y - by) < e.radius + (hasSanctuary ? 24 : 15)) {
+                e._bladeCd = hasSanctuary ? 0.2 : 0.28;
+                const finalDmg = hasSanctuary ? bladeDmg * 1.65 : bladeDmg;
+                if (damageEnemy(e, finalDmg, hasSanctuary ? 22 : 14)) {
+                  enemies.splice(j, 1);
+                }
+                // Sanctuary Storm shockwave on contact!
+                if (hasSanctuary) {
+                  addBurstParticles(bx, by, '#fef08a', 8);
+                  for (let k = enemies.length - 1; k >= 0; k--) {
+                    const ek = enemies[k];
+                    if (ek !== e && Math.hypot(ek.x - bx, ek.y - by) < 70) {
+                      if (damageEnemy(ek, finalDmg * 0.5, 15)) {
+                        enemies.splice(k, 1);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // 3. Lightning Strike & Hellfire Thunder Evolution
+        const lightLv = player.skills.lightning || 0;
+        const hasHellfire = Boolean(player.skills.hellfireThunder);
+        if (lightLv > 0 || hasHellfire) {
+          timers.lightning -= dt;
+          if (timers.lightning <= 0 && enemies.length > 0) {
+            const effectiveLv = hasHellfire ? 12 : lightLv;
+            timers.lightning = Math.max(hasHellfire ? 0.45 : 0.68, (2.3 - effectiveLv * 0.13) * cdMult);
+            const strikeCount = hasHellfire ? 5 : Math.min(5, 1 + Math.floor(effectiveLv / 2));
+            const aoeRadius = (56 + effectiveLv * 7) * (hasHellfire ? 1.35 : 1);
+            const strikeDmg = (24 + effectiveLv * 11) * (hasHellfire ? 1.6 : 1);
+
+            const searchRange = hasHellfire ? 580 : 440;
+            const nearby = enemies.filter(e => Math.hypot(e.x - player.x, e.y - player.y) < searchRange);
+            if (nearby.length > 0) {
+              playSound('thunder');
+              for (let s = 0; s < strikeCount; s++) {
+                const target = nearby[Math.floor(Math.random() * nearby.length)];
+                if (!target) continue;
+                const tx = target.x;
+                const ty = target.y;
+                lightningBolts.push({
+                  x: tx,
+                  y: ty,
+                  radius: aoeRadius,
+                  life: 0.28,
+                  isHellfire: hasHellfire
+                });
+
+                // Spawn Hellfire Ground Zone (불장판) upon strike!
+                if (hasHellfire) {
+                  fireZones.push({
+                    x: tx,
+                    y: ty,
+                    radius: aoeRadius * 0.85,
+                    duration: 3.8,
+                    tickTimer: 0.12,
+                    dps: 36 + effectiveLv * 5
+                  });
+                  addBurstParticles(tx, ty, '#f97316', 12);
+                }
+
+                for (let j = enemies.length - 1; j >= 0; j--) {
+                  const e = enemies[j];
+                  if (Math.hypot(e.x - tx, e.y - ty) <= aoeRadius + e.radius) {
+                    if (damageEnemy(e, strikeDmg, hasHellfire ? 18 : 8)) {
+                      enemies.splice(j, 1);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // 4. Holy Aura (Garlic pulse around player)
+        const auraLv = player.skills.holyAura || 0;
+        if (auraLv > 0) {
+          timers.holyAura -= dt;
+          if (timers.holyAura <= 0) {
+            timers.holyAura = Math.max(0.25, 0.55 * cdMult);
+            const auraRadius = 64 + auraLv * 12;
+            const auraDmg = 6 + auraLv * 3.5;
+            for (let j = enemies.length - 1; j >= 0; j--) {
+              const e = enemies[j];
+              if (Math.hypot(e.x - player.x, e.y - player.y) <= auraRadius + e.radius) {
+                if (damageEnemy(e, auraDmg, 9)) {
+                  enemies.splice(j, 1);
+                }
+              }
+            }
+          }
+        }
+
+        // 5. Nova Burst (radial fireballs)
+        const novaLv = player.skills.novaBurst || 0;
+        if (novaLv > 0) {
+          timers.novaBurst -= dt;
+          if (timers.novaBurst <= 0) {
+            timers.novaBurst = Math.max(1.1, (2.8 - novaLv * 0.15) * cdMult);
+            const count = 6 + novaLv * 2;
+            const novaDmg = 16 + novaLv * 6;
+            for (let i = 0; i < count; i++) {
+              const ang = (i * Math.PI * 2) / count;
+              projectiles.push({
+                x: player.x,
+                y: player.y,
+                vx: Math.cos(ang) * 310,
+                vy: Math.sin(ang) * 310,
+                radius: 6.5,
+                damage: novaDmg,
+                pierce: 2,
+                color: '#fb923c',
+                life: 1.1,
+                hitSet: new Set()
+              });
+            }
+          }
+        }
+      }
+
+      // --- Main Simulation Update ---
+      function updateGame(dt) {
+        elapsedTime += dt;
+
+        // 1. Player Movement (Keyboard or Virtual Joystick)
+        let moveX = 0;
+        let moveY = 0;
+        if (keys['ArrowUp'] || keys['KeyW'] || keys['w'] || keys['W'] || keys['ㅈ']) moveY -= 1;
+        if (keys['ArrowDown'] || keys['KeyS'] || keys['s'] || keys['S'] || keys['ㄴ']) moveY += 1;
+        if (keys['ArrowLeft'] || keys['KeyA'] || keys['a'] || keys['A'] || keys['ㅁ']) moveX -= 1;
+        if (keys['ArrowRight'] || keys['KeyD'] || keys['d'] || keys['D'] || keys['ㅇ']) moveX += 1;
+
+        if (joystick.active && (Math.abs(joystick.dx) > 0.05 || Math.abs(joystick.dy) > 0.05)) {
+          moveX = joystick.dx;
+          moveY = joystick.dy;
+        } else if (moveX !== 0 || moveY !== 0) {
+          const len = Math.hypot(moveX, moveY);
+          moveX /= len;
+          moveY /= len;
+        }
+
+        if (Math.abs(moveX) > 0.05 || Math.abs(moveY) > 0.05) {
+          touchHint.classList.add('opacity-0');
+          if (Math.abs(moveX) > 0.05) {
+            player.facingX = moveX >= 0 ? 1 : -1;
+          }
+        }
+
+        const speed = getMoveSpeed();
+        player.x += moveX * speed * dt;
+        player.y += moveY * speed * dt;
+        resolveObstacleCollision(player, 0);
+        if (player.invulnTimer > 0) player.invulnTimer -= dt;
+
+        for (let i = 0; i < obstacles.length; i++) {
+          if (obstacles[i].hitFlash > 0) obstacles[i].hitFlash -= dt;
+        }
+
+        // 2. Spawn Enemies from All Sides
+        const spawnRate = Math.min(8.5, 1.35 + elapsedTime * 0.045); // enemies per second
+        spawnAccumulator += spawnRate * dt;
+        while (spawnAccumulator >= 1) {
+          spawnAccumulator -= 1;
+          if (enemies.length < 160) {
+            spawnEnemy(false);
+          }
+        }
+
+        if (elapsedTime >= nextBossTime) {
+          nextBossTime += 45;
+          spawnEnemy(true);
+        }
+
+        // 3. Update Weapons
+        updateWeapons(dt);
+
+        // 4. Update Projectiles
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+          const p = projectiles[i];
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.life -= dt;
+          if (p.life <= 0) {
+            projectiles.splice(i, 1);
+            continue;
+          }
+
+          let removed = false;
+          // Check obstacle collision for projectiles
+          for (let k = 0; k < obstacles.length; k++) {
+            const ob = obstacles[k];
+            if (Math.hypot(p.x - ob.x, p.y - ob.y) <= p.radius + ob.radius * 0.85) {
+              ob.hitFlash = 0.08;
+              addBurstParticles(p.x, p.y, ob.type === 'rock' ? '#94a3b8' : '#a16207', 4);
+              projectiles.splice(i, 1);
+              removed = true;
+              break;
+            }
+          }
+          if (removed) continue;
+
+          for (let j = enemies.length - 1; j >= 0; j--) {
+            const e = enemies[j];
+            if (p.hitSet.has(e)) continue;
+            if (Math.hypot(e.x - p.x, e.y - p.y) <= e.radius + p.radius) {
+              p.hitSet.add(e);
+              p.pierce--;
+              if (damageEnemy(e, p.damage, 12)) {
+                enemies.splice(j, 1);
+              }
+              if (p.pierce <= 0) {
+                projectiles.splice(i, 1);
+                removed = true;
+                break;
+              }
+            }
+          }
+          if (removed) continue;
+        }
+
+        // 5. Update Enemies & Player Collision
+        for (let i = enemies.length - 1; i >= 0; i--) {
+          const e = enemies[i];
+          if (e.hitFlash > 0) e.hitFlash -= dt;
+
+          const dx = player.x - e.x;
+          const dy = player.y - e.y;
+          const dist = Math.hypot(dx, dy) || 1;
+
+          // Teleport far-away stragglers back near screen edge
+          const zoom = viewWidth < 640 ? 0.82 : 0.76;
+          if (dist > (Math.max(viewWidth, viewHeight) / zoom) * 1.35 && !e.isBoss) {
+            const ang = Math.random() * Math.PI * 2;
+            const m = Math.max(viewWidth, viewHeight) * 0.65;
+            e.x = player.x + Math.cos(ang) * m;
+            e.y = player.y + Math.sin(ang) * m;
+            continue;
+          }
+
+          e.x += (dx / dist) * e.speed * dt;
+          e.y += (dy / dist) * e.speed * dt;
+          resolveObstacleCollision(e, 0);
+
+          // Contact with player
+          if (dist < player.radius + e.radius - 2) {
+            if (player.invulnTimer <= 0) {
+              player.hp -= e.damage;
+              player.invulnTimer = 0.35;
+              addFloatingText(player.x, player.y - 20, `-${e.damage}`, '#fb7185', 14);
+              addBurstParticles(player.x, player.y, '#f43f5e', 7);
+              if (player.hp <= 0) {
+                player.hp = 0;
+                updateHud();
+                triggerGameOver();
+                return;
+              }
+            }
+          }
+        }
+
+        // 6. Update Gems & Magnet Pickup
+        const magRadius = getMagnetRadius();
+        for (let i = gems.length - 1; i >= 0; i--) {
+          const g = gems[i];
+          const dx = player.x - g.x;
+          const dy = player.y - g.y;
+          const dist = Math.hypot(dx, dy) || 1;
+
+          if (g._vacuumed || dist <= magRadius) {
+            const pullSpeed = g._vacuumed ? 820 : (380 + (magRadius - dist) * 2.5);
+            g.x += (dx / dist) * pullSpeed * dt;
+            g.y += (dy / dist) * pullSpeed * dt;
+          }
+
+          if (dist <= player.radius + g.radius + 6) {
+            gems.splice(i, 1);
+            if (g.type === 'heal') {
+              const healAmt = Math.round(player.maxHp * 0.25);
+              player.hp = Math.min(player.maxHp, player.hp + healAmt);
+              addFloatingText(player.x, player.y - 22, `+${healAmt} HP`, '#34d399', 14);
+              playSound('gem');
+            } else if (g.type === 'vacuum') {
+              // Vacuum Rune: instantly magnetize all gems on screen to player
+              playSound('gem');
+              addFloatingText(player.x, player.y - 25, '🧲 전체 보석 흡수!', '#38bdf8', 16);
+              for (let k = 0; k < gems.length; k++) {
+                gems[k]._vacuumed = true;
+              }
+            } else {
+              const expMult = 1 + (player.skills.growth || 0) * 0.35;
+              const gainedExp = Math.max(1, Math.round(g.value * expMult));
+              player.exp += gainedExp;
+              playSound('gem');
+              if (player.exp >= player.expToNext) {
+                player.exp -= player.expToNext;
+                player.level++;
+                player.expToNext = Math.round(player.expToNext * 1.06 + 2);
+                updateHud();
+                triggerLevelUp();
+                return;
+              }
+            }
+          }
+        }
+
+        // 6b. Update Fire Zones (불장판 지속 피해)
+        for (let i = fireZones.length - 1; i >= 0; i--) {
+          const fz = fireZones[i];
+          fz.duration -= dt;
+          fz.tickTimer -= dt;
+
+          if (fz.tickTimer <= 0) {
+            fz.tickTimer = 0.12;
+            const tickDmg = fz.dps * 0.12;
+            for (let j = enemies.length - 1; j >= 0; j--) {
+              const e = enemies[j];
+              if (Math.hypot(e.x - fz.x, e.y - fz.y) <= fz.radius + e.radius) {
+                if (damageEnemy(e, tickDmg, 3)) {
+                  enemies.splice(j, 1);
+                }
+              }
+            }
+            if (Math.random() < 0.45) {
+              addBurstParticles(
+                fz.x + (Math.random() - 0.5) * fz.radius * 1.4,
+                fz.y + (Math.random() - 0.5) * fz.radius * 1.4,
+                '#ea580c',
+                3
+              );
+            }
+          }
+
+          if (fz.duration <= 0) {
+            fireZones.splice(i, 1);
+          }
+        }
+
+        // 7. Update Visual Effects (Dagger Thrusts, Lightning, Particles, Floating Text)
+        for (let i = daggerThrusts.length - 1; i >= 0; i--) {
+          daggerThrusts[i].life -= dt;
+          if (daggerThrusts[i].life <= 0) daggerThrusts.splice(i, 1);
+        }
+        for (let i = lightningBolts.length - 1; i >= 0; i--) {
+          lightningBolts[i].life -= dt;
+          if (lightningBolts[i].life <= 0) lightningBolts.splice(i, 1);
+        }
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const pt = particles[i];
+          pt.x += pt.vx * dt;
+          pt.y += pt.vy * dt;
+          pt.life -= dt;
+          if (pt.life <= 0) particles.splice(i, 1);
+        }
+        for (let i = floatingTexts.length - 1; i >= 0; i--) {
+          const ft = floatingTexts[i];
+          ft.y -= 28 * dt;
+          ft.life -= dt;
+          if (ft.life <= 0) floatingTexts.splice(i, 1);
+        }
+
+        updateHud();
+      }
+
+      // --- Rendering ---
+      function drawGame() {
+        ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+        // Deep Forest Background fill
+        ctx.fillStyle = '#112217';
+        ctx.fillRect(0, 0, viewWidth, viewHeight);
+
+        if (!player) return;
+
+        // Expanded tactical field of view (Zoom Out ~0.76x for wide area awareness)
+        const zoom = viewWidth < 640 ? 0.82 : 0.76;
+        const cullW = (viewWidth / zoom) * 0.58 + 120;
+        const cullH = (viewHeight / zoom) * 0.58 + 120;
+
+        ctx.save();
+        ctx.translate(viewWidth / 2, viewHeight / 2);
+        ctx.scale(zoom, zoom);
+        ctx.translate(-player.x, -player.y);
+
+        // 1. Subtle Forest Tile Pattern & Organic Ground Patches
+        const gridSize = 110;
+        const startX = Math.floor((player.x - viewWidth / 2) / gridSize) * gridSize;
+        const endX = player.x + viewWidth / 2 + gridSize;
+        const startY = Math.floor((player.y - viewHeight / 2) / gridSize) * gridSize;
+        const endY = player.y + viewHeight / 2 + gridSize;
+
+        ctx.strokeStyle = 'rgba(20, 83, 45, 0.28)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let x = startX; x <= endX; x += gridSize) {
+          ctx.moveTo(x, startY);
+          ctx.lineTo(x, endY);
+        }
+        for (let y = startY; y <= endY; y += gridSize) {
+          ctx.moveTo(startX, y);
+          ctx.lineTo(endX, y);
+        }
+        ctx.stroke();
+
+        // 1a. Fire Zones (불장판 지속 지대)
+        for (let i = 0; i < fireZones.length; i++) {
+          const fz = fireZones[i];
+          if (Math.abs(fz.x - player.x) > cullW || Math.abs(fz.y - player.y) > cullH) continue;
+          const pulse = 0.88 + 0.12 * Math.sin(elapsedTime * 9 + i);
+          const fzR = fz.radius * pulse;
+
+          const fzGrad = ctx.createRadialGradient(fz.x, fz.y, 4, fz.x, fz.y, fzR);
+          fzGrad.addColorStop(0, 'rgba(254, 240, 138, 0.7)');
+          fzGrad.addColorStop(0.35, 'rgba(249, 115, 22, 0.55)');
+          fzGrad.addColorStop(0.75, 'rgba(220, 38, 38, 0.35)');
+          fzGrad.addColorStop(1, 'rgba(153, 27, 27, 0)');
+
+          ctx.fillStyle = fzGrad;
+          ctx.beginPath();
+          ctx.arc(fz.x, fz.y, fzR, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(fz.x, fz.y, fzR * 0.8, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // Forest floor details (moss patches, dirt paths, grass tufts, flowers, mushrooms)
+        for (let i = 0; i < worldProps.length; i++) {
+          const wp = worldProps[i];
+          if (Math.abs(wp.x - player.x) > cullW || Math.abs(wp.y - player.y) > cullH) continue;
+
+          if (wp.type === 'moss') {
+            ctx.fillStyle = 'rgba(22, 101, 52, 0.26)';
+            ctx.beginPath();
+            ctx.ellipse(wp.x, wp.y, wp.size * 1.25, wp.size * 0.85, wp.seed, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (wp.type === 'dirt') {
+            ctx.fillStyle = 'rgba(69, 44, 30, 0.24)';
+            ctx.beginPath();
+            ctx.ellipse(wp.x, wp.y, wp.size * 1.15, wp.size * 0.75, wp.seed, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (wp.type === 'grass') {
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.moveTo(wp.x - 4, wp.y + 3);
+            ctx.lineTo(wp.x - 7, wp.y - wp.size);
+            ctx.moveTo(wp.x, wp.y + 4);
+            ctx.lineTo(wp.x, wp.y - wp.size * 1.2);
+            ctx.moveTo(wp.x + 4, wp.y + 3);
+            ctx.lineTo(wp.x + 7, wp.y - wp.size * 0.95);
+            ctx.stroke();
+          } else if (wp.type === 'flower') {
+            ctx.fillStyle = wp.seed > 3 ? '#fde047' : '#f472b6';
+            ctx.beginPath();
+            ctx.arc(wp.x, wp.y, 3.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fef08a';
+            ctx.beginPath();
+            ctx.arc(wp.x, wp.y, 1.4, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (wp.type === 'mushroom') {
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillRect(wp.x - 2, wp.y - 1, 4, 5);
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(wp.x, wp.y - 1, 5.5, Math.PI, 0);
+            ctx.fill();
+          }
+        }
+
+        // 1b. Obstacle Ground Shadows & Solid Rocks / Tree Trunks
+        for (let i = 0; i < obstacles.length; i++) {
+          const ob = obstacles[i];
+          if (Math.abs(ob.x - player.x) > cullW || Math.abs(ob.y - player.y) > cullH) continue;
+
+          // Ground drop shadow
+          ctx.fillStyle = 'rgba(5, 12, 8, 0.45)';
+          ctx.beginPath();
+          const shadowR = ob.type === 'rock' ? ob.radius * 1.1 : ob.canopyRadius * 0.92;
+          ctx.ellipse(ob.x + 6, ob.y + 8, shadowR, shadowR * 0.78, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (ob.type === 'rock') {
+            ctx.save();
+            ctx.translate(ob.x, ob.y);
+            // Main boulder body
+            ctx.fillStyle = ob.hitFlash > 0 ? '#e2e8f0' : '#475569';
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(0, 0, ob.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Rock ridge highlight
+            ctx.fillStyle = '#64748b';
+            ctx.beginPath();
+            ctx.arc(-ob.radius * 0.22, -ob.radius * 0.22, ob.radius * 0.58, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Moss patch on boulder
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.5)';
+            ctx.beginPath();
+            ctx.arc(ob.radius * 0.28, ob.radius * 0.25, ob.radius * 0.38, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          } else {
+            // Tree Trunk (solid collision zone)
+            ctx.save();
+            ctx.translate(ob.x, ob.y);
+            ctx.fillStyle = ob.hitFlash > 0 ? '#fde68a' : '#78350f';
+            ctx.strokeStyle = '#451a03';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(0, 0, ob.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+
+        // 2. Holy Aura Ring (if unlocked)
+        const auraLv = player.skills.holyAura || 0;
+        if (auraLv > 0) {
+          const auraRadius = 64 + auraLv * 12;
+          const grad = ctx.createRadialGradient(player.x, player.y, 10, player.x, player.y, auraRadius);
+          grad.addColorStop(0, 'rgba(250, 204, 21, 0.04)');
+          grad.addColorStop(0.8, 'rgba(250, 204, 21, 0.14)');
+          grad.addColorStop(1, 'rgba(250, 204, 21, 0.35)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, auraRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // 3. Gems & Heal Orbs
+        for (let i = 0; i < gems.length; i++) {
+          const g = gems[i];
+          ctx.save();
+          ctx.translate(g.x, g.y);
+          if (g.type === 'heal') {
+            ctx.fillStyle = '#10b981';
+            ctx.strokeStyle = '#a7f3d0';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+          } else if (g.type === 'vacuum') {
+            // Glowing Vacuum Magnet Orb
+            ctx.fillStyle = '#06b6d4';
+            ctx.strokeStyle = '#67e8f9';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🧲', 0, 0);
+          } else {
+            // EXP Gem color-coded by value tier
+            if (g.value >= 25) {
+              ctx.fillStyle = '#f43f5e'; // Crimson Ruby (Boss / Elite)
+            } else if (g.value >= 10) {
+              ctx.fillStyle = '#fbbf24'; // Gold
+            } else if (g.value >= 5) {
+              ctx.fillStyle = '#34d399'; // Emerald
+            } else {
+              ctx.fillStyle = '#38bdf8'; // Blue
+            }
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(0, -g.radius);
+            ctx.lineTo(g.radius, 0);
+            ctx.lineTo(0, g.radius);
+            ctx.lineTo(-g.radius, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+
+        // 4. Orbiting Blades (with pulsing orbit ring & sword shape)
+        const bladeLv = player.skills.orbitBlade || 0;
+        if (bladeLv > 0) {
+          const { bladeCount, currentOrbitDist } = getOrbitBladeStats(bladeLv);
+
+          // Subtle pulsing orbit path indicator
+          ctx.strokeStyle = 'rgba(253, 224, 71, 0.18)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, currentOrbitDist, 0, Math.PI * 2);
+          ctx.stroke();
+
+          for (let i = 0; i < bladeCount; i++) {
+            const ang = timers.orbitAngle + (i * Math.PI * 2) / bladeCount;
+            const bx = player.x + Math.cos(ang) * currentOrbitDist;
+            const by = player.y + Math.sin(ang) * currentOrbitDist;
+
+            ctx.save();
+            ctx.translate(bx, by);
+            ctx.rotate(ang + Math.PI / 2);
+
+            // Glowing sword blade visual
+            ctx.fillStyle = '#fef08a';
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, -14);
+            ctx.lineTo(6, 4);
+            ctx.lineTo(0, 11);
+            ctx.lineTo(-6, 4);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Sword hilt core
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath();
+            ctx.arc(0, 3, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+
+        // 5. Enemies
+        for (let i = 0; i < enemies.length; i++) {
+          const e = enemies[i];
+          ctx.save();
+          ctx.translate(e.x, e.y);
+
+          ctx.fillStyle = e.hitFlash > 0 ? '#ffffff' : e.color;
+          ctx.strokeStyle = e.outline;
+          ctx.lineWidth = e.isBoss ? 3.5 : 2;
+          ctx.beginPath();
+          ctx.arc(0, 0, e.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Eyes
+          const lookX = player.x >= e.x ? 3 : -3;
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.arc(lookX - 3, -2, e.isBoss ? 3.5 : 2, 0, Math.PI * 2);
+          ctx.arc(lookX + 3, -2, e.isBoss ? 3.5 : 2, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Boss HP bar
+          if (e.isBoss) {
+            const bw = 46;
+            const bh = 6;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.fillRect(-bw / 2, -e.radius - 14, bw, bh);
+            ctx.fillStyle = '#f43f5e';
+            ctx.fillRect(-bw / 2, -e.radius - 14, bw * Math.max(0, e.hp / e.maxHp), bh);
+          }
+
+          ctx.restore();
+        }
+
+        // 5b. Dagger Thrusts (Fast narrow stabbing visuals)
+        if ((player.skills.daggerThrust || 0) > 0) {
+          ctx.strokeStyle = 'rgba(244, 63, 94, 0.16)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, 76, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        for (let i = 0; i < daggerThrusts.length; i++) {
+          const dtItem = daggerThrusts[i];
+          const progress = 1 - dtItem.life / dtItem.maxLife;
+          // Lunge forward rapidly then retract slightly
+          const thrustExt = progress < 0.65
+            ? (progress / 0.65)
+            : (1 - (progress - 0.65) / 0.35 * 0.35);
+          const tipDist = 18 + (dtItem.range - 18) * thrustExt;
+
+          ctx.save();
+          ctx.translate(player.x, player.y);
+          ctx.rotate(dtItem.angle);
+
+          // Narrow crimson/silver thrust streak
+          const grad = ctx.createLinearGradient(10, 0, tipDist, 0);
+          grad.addColorStop(0, 'rgba(244, 63, 94, 0)');
+          grad.addColorStop(0.5, 'rgba(251, 113, 133, 0.75)');
+          grad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 3.5;
+          ctx.beginPath();
+          ctx.moveTo(12, 0);
+          ctx.lineTo(tipDist, 0);
+          ctx.stroke();
+
+          // Sharp dagger blade at the tip
+          ctx.translate(tipDist, 0);
+          ctx.fillStyle = '#f8fafc';
+          ctx.strokeStyle = '#f43f5e';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(8, 0);
+          ctx.lineTo(-10, -4.5);
+          ctx.lineTo(-7, 0);
+          ctx.lineTo(-10, 4.5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.restore();
+        }
+
+        // 6. Projectiles
+        for (let i = 0; i < projectiles.length; i++) {
+          const p = projectiles[i];
+          ctx.fillStyle = p.color;
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+
+        // 7. Lightning Bolts
+        for (let i = 0; i < lightningBolts.length; i++) {
+          const lb = lightningBolts[i];
+          const alpha = Math.max(0, lb.life / 0.25);
+          ctx.strokeStyle = `rgba(192, 132, 252, ${alpha})`;
+          ctx.fillStyle = `rgba(233, 213, 255, ${alpha * 0.28})`;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(lb.x, lb.y, lb.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Vertical bolt beam
+          ctx.strokeStyle = `rgba(250, 204, 21, ${alpha})`;
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(lb.x - 8, lb.y - 180);
+          ctx.lineTo(lb.x + 6, lb.y - 90);
+          ctx.lineTo(lb.x - 4, lb.y - 40);
+          ctx.lineTo(lb.x, lb.y);
+          ctx.stroke();
+        }
+
+        // 8. Player Character
+        ctx.save();
+        ctx.translate(player.x, player.y);
+
+        // Subtle magnet range circle
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.14)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(0, 0, getMagnetRadius(), 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Player Body
+        ctx.fillStyle = player.invulnTimer > 0 ? '#fda4af' : player.color;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Character Icon
+        ctx.font = '16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(player.icon, 0, 1);
+
+        // Player HP bar directly underneath hero
+        const hpBarW = 38;
+        const hpBarH = 5;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        ctx.fillRect(-hpBarW / 2, player.radius + 7, hpBarW, hpBarH);
+        const hpRatio = Math.max(0, player.hp / player.maxHp);
+        ctx.fillStyle = hpRatio > 0.4 ? '#10b981' : '#f43f5e';
+        ctx.fillRect(-hpBarW / 2, player.radius + 7, hpBarW * hpRatio, hpBarH);
+
+        ctx.restore();
+
+        // 9. Burst Particles & Floating Damage Numbers
+        for (let i = 0; i < particles.length; i++) {
+          const pt = particles[i];
+          ctx.fillStyle = pt.color;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // 9b. Lush Tree Canopies (semi-transparent when player is right underneath)
+        for (let i = 0; i < obstacles.length; i++) {
+          const ob = obstacles[i];
+          if (ob.type === 'rock') continue;
+          if (Math.abs(ob.x - player.x) > cullW || Math.abs(ob.y - player.y) > cullH) continue;
+
+          const distToPlayer = Math.hypot(player.x - ob.x, player.y - ob.y);
+          const canopyAlpha = distToPlayer < ob.canopyRadius + 18 ? 0.55 : 0.92;
+
+          ctx.save();
+          ctx.translate(ob.x, ob.y - 10);
+          ctx.globalAlpha = canopyAlpha;
+
+          // Outer dark foliage
+          ctx.fillStyle = ob.type === 'pine' ? '#064e3b' : '#14532d';
+          ctx.strokeStyle = '#052e16';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(0, 0, ob.canopyRadius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Mid foliage puffs
+          ctx.fillStyle = ob.type === 'pine' ? '#047857' : '#166534';
+          ctx.beginPath();
+          ctx.arc(-ob.canopyRadius * 0.28, -ob.canopyRadius * 0.2, ob.canopyRadius * 0.62, 0, Math.PI * 2);
+          ctx.arc(ob.canopyRadius * 0.26, -ob.canopyRadius * 0.12, ob.canopyRadius * 0.55, 0, Math.PI * 2);
+          ctx.arc(0, ob.canopyRadius * 0.22, ob.canopyRadius * 0.58, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Sunlit top leaf highlight
+          ctx.fillStyle = ob.type === 'pine' ? '#10b981' : '#22c55e';
+          ctx.beginPath();
+          ctx.arc(-ob.canopyRadius * 0.2, -ob.canopyRadius * 0.25, ob.canopyRadius * 0.36, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.restore();
+        }
+
+        // 9c. Ambient Forest Fireflies
+        for (let i = 0; i < fireflies.length; i++) {
+          const ff = fireflies[i];
+          const fx = player.x + ((ff.offsetX + Math.sin(elapsedTime * ff.speed + ff.phase) * 60) % (viewWidth * 0.8));
+          const fy = player.y + ((ff.offsetY + Math.cos(elapsedTime * ff.speed + ff.phase) * 60) % (viewHeight * 0.8));
+          const glow = 0.35 + 0.65 * Math.abs(Math.sin(elapsedTime * 2.2 + ff.phase));
+          ctx.fillStyle = `rgba(190, 242, 100, ${glow})`;
+          ctx.beginPath();
+          ctx.arc(fx, fy, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        for (let i = 0; i < floatingTexts.length; i++) {
+          const ft = floatingTexts[i];
+          const alpha = Math.max(0, ft.life / ft.maxLife);
+          ctx.font = `800 ${ft.size}px 'Noto Sans KR', sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillStyle = ft.color;
+          ctx.globalAlpha = alpha;
+          ctx.fillText(ft.text, ft.x, ft.y);
+          ctx.globalAlpha = 1;
+        }
+
+        ctx.restore();
+
+        // 10. Screen-Space Virtual Joystick Overlay (Mobile Touch & Mouse Drag)
+        if (joystick.active && gameState === 'PLAYING') {
+          ctx.save();
+          // Outer ring
+          ctx.strokeStyle = 'rgba(248, 250, 252, 0.35)';
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(joystick.originX, joystick.originY, joystick.maxRadius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Inner thumb knob
+          ctx.fillStyle = 'rgba(251, 191, 36, 0.85)';
+          ctx.beginPath();
+          ctx.arc(joystick.currX, joystick.currY, 22, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // --- Game Over ---
+      function triggerGameOver() {
+        playSound('gameover');
+        gameState = 'GAME_OVER';
+        joystick.active = false;
+
+        document.getElementById('finalTimeStat').textContent = formatTime(elapsedTime);
+        document.getElementById('finalLevelStat').textContent = `LV. ${player.level}`;
+        document.getElementById('finalKillStat').textContent = killCount.toLocaleString();
+
+        const finalBuildList = document.getElementById('finalBuildList');
+        finalBuildList.innerHTML = '';
+        UPGRADE_CATALOG.forEach(item => {
+          const lv = player.skills[item.id] || 0;
+          if (lv > 0) {
+            const chip = document.createElement('div');
+            chip.className = 'px-2.5 py-1 rounded-xl bg-slate-800 text-xs font-bold flex items-center gap-1.5 border border-slate-700';
+            chip.innerHTML = `<span>${item.icon}</span><span class="text-slate-200">${item.name}</span><span class="text-amber-400">Lv.${lv}</span>`;
+            finalBuildList.appendChild(chip);
+          }
+        });
+
+        gameOverModal.classList.remove('hidden');
+        gameOverModal.classList.add('flex');
+      }
+
+      // --- Main Animation Loop ---
+      function gameLoop(timestamp) {
+        if (!lastTimestamp) lastTimestamp = timestamp;
+        const dt = Math.min(0.05, (timestamp - lastTimestamp) / 1000);
+        lastTimestamp = timestamp;
+
+        if (gameState === 'PLAYING') {
+          updateGame(dt);
+        }
+        drawGame();
+
+        animFrameId = requestAnimationFrame(gameLoop);
+      }
+
+      // --- Pointer & Touch Virtual Joystick Controls ---
+      function handlePointerDown(e) {
+        if (gameState !== 'PLAYING') return;
+        if (e.cancelable && e.preventDefault) e.preventDefault();
+        ensureAudio();
+        const rect = canvas.getBoundingClientRect();
+        const clientX = (e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0)) - rect.left;
+        const clientY = (e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0)) - rect.top;
+        
+        try {
+          if (canvas.setPointerCapture && e.pointerId !== undefined) {
+            canvas.setPointerCapture(e.pointerId);
+          }
+        } catch (err) {}
+
+        joystick.active = true;
+        joystick.pointerId = e.pointerId !== undefined ? e.pointerId : 1;
+        joystick.originX = clientX;
+        joystick.originY = clientY;
+        joystick.currX = clientX;
+        joystick.currY = clientY;
+        joystick.dx = 0;
+        joystick.dy = 0;
+      }
+
+      function handlePointerMove(e) {
+        if (!joystick.active) return;
+        const pId = e.pointerId !== undefined ? e.pointerId : 1;
+        if (pId !== joystick.pointerId && e.pointerId !== undefined) return;
+        if (e.cancelable && e.preventDefault) e.preventDefault();
+
+        const rect = canvas.getBoundingClientRect();
+        const clientX = (e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0)) - rect.left;
+        const clientY = (e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0)) - rect.top;
+
+        const rawDx = clientX - joystick.originX;
+        const rawDy = clientY - joystick.originY;
+        const dist = Math.hypot(rawDx, rawDy);
+
+        if (dist === 0) {
+          joystick.currX = joystick.originX;
+          joystick.currY = joystick.originY;
+          joystick.dx = 0;
+          joystick.dy = 0;
+          return;
+        }
+
+        const clamped = Math.min(dist, joystick.maxRadius);
+        const angle = Math.atan2(rawDy, rawDx);
+        joystick.currX = joystick.originX + Math.cos(angle) * clamped;
+        joystick.currY = joystick.originY + Math.sin(angle) * clamped;
+        joystick.dx = (Math.cos(angle) * clamped) / joystick.maxRadius;
+        joystick.dy = (Math.sin(angle) * clamped) / joystick.maxRadius;
+      }
+
+      function handlePointerUp(e) {
+        const pId = e && e.pointerId !== undefined ? e.pointerId : 1;
+        if (!e || pId === joystick.pointerId || !joystick.pointerId) {
+          try {
+            if (canvas.releasePointerCapture && e && e.pointerId !== undefined) {
+              canvas.releasePointerCapture(e.pointerId);
+            }
+          } catch (err) {}
+          joystick.active = false;
+          joystick.pointerId = null;
+          joystick.dx = 0;
+          joystick.dy = 0;
+        }
+      }
+
+      canvas.addEventListener('pointerdown', handlePointerDown);
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
+      window.addEventListener('pointercancel', handlePointerUp);
+
+      // Complementary native touch listeners (prevent native mobile browser gesture cancellations)
+      canvas.addEventListener('touchstart', (e) => {
+        if (gameState !== 'PLAYING') return;
+        if (e.touches.length > 0) {
+          if (e.cancelable) e.preventDefault();
+          const t = e.touches[0];
+          handlePointerDown({
+            pointerId: t.identifier,
+            clientX: t.clientX,
+            clientY: t.clientY,
+            cancelable: true,
+            preventDefault: () => {}
+          });
+        }
+      }, { passive: false });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!joystick.active) return;
+        for (let i = 0; i < e.touches.length; i++) {
+          const t = e.touches[i];
+          if (t.identifier === joystick.pointerId || joystick.pointerId === 1) {
+            if (e.cancelable) e.preventDefault();
+            handlePointerMove({
+              pointerId: joystick.pointerId,
+              clientX: t.clientX,
+              clientY: t.clientY,
+              cancelable: true,
+              preventDefault: () => {}
+            });
+            break;
+          }
+        }
+      }, { passive: false });
+
+      window.addEventListener('touchend', (e) => {
+        if (joystick.active) {
+          handlePointerUp({ pointerId: joystick.pointerId });
+        }
+      }, { passive: false });
+
+      // Keyboard Controls (supports English WASD, Arrow keys, and Korean IME ㅈㅁㄴㅇ)
+      const gameKeyCodes = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+      const gameKeyNames = ['w', 'W', 's', 'S', 'a', 'A', 'd', 'D', 'ㅈ', 'ㅁ', 'ㄴ', 'ㅇ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+
+      window.addEventListener('keydown', (e) => {
+        if (gameState === 'PLAYING' && (gameKeyCodes.includes(e.code) || gameKeyNames.includes(e.key))) {
+          if (e.cancelable) e.preventDefault();
+        }
+        keys[e.code] = true;
+        if (e.key) keys[e.key] = true;
+
+        if (e.code === 'Escape') {
+          if (!patchNotesPanel.classList.contains('hidden')) {
+            closePatchNotes();
+          } else if (gameState === 'PLAYING' || gameState === 'PAUSED') {
+            togglePause();
+          }
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        keys[e.code] = false;
+        if (e.key) keys[e.key] = false;
+      });
+
+      // --- UI Button Listeners ---
+      function selectCharacter(key, targetBtn) {
+        selectedCharKey = key || 'knight';
+        const charBtns = document.querySelectorAll('.char-btn');
+        charBtns.forEach(b => {
+          b.classList.remove('border-amber-400', 'bg-slate-800/90');
+          b.classList.add('border-slate-700', 'bg-slate-900/60');
+        });
+        if (targetBtn) {
+          targetBtn.classList.remove('border-slate-700', 'bg-slate-900/60');
+          targetBtn.classList.add('border-amber-400', 'bg-slate-800/90');
+        }
+      }
+
+      const charBtns = document.querySelectorAll('.char-btn');
+      charBtns.forEach(btn => {
+        const handler = (e) => {
+          const charKey = btn.getAttribute('data-char') || 'knight';
+          selectCharacter(charKey, btn);
+        };
+        btn.addEventListener('click', handler);
+        btn.addEventListener('pointerup', handler);
+      });
+
+      function closePatchNotes() {
+        if (!patchNotesPanel.classList.contains('hidden')) {
+          patchNotesPanel.classList.add('hidden');
+          patchNotesChevron.textContent = '▼';
+        }
+      }
+
+      function openPatchNotes() {
+        patchNotesPanel.classList.remove('hidden');
+        patchNotesChevron.textContent = '▲';
+      }
+
+      function togglePatchNotes(e) {
+        if (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        if (patchNotesPanel.classList.contains('hidden')) {
+          openPatchNotes();
+        } else {
+          closePatchNotes();
+        }
+      }
+
+      togglePatchNotesBtn.addEventListener('click', togglePatchNotes);
+      if (closePatchNotesTopBtn) {
+        closePatchNotesTopBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closePatchNotes();
+        });
+      }
+      if (closePatchNotesBottomBtn) {
+        closePatchNotesBottomBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closePatchNotes();
+        });
+      }
+
+      // Close patch notes when clicking outside the panel
+      document.addEventListener('pointerdown', (e) => {
+        if (!patchNotesPanel.classList.contains('hidden')) {
+          if (!patchNotesPanel.contains(e.target) && !togglePatchNotesBtn.contains(e.target)) {
+            closePatchNotes();
+          }
+        }
+      });
+
+      function startBattle() {
+        if (gameState === 'PLAYING') return;
+        closePatchNotes();
+        ensureAudio();
+        startModal.classList.add('hidden');
+        startModal.classList.remove('flex');
+        startModal.style.display = 'none';
+        initGame();
+        gameState = 'PLAYING';
+        lastTimestamp = performance.now();
+      }
+      startGameBtn.addEventListener('click', startBattle);
+      startGameBtn.addEventListener('pointerup', startBattle);
+
+      retryGameBtn.addEventListener('click', () => {
+        ensureAudio();
+        gameOverModal.classList.add('hidden');
+        gameOverModal.classList.remove('flex');
+        initGame();
+        gameState = 'PLAYING';
+        lastTimestamp = performance.now();
+      });
+
+      function togglePause() {
+        if (gameState === 'PLAYING') {
+          gameState = 'PAUSED';
+          joystick.active = false;
+
+          // 1. Battle Summary Cards
+          const expPct = Math.min(100, Math.floor((player.exp / player.expToNext) * 100));
+          const timeToBoss = Math.max(0, Math.ceil(nextBossTime - elapsedTime));
+
+          // 2. Build Weapon Cards & Evolution Status
+          let weaponsHtml = '';
+          // Show Evolutions First
+          EVOLUTIONS.forEach(evo => {
+            if ((player.skills[evo.id] || 0) > 0) {
+              weaponsHtml += `
+                <div class="p-2.5 rounded-xl bg-gradient-to-r from-amber-950/60 via-purple-950/60 to-slate-900 border border-amber-400 flex items-center justify-between gap-2 shadow">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xl">${evo.icon}</span>
+                    <div>
+                      <div class="font-extrabold text-xs text-amber-300">${evo.name}</div>
+                      <div class="text-[10px] text-slate-400">초월 진화 무기 완성</div>
+                    </div>
+                  </div>
+                  <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">★ 초월 완료</span>
+                </div>
+              `;
+            }
+          });
+
+          // Show Base Weapons
+          const weaponItems = UPGRADE_CATALOG.filter(u => u.category === '무기' && (player.skills[u.id] || 0) > 0);
+          if (weaponItems.length === 0 && !weaponsHtml) {
+            weaponsHtml = '<div class="text-xs text-slate-500 italic p-1">보유한 무기가 없습니다.</div>';
+          } else {
+            weaponItems.forEach(w => {
+              const lv = player.skills[w.id] || 0;
+              // Check if paired with an evolution
+              const pairedEvo = EVOLUTIONS.find(e => e.reqA === w.id || e.reqB === w.id);
+              let evoHint = '';
+              if (pairedEvo && !player.skills[pairedEvo.id]) {
+                const partnerId = pairedEvo.reqA === w.id ? pairedEvo.reqB : pairedEvo.reqA;
+                const partnerItem = UPGRADE_CATALOG.find(u => u.id === partnerId);
+                const partnerLv = player.skills[partnerId] || 0;
+                evoHint = `<div class="text-[10px] text-amber-400 mt-0.5 font-semibold">🔗 + ${partnerItem ? partnerItem.name : partnerId} (Lv.${partnerLv}/10) 조합 대기</div>`;
+              }
+
+              weaponsHtml += `
+                <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-lg shrink-0">${w.icon}</span>
+                    <div class="min-w-0">
+                      <div class="font-bold text-xs text-slate-200 truncate">${w.name}</div>
+                      ${evoHint}
+                    </div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <span class="text-xs font-mono font-black ${lv >= 10 ? 'text-amber-400' : 'text-cyan-400'}">Lv.${lv}/10</span>
+                    <div class="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                      <div class="h-full ${lv >= 10 ? 'bg-amber-400' : 'bg-cyan-500'}" style="width: ${(lv / 10) * 100}%"></div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            });
+          }
+
+          // 3. Build Passives Cards
+          const passiveItems = UPGRADE_CATALOG.filter(u => u.category === '패시브' && (player.skills[u.id] || 0) > 0);
+          let passivesHtml = '';
+          if (passiveItems.length === 0) {
+            passivesHtml = '<div class="text-xs text-slate-500 italic p-1">보유한 패시브 능력이 없습니다.</div>';
+          } else {
+            passiveItems.forEach(p => {
+              const lv = player.skills[p.id] || 0;
+              let benefit = '';
+              if (p.id === 'growth') benefit = `경험치 +${lv * 35}%`;
+              else if (p.id === 'might') benefit = `공격력 +${lv * 20}%`;
+              else if (p.id === 'haste') benefit = `쿨타임 -${lv * 12}%`;
+              else if (p.id === 'swift') benefit = `이속 +${lv * 12}%`;
+              else if (p.id === 'magnet') benefit = `자석범위 +${lv * 35}%`;
+              else if (p.id === 'vitality') benefit = `체력 +${lv * 30}`;
+
+              passivesHtml += `
+                <div class="p-2 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-1.5">
+                    <span>${p.icon}</span>
+                    <span class="font-semibold text-slate-300">${p.name.split(' ')[0]}</span>
+                    <span class="text-[11px] font-mono font-bold text-amber-400">Lv.${lv}</span>
+                  </div>
+                  <span class="text-[11px] text-emerald-400 font-bold">${benefit}</span>
+                </div>
+              `;
+            });
+          }
+
+          // Assemble complete dashboard
+          pauseStatsBox.innerHTML = `
+            <!-- Top Summary 4-Grid -->
+            <div class="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
+              <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+                <div class="text-[10px] text-slate-400">생존 시간</div>
+                <div class="text-sm font-mono font-black text-amber-400 mt-0.5">${formatTime(elapsedTime)}</div>
+              </div>
+              <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+                <div class="text-[10px] text-slate-400">현재 레벨</div>
+                <div class="text-sm font-mono font-black text-cyan-400 mt-0.5">Lv.${player.level}</div>
+                <div class="text-[9px] text-slate-400 mt-0.5">${expPct}%</div>
+              </div>
+              <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+                <div class="text-[10px] text-slate-400">처치 수</div>
+                <div class="text-sm font-mono font-black text-rose-400 mt-0.5">${killCount.toLocaleString()}</div>
+              </div>
+              <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+                <div class="text-[10px] text-slate-400">다음 보스</div>
+                <div class="text-sm font-mono font-black text-purple-400 mt-0.5">${timeToBoss}s</div>
+              </div>
+            </div>
+
+            <!-- Weapons & Evolutions -->
+            <div class="space-y-1.5">
+              <div class="text-xs font-bold text-amber-300 flex items-center gap-1">
+                <span>⚔️</span><span>보유 무기 & 초월 진화 현황</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                ${weaponsHtml}
+              </div>
+            </div>
+
+            <!-- Passives -->
+            <div class="space-y-1.5">
+              <div class="text-xs font-bold text-emerald-300 flex items-center gap-1">
+                <span>📜</span><span>보유 패시브 능력</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                ${passivesHtml}
+              </div>
+            </div>
+
+            <!-- Detailed Stats Grid -->
+            <div class="space-y-1.5">
+              <div class="text-xs font-bold text-slate-400 flex items-center gap-1">
+                <span>📊</span><span>실시간 전투 스탯</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 text-[11px] bg-slate-900/80 p-2.5 rounded-2xl border border-slate-800">
+                <div>체력: <strong class="text-emerald-400">${Math.ceil(player.hp)} / ${player.maxHp}</strong></div>
+                <div>공격력: <strong class="text-amber-400">${(getDamageMultiplier() * 100).toFixed(0)}%</strong></div>
+                <div>쿨타임: <strong class="text-cyan-400">-${((1 - getCooldownMultiplier()) * 100).toFixed(0)}%</strong></div>
+                <div>이속: <strong class="text-slate-200">${Math.round(getMoveSpeed())}</strong></div>
+                <div>자석 반경: <strong class="text-slate-200">${Math.round(getMagnetRadius())}px</strong></div>
+                <div>경험치: <strong class="text-amber-300">+${((player.skills.growth || 0) * 35)}%</strong></div>
+              </div>
+            </div>
+          `;
+
+          pauseModal.classList.remove('hidden');
+          pauseModal.classList.add('flex');
+          pauseModal.style.display = 'flex';
+        } else if (gameState === 'PAUSED') {
+          pauseModal.classList.add('hidden');
+          pauseModal.classList.remove('flex');
+          pauseModal.style.display = 'none';
+          gameState = 'PLAYING';
+          lastTimestamp = performance.now();
+        }
+      }
+
+      pauseBtn.addEventListener('click', togglePause);
+      resumeGameBtn.addEventListener('click', togglePause);
+      if (closePauseTopBtn) closePauseTopBtn.addEventListener('click', togglePause);
+
+      restartFromPauseBtn.addEventListener('click', () => {
+        pauseModal.classList.add('hidden');
+        pauseModal.classList.remove('flex');
+        startModal.classList.remove('hidden');
+        initGame();
+        gameState = 'START';
+      });
+
+      muteBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        muteIcon.textContent = isMuted ? '🔇' : '🔊';
+      });
+
+      // --- Start on window.onload ---
+      window.onload = function () {
+        initGame();
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        animFrameId = requestAnimationFrame(gameLoop);
+      };
+    })();
+
+    // Portal Navigation & Fullscreen Controls
+    (function () {
+      const gameViewport = document.getElementById('gameViewport');
+      const viewWideBtn = document.getElementById('viewWideBtn');
+      const viewMobileBtn = document.getElementById('viewMobileBtn');
+      const viewFullscreenBtn = document.getElementById('viewFullscreenBtn');
+      const quickPlayBtn = document.getElementById('quickPlayBtn');
+
+      // Navigation tab switching
+      const navButtons = document.querySelectorAll('.nav-tab, .nav-tab-mobile');
+      navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-nav');
+          const elem = document.getElementById(`section-${target}`);
+          if (elem) {
+            elem.scrollIntoView({ behavior: 'smooth' });
+          }
+          navButtons.forEach(b => {
+            b.classList.remove('bg-emerald-500/20', 'text-emerald-300', 'border-emerald-500/30', 'text-amber-400');
+            b.classList.add('text-slate-300');
+          });
+          btn.classList.add('bg-emerald-500/20', 'text-emerald-300');
+          btn.classList.remove('text-slate-300');
+        });
+      });
+
+      if (quickPlayBtn) {
+        quickPlayBtn.addEventListener('click', () => {
+          const playSection = document.getElementById('section-play');
+          if (playSection) playSection.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+
+      // View mode toggles
+      if (viewWideBtn) {
+        viewWideBtn.addEventListener('click', () => {
+          gameViewport.classList.remove('mobile-frame-mode', 'fullscreen-mode');
+          viewWideBtn.classList.replace('bg-slate-800', 'bg-emerald-500/20');
+          viewWideBtn.classList.replace('text-slate-300', 'text-emerald-300');
+          viewMobileBtn.classList.replace('bg-emerald-500/20', 'bg-slate-800');
+          viewMobileBtn.classList.replace('text-emerald-300', 'text-slate-300');
+          window.dispatchEvent(new Event('resize'));
+        });
+      }
+
+      if (viewMobileBtn) {
+        viewMobileBtn.addEventListener('click', () => {
+          gameViewport.classList.remove('fullscreen-mode');
+          gameViewport.classList.add('mobile-frame-mode');
+          viewMobileBtn.classList.replace('bg-slate-800', 'bg-emerald-500/20');
+          viewMobileBtn.classList.replace('text-slate-300', 'text-emerald-300');
+          viewWideBtn.classList.replace('bg-emerald-500/20', 'bg-slate-800');
+          viewWideBtn.classList.replace('text-emerald-300', 'text-slate-300');
+          window.dispatchEvent(new Event('resize'));
+        });
+      }
+
+      if (viewFullscreenBtn) {
+        viewFullscreenBtn.addEventListener('click', () => {
+          const isFs = gameViewport.classList.toggle('fullscreen-mode');
+          viewFullscreenBtn.innerHTML = isFs
+            ? '<span>✕</span><span>창모드 복귀</span>'
+            : '<span>⛶</span><span>전체화면</span>';
+          window.dispatchEvent(new Event('resize'));
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
