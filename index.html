@@ -1,38 +1,40 @@
 <!DOCTYPE html>
-<html lang="ko" class="scroll-smooth">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>나이트 서바이버 (Night Survivors) - 공식 게임 포털 & 가이드</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>나이트 서바이버 (Night Survivors) - 공식 웹 게임</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
-    body {
+    html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       background-color: #0b130e;
       color: #f1f5f9;
       font-family: 'Noto Sans KR', 'Inter', sans-serif;
+      touch-action: none;
     }
-    .glass-nav {
-      background: rgba(11, 19, 14, 0.88);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(34, 197, 94, 0.2);
-    }
-    .glass-card {
-      background: rgba(15, 29, 20, 0.8);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(74, 222, 128, 0.18);
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      touch-action: none;
     }
     .glass-panel {
       background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(148, 163, 184, 0.2);
     }
     .upgrade-card {
@@ -50,774 +52,500 @@
     .levelup-badge {
       animation: pulseGlow 1.8s infinite;
     }
-    #gameViewport.fullscreen-mode {
-      position: fixed !important;
-      inset: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      z-index: 9999 !important;
-      border-radius: 0 !important;
-      margin: 0 !important;
+    /* Custom scrollbars for in-game dialogs */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
     }
-    #gameViewport.mobile-frame-mode {
-      max-width: 420px;
-      margin-left: auto;
-      margin-right: auto;
-      height: 740px !important;
-      border: 4px solid #334155;
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(34, 197, 94, 0.4);
+      border-radius: 4px;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950">
+<body class="relative w-full h-full overflow-hidden select-none">
 
-  <!-- Top Sticky Navigation Bar -->
-  <header class="sticky top-0 z-50 glass-nav">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-      <!-- Brand & Version -->
-      <a href="#section-play" class="flex items-center gap-2.5 group">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-amber-500 flex items-center justify-center text-xl shadow-lg shadow-emerald-900/40 group-hover:scale-105 transition">
-          ⚔️
+  <!-- Main Game Canvas (Fills entire screen) -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Top In-Game HUD -->
+  <div id="hudContainer" class="fixed top-0 left-0 right-0 z-10 pointer-events-none p-2 sm:p-3 flex flex-col gap-2">
+    <!-- EXP Bar Row -->
+    <div class="w-full max-w-2xl mx-auto glass-panel rounded-full p-1 flex items-center gap-2 shadow-lg">
+      <div id="levelBadge" class="bg-amber-500 text-slate-950 font-black text-xs sm:text-sm px-2.5 py-0.5 rounded-full shrink-0 shadow">
+        LV. 1
+      </div>
+      <div class="relative flex-1 h-3 sm:h-3.5 bg-slate-800 rounded-full overflow-hidden">
+        <div id="expBarFill" class="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 transition-all duration-150" style="width: 0%;"></div>
+        <div id="expText" class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow">
+          0 / 6 EXP
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats & Controls Row -->
+    <div class="w-full max-w-2xl mx-auto flex items-center justify-between gap-2">
+      <!-- Time & Kills -->
+      <div class="glass-panel rounded-xl px-3 py-1.5 flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-bold shadow">
+        <div class="flex items-center gap-1.5 text-amber-400">
+          <span>⏱️</span>
+          <span id="timerText" class="font-mono text-sm sm:text-base">00:00</span>
+        </div>
+        <div class="h-3 w-[1px] bg-slate-700"></div>
+        <div class="flex items-center gap-1 text-rose-400">
+          <span>💀</span>
+          <span id="killText">0</span>
+        </div>
+        <div class="h-3 w-[1px] bg-slate-700 hidden sm:block"></div>
+        <div class="hidden sm:flex items-center gap-1 text-emerald-400">
+          <span>❤️</span>
+          <span id="hpText">100 / 100</span>
+        </div>
+      </div>
+
+      <!-- Weapon & Skill Badges Bar -->
+      <div id="skillIconsBar" class="flex items-center gap-1 overflow-x-auto max-w-[42%] sm:max-w-none py-0.5"></div>
+
+      <!-- Action Buttons (Pointer Events Auto) -->
+      <div class="flex items-center gap-1.5 pointer-events-auto">
+        <button id="fullscreenToggleBtn" type="button" class="glass-panel hover:bg-slate-800 active:scale-95 text-slate-200 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-semibold transition flex items-center gap-1 shadow" title="전체화면 켜기/끄기">
+          <span id="fullscreenIcon">⛶</span>
+        </button>
+        <button id="muteBtn" type="button" class="glass-panel hover:bg-slate-800 active:scale-95 text-slate-200 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-semibold transition flex items-center gap-1 shadow" title="효과음 켜기/끄기">
+          <span id="muteIcon">🔊</span>
+        </button>
+        <button id="pauseBtn" type="button" class="glass-panel hover:bg-slate-800 active:scale-95 text-slate-200 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-semibold transition flex items-center gap-1 shadow" title="일시정지">
+          <span id="pauseIcon">⏸️</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boss Warning Banner -->
+  <div id="bossBanner" class="fixed top-24 left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden">
+    <div class="bg-rose-950/90 border-2 border-rose-500 text-rose-200 px-5 py-2 rounded-full font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-2xl flex items-center gap-2 animate-bounce">
+      <span>⚠️</span>
+      <span id="bossBannerText">보스 몬스터 출현!</span>
+      <span>⚠️</span>
+    </div>
+  </div>
+
+  <!-- Touch Hint Overlay (fades out once player moves) -->
+  <div id="touchHint" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none transition-opacity duration-500 opacity-90">
+    <div class="glass-panel rounded-full px-4 py-2 text-xs sm:text-sm text-slate-300 flex items-center gap-2 shadow-lg">
+      <span class="text-base">👆</span>
+      <span>화면을 터치 후 드래그(또는 WASD/방향키)하여 이동하세요</span>
+    </div>
+  </div>
+
+  <!-- START MODAL: Main Menu, Game Guide, and Character Selection -->
+  <div id="startModal" class="fixed inset-0 z-30 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md">
+    
+    <!-- Top-Right Patch Notes Floating Widget on Main Screen -->
+    <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 flex flex-col items-end max-w-[290px] sm:max-w-xs w-full pointer-events-auto">
+      <button id="togglePatchNotesBtn" type="button" class="glass-panel hover:bg-slate-800/90 active:scale-95 px-3 py-1.5 rounded-2xl border border-amber-400/40 shadow-lg flex items-center gap-2 text-xs font-extrabold text-amber-300 transition">
+        <span>📋 패치노트</span>
+        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">1.8.0</span>
+        <span id="patchNotesChevron" class="text-[10px] text-slate-300">▼</span>
+      </button>
+
+      <div id="patchNotesPanel" class="mt-2 w-full glass-panel rounded-2xl p-3.5 border border-slate-700/90 shadow-2xl text-left max-h-[48vh] overflow-y-auto space-y-3 hidden" style="touch-action: pan-y;">
+        <div class="flex items-center justify-between border-b border-slate-700/80 pb-2">
+          <span class="text-xs font-black text-white flex items-center gap-1.5">🛠️ 업데이트 내역 (패치노트)</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-mono font-bold text-amber-400">v1.8.0</span>
+            <button id="closePatchNotesTopBtn" type="button" class="glass-panel hover:bg-slate-800 text-slate-300 hover:text-white px-2 py-0.5 rounded-lg text-xs font-bold transition">✕</button>
+          </div>
+        </div>
+
+        <div class="space-y-2.5 text-[11px] leading-relaxed">
+                    <div class="bg-slate-900/90 rounded-xl p-2.5 border border-amber-500/40">
+            <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
+              <span>v1.8.0</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
+            </div>
+            <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
+              <li><strong>시간 경과 적 수 & 체력 대폭 증가:</strong> 생존 시간에 따라 스폰율(최대 26마리/초)과 적 최대 수(320마리), 몬스터 체력이 점진적 강화</li>
+              <li><strong>마지막 보스 처치 수 연동:</strong> 마지막 보스(황혼의 파멸 학살자)를 격파할 때마다 다음 보스 출현 시 등장하는 마리수가 +1마리씩 누적 증가 (1마리 ➔ 2마리 ➔ 3마리...)</li>
+              <li><strong>보스 다중 스폰 연출:</strong> 여러 마리 동시 출격 시 사방 포위 배치 및 전용 경고 배너 표시</li>
+            </ul>
+          </div>
+<div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
+            <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
+              <span>v1.8.0</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
+            </div>
+            <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
+              <li><strong>뇌화겁화 번개 범위 축소:</strong> 번개 충격파(56px)를 불장판(80px)보다 좁게 집중하여 불장판이 타격 지점을 덮도록 개선</li>
+              <li><strong>단일 게임 화면 개편:</strong> 웹사이트 전체를 깔끔한 100% 풀스크린 게임 화면으로 구성</li>
+              <li><strong>인게임 '게임설명' 모달 신설:</strong> 메인 메뉴 '게임설명' 버튼 클릭 시 룰, 조작법, 조합 공식, 영웅 도감, 생존 팁을 모달에서 확인 가능</li>
+            </ul>
+          </div>
+          <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
+            <div class="font-bold text-amber-300 mb-1">v1.6.0</div>
+            <ul class="text-slate-300 space-y-0.5 list-disc list-inside">
+              <li>불장판 밸런스 조정 (지속 2.2초, DPS 완화, 최대 4개 제한)</li>
+              <li>메인 타이틀 화면 및 2단계 분기 메뉴 도입</li>
+            </ul>
+          </div>
+          <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
+            <div class="font-bold text-amber-300 mb-1">v1.5.0</div>
+            <ul class="text-slate-300 space-y-0.5 list-disc list-inside">
+              <li>경험치 파밍 개선 및 전체 자석 룬(🧲) 추가</li>
+              <li>시간대별 7종 몬스터 및 4단계 엘리트 보스 등장</li>
+            </ul>
+          </div>
+        </div>
+
+        <button id="closePatchNotesBottomBtn" type="button" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition shadow border border-slate-700">
+          패치노트 닫기 ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN DIALOG CARD: Houses Title View, Guide View, and CharSelect View -->
+    <div id="mainModalCard" class="w-full max-w-md glass-panel rounded-3xl p-5 sm:p-6 border border-slate-700/80 shadow-2xl flex flex-col gap-4 max-h-[92vh] overflow-y-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
+      
+      <!-- ==============================================
+           VIEW 1: Title Screen Menu (Initial Main View)
+           ============================================== -->
+      <div id="titleScreenView" class="space-y-5 text-center py-2">
+        <div class="space-y-1.5">
+          <span class="inline-block text-[11px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
+            Mobile Roguelite Survival
+          </span>
+          <div class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-tr from-emerald-600 via-amber-500 to-orange-500 flex items-center justify-center text-3xl shadow-xl shadow-amber-500/25 my-1">
+            ⚔️
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-white">
+            나이트 서바이버
+          </h1>
+          <div class="text-xs font-mono font-bold text-amber-400 tracking-widest">
+            1.8.0
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed">
+            사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
+          </p>
+        </div>
+
+        <!-- Main Menu Action Buttons -->
+        <div class="space-y-2.5 pt-2">
+          <button id="toCharSelectBtn" type="button" class="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-amber-500 to-orange-500 hover:brightness-110 active:scale-[0.99] text-slate-950 font-black text-base shadow-xl shadow-amber-500/25 transition flex items-center justify-center gap-2">
+            <span>🎮</span><span>게임 시작</span><span>▶</span>
+          </button>
+
+          <button id="toGuideBtn" type="button" class="w-full py-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-700 hover:border-emerald-500/50 active:scale-[0.99] text-slate-200 font-extrabold text-sm shadow-lg transition flex items-center justify-center gap-2">
+            <span>📖</span><span>게임설명 (조작법 & 조합표)</span>
+          </button>
+        </div>
+
+        <!-- Key Features Preview Badges -->
+        <div class="rounded-2xl bg-slate-900/80 border border-slate-800 p-3 text-xs text-slate-400 text-left space-y-1">
+          <div>• <strong class="text-amber-300">자동 조준 사격:</strong> 이동만 하면 사거리 내 적을 100% 자동 공격</div>
+          <div>• <strong class="text-cyan-300">초월 진화 조합:</strong> 10레벨 무기 2종 결합 시 전설 무기 탄생</div>
+          <div>• <strong class="text-emerald-300">모바일 가상 조이스틱:</strong> 화면 어디든 터치 & 드래그로 조작</div>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           VIEW 2: In-Game Comprehensive Guide (게임설명 모달)
+           ============================================== -->
+      <div id="gameGuideView" class="space-y-4 text-left hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+          <button id="backToTitleFromGuideBtn" type="button" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition flex items-center gap-1">
+            <span>←</span><span>메인 메뉴</span>
+          </button>
+          <span class="text-xs sm:text-sm font-black text-white flex items-center gap-1.5">
+            <span>📖</span><span>게임설명 & 핵심 공략</span>
+          </span>
+          <span class="w-10"></span>
+        </div>
+
+        <!-- Scrollable Guide Content Container -->
+        <div class="space-y-4 text-xs max-h-[62vh] overflow-y-auto pr-1" style="touch-action: pan-y;">
+          
+          <!-- Section A: 기본 게임 룰 -->
+          <div class="bg-slate-900/90 rounded-2xl p-3.5 border border-emerald-500/30 space-y-1.5 shadow">
+            <div class="font-bold text-sm text-emerald-300 flex items-center gap-1.5">
+              <span>🎮</span><span>1. 기본 게임 룰 & 진행 방식</span>
+            </div>
+            <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+              <li><strong>사방에서 몰려오는 적 회피:</strong> 적과 접촉하면 지속 피해를 입으므로 멈추지 말고 회피 기동하세요.</li>
+              <li><strong>100% 자동 사격:</strong> 영웅은 사거리 안의 가장 가까운 적을 알아서 공격합니다. 이동에만 집중하세요.</li>
+              <li><strong>보석 수집 & 레벨업:</strong> 쓰러진 적이 떨어뜨린 경험치 보석을 모아 레벨을 올립니다.</li>
+              <li><strong>3택 1 능력 선택:</strong> 레벨업할 때마다 무작위 3가지 능력 중 하나를 선택해 영웅을 강화합니다.</li>
+            </ul>
+          </div>
+
+          <!-- Section B: 조작 방법 -->
+          <div class="bg-slate-900/90 rounded-2xl p-3.5 border border-cyan-500/30 space-y-1.5 shadow">
+            <div class="font-bold text-sm text-cyan-300 flex items-center gap-1.5">
+              <span>📱</span><span>2. 모바일 터치 & PC 조작법</span>
+            </div>
+            <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+              <li><strong>모바일 가상 조이스틱:</strong> 화면 어디든 손가락을 터치 후 드래그하면 즉시 조이스틱이 생성됩니다.</li>
+              <li><strong>PC 키보드 이동:</strong> <kbd class="px-1.5 py-0.5 bg-slate-800 rounded font-mono text-amber-300">WASD</kbd> 또는 방향키로 이동합니다.</li>
+              <li><strong>한글 입력 완벽 지원:</strong> 한/영 키가 '한' 상태여도 <kbd class="px-1.5 py-0.5 bg-slate-800 rounded font-mono text-cyan-300">ㅈㅁㄴㅇ</kbd> 키로 즉시 이동 가능합니다.</li>
+              <li><strong>일시정지:</strong> PC는 <kbd class="px-1.5 py-0.5 bg-slate-800 rounded font-mono text-slate-200">ESC</kbd>, 모바일은 상단 <span class="text-amber-400">⏸️</span> 버튼으로 능력 현황을 확인합니다.</li>
+            </ul>
+          </div>
+
+          <!-- Section C: 초월 진화 조합표 -->
+          <div class="bg-slate-900/90 rounded-2xl p-3.5 border border-amber-500/30 space-y-2 shadow">
+            <div class="font-bold text-sm text-amber-300 flex items-center gap-1.5">
+              <span>⚡</span><span>3. 10레벨 무기 초월 진화 공식</span>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-snug">
+              연관된 두 무기를 모두 <strong>10레벨</strong>까지 올리면 레벨업 시 전설의 초월 진화 무기가 등장합니다:
+            </p>
+            <div class="space-y-2 text-[11px]">
+              <div class="bg-slate-950/80 p-2.5 rounded-xl border border-amber-500/40 space-y-0.5">
+                <div class="font-black text-amber-300 flex items-center justify-between">
+                  <span>⚡🔥 뇌화겁화 (화염 낙뢰)</span>
+                  <span class="text-[10px] text-amber-400">낙뢰 + 화염 파동</span>
+                </div>
+                <div class="text-slate-300 text-[10px]">
+                  집중 번개 충격파(56px)와 함께 반경 80px의 <strong>지속 불장판(2.2초)</strong>이 생성되어 적들을 불태웁니다. (번개 범위 집중화 완료)
+                </div>
+              </div>
+
+              <div class="bg-slate-950/80 p-2.5 rounded-xl border border-amber-500/40 space-y-0.5">
+                <div class="font-black text-amber-300 flex items-center justify-between">
+                  <span>🗡️🛡️ 성스러운 심판의 폭풍</span>
+                  <span class="text-[10px] text-amber-400">성검 + 신성 결계</span>
+                </div>
+                <div class="text-slate-300 text-[10px]">
+                  5개의 거대 황금 성검이 회전하며, 칼날에 적이 닿을 때마다 폭발적인 <strong>연쇄 심판 폭발</strong>을 방출합니다.
+                </div>
+              </div>
+
+              <div class="bg-slate-950/80 p-2.5 rounded-xl border border-amber-500/40 space-y-0.5">
+                <div class="font-black text-amber-300 flex items-center justify-between">
+                  <span>🔪🔹 환영 비검술</span>
+                  <span class="text-[10px] text-amber-400">마법 탄환 + 단검 찌르기</span>
+                </div>
+                <div class="text-slate-300 text-[10px]">
+                  원거리 탄환과 근접 찌르기가 융합되어, 사방으로 초고속 <strong>관통 환영 비검</strong>이 난무하며 폭발 검기를 뿜습니다.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section D: 4인의 영웅 클래스 도감 -->
+          <div class="bg-slate-900/90 rounded-2xl p-3.5 border border-purple-500/30 space-y-2 shadow">
+            <div class="font-bold text-sm text-purple-300 flex items-center gap-1.5">
+              <span>🦹</span><span>4. 4인의 영웅 클래스 도감</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-[10px]">
+              <div class="bg-slate-950/70 p-2 rounded-xl border border-slate-800 space-y-0.5">
+                <div class="font-bold text-amber-300">⚔️ 아서 (성기사)</div>
+                <div class="text-slate-300">체력 120 (밸런스형)</div>
+                <div class="text-slate-400">기본: 마법 탄환 + 회전 성검</div>
+              </div>
+              <div class="bg-slate-950/70 p-2 rounded-xl border border-slate-800 space-y-0.5">
+                <div class="font-bold text-cyan-300">🔮 루나 (아크메이지)</div>
+                <div class="text-slate-300">자석 범위 +35% (파밍형)</div>
+                <div class="text-slate-400">기본: 마법 탄환 Lv.2 + 자석석</div>
+              </div>
+              <div class="bg-slate-950/70 p-2 rounded-xl border border-slate-800 space-y-0.5">
+                <div class="font-bold text-purple-300">⚡ 카이 (번개술사)</div>
+                <div class="text-slate-300">이동속도 +15% (기동형)</div>
+                <div class="text-slate-400">기본: 마법 탄환 + 번개 낙뢰</div>
+              </div>
+              <div class="bg-slate-950/70 p-2 rounded-xl border border-slate-800 space-y-0.5">
+                <div class="font-bold text-rose-300">🥷 쉐도우 (암살자)</div>
+                <div class="text-slate-300">이동속도 235 (초고속 근접)</div>
+                <div class="text-slate-400">기본: 암살자의 단검 찌르기</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section E: 생존 핵심 팁 -->
+          <div class="bg-slate-900/90 rounded-2xl p-3.5 border border-slate-700 space-y-1.5 shadow">
+            <div class="font-bold text-sm text-slate-200 flex items-center gap-1.5">
+              <span>🌳</span><span>5. 핵심 생존 꿀팁</span>
+            </div>
+            <ul class="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+              <li><strong>지형지물 엄폐:</strong> 숲속의 나무와 바위 뒤로 숨어 적들의 돌진을 분산시키고 엄폐하세요.</li>
+              <li><strong>전체 자석 룬(🧲):</strong> 적 처치 시 가끔 드랍되는 자석을 먹으면 맵의 모든 보석이 즉시 흡수됩니다.</li>
+              <li><strong>지혜의 고서(📖):</strong> 경험치 획득량이 +35%씩 오르므로 초반에 빠르게 올려 레벨을 높이세요.</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Guide Close Button -->
+        <button id="closeGuideBottomBtn" type="button" class="w-full py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition">
+          메인 메뉴로 돌아가기
+        </button>
+      </div>
+
+      <!-- ==============================================
+           VIEW 3: Character Selection Screen (클래스 선택)
+           ============================================== -->
+      <div id="charSelectView" class="space-y-4 hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <button id="backToTitleFromCharBtn" type="button" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition flex items-center gap-1">
+            <span>←</span><span>메인 메뉴</span>
+          </button>
+          <span class="text-xs font-black text-white">영웅 클래스 선택</span>
+          <span class="w-12"></span>
+        </div>
+
+        <!-- Character Selection Cards -->
+        <div id="charList" class="grid grid-cols-1 gap-2.5">
+          <button type="button" data-char="knight" class="char-btn text-left p-3 rounded-2xl border-2 border-amber-400 bg-slate-800/90 flex items-center gap-3 transition">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-2xl shrink-0">
+              ⚔️
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-sm sm:text-base text-white">아서 (성기사)</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold">밸런스형</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 마법 탄환 + 회전 성검 Lv.1 | 체력 120</p>
+            </div>
+          </button>
+
+          <button type="button" data-char="mage" class="char-btn text-left p-3 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:bg-slate-800/70 flex items-center gap-3 transition">
+            <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-2xl shrink-0">
+              🔮
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-sm sm:text-base text-white">루나 (아크메이지)</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold">원거리 특화</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 마법 탄환 Lv.2 + 자석 범위 +35% | 체력 95</p>
+            </div>
+          </button>
+
+          <button type="button" data-char="invoker" class="char-btn text-left p-3 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:bg-slate-800/70 flex items-center gap-3 transition">
+            <div class="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-2xl shrink-0">
+              ⚡
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-sm sm:text-base text-white">카이 (번개술사)</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-semibold">범위·기동형</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 마법 탄환 + 번개 낙뢰 Lv.1 | 이동속도 +15%</p>
+            </div>
+          </button>
+
+          <button type="button" data-char="assassin" class="char-btn text-left p-3 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:bg-slate-800/70 flex items-center gap-3 transition">
+            <div class="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-2xl shrink-0">
+              🥷
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-sm sm:text-base text-white">쉐도우 (암살자)</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-semibold">초고속 근접형</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 단검 찌르기 Lv.1 (초근접) | 이동속도 매우 빠름</p>
+            </div>
+          </button>
+        </div>
+
+        <!-- Start Button -->
+        <button id="startGameBtn" type="button" class="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-amber-500 to-orange-500 hover:brightness-110 active:scale-[0.99] text-slate-950 font-black text-base shadow-xl shadow-amber-500/25 transition">
+          전투 출격하기 🚀
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Level Up (Choose 1 of 3) Modal -->
+  <div id="levelUpModal" class="fixed inset-0 z-30 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md">
+    <div class="w-full max-w-md glass-panel rounded-3xl p-5 border border-amber-400/40 shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto">
+      <div class="text-center space-y-1">
+        <span class="inline-block levelup-badge bg-amber-400 text-slate-950 font-black text-xs px-3 py-0.5 rounded-full uppercase tracking-wider">
+          LEVEL UP!
+        </span>
+        <h2 id="levelUpTitle" class="text-xl sm:text-2xl font-black text-white">
+          레벨 2 달성! 능력을 선택하세요
+        </h2>
+        <p class="text-xs text-slate-300">
+          세 가지 축복 중 하나를 골라 영웅을 강화하세요 (터치하여 즉시 적용)
+        </p>
+      </div>
+      <div id="upgradeChoicesContainer" class="flex flex-col gap-2.5"></div>
+    </div>
+  </div>
+
+  <!-- Pause Modal (Comprehensive Progress & Ability Dashboard) -->
+  <div id="pauseModal" class="fixed inset-0 z-30 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="w-full max-w-lg glass-panel rounded-3xl p-5 sm:p-6 border border-slate-700 shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">⏸️</span>
+          <div>
+            <h2 class="text-lg sm:text-xl font-black text-white">전투 일시정지</h2>
+            <p class="text-[11px] text-slate-400">현재 전투 진행도 및 획득한 능력 현황</p>
+          </div>
+        </div>
+        <button id="closePauseTopBtn" type="button" class="glass-panel hover:bg-slate-800 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 transition">
+          닫기 ✕
+        </button>
+      </div>
+
+      <div id="pauseStatsBox" class="space-y-3.5"></div>
+
+      <div class="flex gap-2 pt-2 border-t border-slate-800">
+        <button id="resumeGameBtn" type="button" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm shadow-lg shadow-amber-500/20 transition">
+          계속하기
+        </button>
+        <button id="restartFromPauseBtn" type="button" class="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition">
+          처음부터 다시 시작
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div id="gameOverModal" class="fixed inset-0 z-30 hidden items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="w-full max-w-md glass-panel rounded-3xl p-6 border border-rose-500/40 shadow-2xl flex flex-col gap-4 text-center">
+      <div class="space-y-1">
+        <span id="gameOverBadge" class="inline-block text-xs font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
+          GAME OVER
+        </span>
+        <h2 id="gameOverHeading" class="text-2xl sm:text-3xl font-black text-white">
+          전투 종료!
+        </h2>
+        <p id="gameOverSubtext" class="text-xs sm:text-sm text-slate-300">
+          몰려오는 어둠의 군단에게 쓰러졌습니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800">
+        <div>
+          <div class="text-[11px] text-slate-400">생존 시간</div>
+          <div id="finalTimeStat" class="text-base sm:text-lg font-black text-amber-400 mt-0.5">00:00</div>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="font-black text-base sm:text-lg tracking-tight text-white group-hover:text-emerald-300 transition">나이트 서바이버</span>
-            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold">v1.5.0</span>
-          </div>
-          <p class="text-[10px] text-slate-400 -mt-0.5 hidden sm:block">Night Survivors Official Portal</p>
+          <div class="text-[11px] text-slate-400">달성 레벨</div>
+          <div id="finalLevelStat" class="text-base sm:text-lg font-black text-cyan-400 mt-0.5">LV. 1</div>
         </div>
-      </a>
-
-      <!-- Desktop Nav Tabs -->
-      <nav class="hidden md:flex items-center gap-1 text-xs font-bold text-slate-300">
-        <button type="button" data-nav="play" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 text-amber-400 bg-slate-800/80 transition flex items-center gap-1.5">
-          <span>🎮</span><span>게임 플레이</span>
-        </button>
-        <button type="button" data-nav="evolution" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
-          <span>🧬</span><span>초월 진화 조합표</span>
-        </button>
-        <button type="button" data-nav="heroes" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
-          <span>🦹</span><span>영웅 & 몬스터 도감</span>
-        </button>
-        <button type="button" data-nav="guide" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
-          <span>📖</span><span>조작 가이드</span>
-        </button>
-        <button type="button" data-nav="patch" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
-          <span>📋</span><span>패치노트</span>
-        </button>
-        <button type="button" data-nav="cicd" class="nav-tab px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-white transition flex items-center gap-1.5">
-          <span>🚀</span><span>자동 배포</span>
-        </button>
-      </nav>
-
-      <!-- Action Button -->
-      <div class="flex items-center gap-2">
-        <button id="quickPlayBtn" type="button" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:from-emerald-400 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition flex items-center gap-1.5">
-          <span>전투 시작</span><span>▶</span>
-        </button>
+        <div>
+          <div class="text-[11px] text-slate-400">처치한 적</div>
+          <div id="finalKillStat" class="text-base sm:text-lg font-black text-rose-400 mt-0.5">0</div>
+        </div>
       </div>
+
+      <div class="text-left space-y-1.5">
+        <div class="text-xs font-bold text-slate-400">획득한 무기 & 능력</div>
+        <div id="finalBuildList" class="flex flex-wrap gap-1.5 bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80 min-h-[44px]"></div>
+      </div>
+
+      <button id="retryGameBtn" type="button" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.99] text-slate-950 font-black text-base shadow-lg shadow-amber-500/25 transition">
+        다시 도전하기 🔄
+      </button>
     </div>
-
-    <!-- Mobile Sub-Navigation Bar -->
-    <div class="md:hidden flex items-center gap-1 overflow-x-auto px-3 py-2 border-t border-slate-800/60 bg-slate-950/80 text-xs font-bold no-scrollbar">
-      <button type="button" data-nav="play" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">🎮 플레이</button>
-      <button type="button" data-nav="evolution" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">🧬 조합표</button>
-      <button type="button" data-nav="heroes" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">🦹 영웅·몬스터</button>
-      <button type="button" data-nav="guide" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">📖 조작법</button>
-      <button type="button" data-nav="patch" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">📋 패치노트</button>
-      <button type="button" data-nav="cicd" class="nav-tab-mobile shrink-0 px-3 py-1 rounded-lg text-slate-300 hover:bg-slate-800">🚀 자동배포</button>
-    </div>
-  </header>
-
-  <!-- Main Portal Content -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
-
-    <!-- SECTION 1: Game Player Arena -->
-    <section id="section-play" class="space-y-3">
-      <!-- Player Mode & Info Toolbar -->
-      <div class="flex flex-wrap items-center justify-between gap-3 glass-card p-3 rounded-2xl border border-emerald-500/20">
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center justify-center w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-          <span class="text-xs font-bold text-slate-200">인게임 아케이드 실행 중</span>
-          <span class="text-[11px] text-slate-400 hidden sm:inline">• 터치 드래그 가상 조이스틱 또는 WASD/방향키 지원</span>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button id="viewWideBtn" type="button" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 transition">
-            와이드 뷰
-          </button>
-          <button id="viewMobileBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-bold border border-slate-700 transition">
-            스마트폰 프레임
-          </button>
-          <button id="viewFullscreenBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 text-amber-300 hover:bg-slate-700 text-xs font-bold border border-slate-700 transition flex items-center gap-1">
-            <span>⛶</span><span>전체화면</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Playable Game Viewport Container -->
-      <div id="gameViewport" class="relative w-full h-[620px] sm:h-[720px] rounded-3xl overflow-hidden border-2 border-emerald-500/30 bg-slate-950 shadow-2xl transition-all duration-300 select-none" style="touch-action: none; -webkit-touch-callout: none; user-select: none;">
-        <!-- Main Game Canvas -->
-        <canvas id="gameCanvas" class="w-full h-full block cursor-crosshair" style="touch-action: none; -webkit-touch-callout: none; user-select: none;"></canvas>
-
-        <!-- Top HUD -->
-        <div id="hudContainer" class="absolute top-0 left-0 right-0 z-10 pointer-events-none p-2 sm:p-3 flex flex-col gap-2">
-          <!-- EXP Bar Row -->
-          <div class="w-full max-w-2xl mx-auto glass-panel rounded-full p-1 flex items-center gap-2 shadow-lg">
-            <div id="levelBadge" class="bg-amber-500 text-slate-950 font-black text-xs sm:text-sm px-2.5 py-0.5 rounded-full shrink-0 shadow">
-              LV. 1
-            </div>
-            <div class="relative flex-1 h-3 sm:h-3.5 bg-slate-800 rounded-full overflow-hidden">
-              <div id="expBarFill" class="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 transition-all duration-150" style="width: 0%;"></div>
-              <div id="expText" class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow">
-                0 / 6 EXP
-              </div>
-            </div>
-          </div>
-
-          <!-- Stats & Controls Row -->
-          <div class="w-full max-w-2xl mx-auto flex items-center justify-between gap-2">
-            <div class="glass-panel rounded-xl px-3 py-1.5 flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-bold shadow">
-              <div class="flex items-center gap-1.5 text-amber-400">
-                <span>⏱️</span>
-                <span id="timerText" class="font-mono text-sm sm:text-base">00:00</span>
-              </div>
-              <div class="h-3 w-[1px] bg-slate-700"></div>
-              <div class="flex items-center gap-1 text-rose-400">
-                <span>💀</span>
-                <span id="killText">0</span>
-              </div>
-              <div class="h-3 w-[1px] bg-slate-700 hidden sm:block"></div>
-              <div class="hidden sm:flex items-center gap-1 text-emerald-400">
-                <span>❤️</span>
-                <span id="hpText">100 / 100</span>
-              </div>
-            </div>
-
-            <div id="skillIconsBar" class="flex items-center gap-1 overflow-x-auto max-w-[45%] sm:max-w-none py-0.5"></div>
-
-            <div class="flex items-center gap-1.5 pointer-events-auto">
-              <button id="muteBtn" type="button" class="glass-panel hover:bg-slate-800 active:scale-95 text-slate-200 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-semibold transition flex items-center gap-1 shadow" title="효과음 켜기/끄기">
-                <span id="muteIcon">🔊</span>
-              </button>
-              <button id="pauseBtn" type="button" class="glass-panel hover:bg-slate-800 active:scale-95 text-slate-200 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-semibold transition flex items-center gap-1 shadow" title="일시정지">
-                <span id="pauseIcon">⏸️</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Boss Warning Banner -->
-        <div id="bossBanner" class="absolute top-24 left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden">
-          <div class="bg-rose-950/90 border-2 border-rose-500 text-rose-200 px-5 py-2 rounded-full font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-2xl flex items-center gap-2 animate-bounce">
-            <span>⚠️</span>
-            <span id="bossBannerText">보스 몬스터 출현!</span>
-            <span>⚠️</span>
-          </div>
-        </div>
-
-        <!-- Touch Hint Overlay -->
-        <div id="touchHint" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none transition-opacity duration-500 opacity-90">
-          <div class="glass-panel rounded-full px-4 py-2 text-xs sm:text-sm text-slate-300 flex items-center gap-2 shadow-lg">
-            <span class="text-base">👆</span>
-            <span>화면을 터치 후 드래그(또는 WASD/방향키)하여 이동하세요</span>
-          </div>
-        </div>
-
-        <!-- Start / Character Selection Modal -->
-        <div id="startModal" class="absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
-          <!-- Top-Right Patch Notes Floating Widget on Main Screen -->
-          <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-40 flex flex-col items-end max-w-[290px] sm:max-w-xs w-full pointer-events-auto">
-            <button id="togglePatchNotesBtn" type="button" class="glass-panel hover:bg-slate-800/90 active:scale-95 px-3 py-1.5 rounded-2xl border border-amber-400/40 shadow-lg flex items-center gap-2 text-xs font-extrabold text-amber-300 transition">
-              <span>📋 패치노트</span>
-              <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">1.5.0</span>
-              <span id="patchNotesChevron" class="text-[10px] text-slate-300">▼</span>
-            </button>
-
-            <div id="patchNotesPanel" class="mt-2 w-full glass-panel rounded-2xl p-3.5 border border-slate-700/90 shadow-2xl text-left max-h-[48vh] overflow-y-auto space-y-3 hidden" style="touch-action: pan-y;">
-              <div class="flex items-center justify-between border-b border-slate-700/80 pb-2">
-                <span class="text-xs font-black text-white flex items-center gap-1.5">🛠️ 업데이트 내역 (패치노트)</span>
-                <div class="flex items-center gap-2">
-                  <span class="text-[11px] font-mono font-bold text-amber-400">v1.5.0</span>
-                  <button id="closePatchNotesTopBtn" type="button" class="glass-panel hover:bg-slate-800 text-slate-300 hover:text-white px-2 py-0.5 rounded-lg text-xs font-bold transition">✕</button>
-                </div>
-              </div>
-
-              <div class="space-y-2.5 text-[11px] leading-relaxed">
-                <div class="bg-slate-900/90 rounded-xl p-2.5 border border-amber-500/40">
-                  <div class="flex items-center justify-between font-bold text-amber-300 mb-1">
-                    <span>v1.5.0</span>
-                    <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200">NEW</span>
-                  </div>
-                  <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
-                    <li><strong>레벨업 편의성 대폭 개선:</strong> 필요 경험치 추가 완화, 지혜의 고서 강화(+35%), 전체 자석 룬 드랍 및 시간 비례 보석 가치 상승</li>
-                    <li><strong>시간대별 다채로운 적 등장:</strong> 고블린, 해골 전사, 골렘, 늑대인간, 사령술사, 망령 등 7종의 몬스터 및 주기별 엘리트 보스</li>
-                    <li><strong>일시정지 종합 대시보드:</strong> 보유 무기/패시브 레벨, 초월 진화 진행도, 조합 힌트 및 실시간 전투 스탯 표시</li>
-                  </ul>
-                </div>
-                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
-                  <div class="font-bold text-amber-300 mb-1">v1.4.0</div>
-                  <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
-                    <li><strong>경험치 성장 개선:</strong> '지혜의 고서(EXP 획득 +25%)' 추가 및 레벨업 필요치 완화</li>
-                    <li><strong>초월 진화 조합:</strong> 10레벨 무기 2종 조합 시 강력한 신규 초월 무기 진화 (예: 뇌화겁화 불장판 등)</li>
-                    <li><strong>광각 전장 시야:</strong> 줌아웃 카메라 적용으로 사방의 적과 지형을 훨씬 넓게 확인 가능</li>
-                  </ul>
-                </div>
-                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800">
-                  <div class="font-bold text-amber-300 mb-1">v1.3.0</div>
-                  <ul class="text-slate-200 space-y-0.5 list-disc list-inside">
-                    <li>신규 클래스 <strong>쉐도우(암살자)</strong> 추가 (빠른 이동속도)</li>
-                    <li>기본 무기 <strong>암살자의 단검(찌르기)</strong> 추가 (초근접 좁은 범위)</li>
-                    <li>단검 레벨업: 홀수 레벨 개수 증가 / 짝수 레벨 공격력 증가</li>
-                  </ul>
-                </div>
-              </div>
-
-              <button id="closePatchNotesBottomBtn" type="button" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition shadow border border-slate-700">
-                패치노트 닫기 ✕
-              </button>
-            </div>
-          </div>
-
-          <div class="w-full max-w-md glass-panel rounded-3xl p-5 sm:p-6 border border-slate-700/80 shadow-2xl flex flex-col gap-4 max-h-[92vh] overflow-y-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
-            <div class="text-center space-y-1">
-              <span class="inline-block text-[11px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
-                Mobile Roguelite Survival
-              </span>
-              <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                나이트 서바이버
-              </h1>
-              <div class="text-xs font-mono font-bold text-amber-400 tracking-widest">
-                1.5.0
-              </div>
-              <p class="text-xs sm:text-sm text-slate-300">
-                사방에서 몰려오는 적들을 물리치고 보석을 모아 레벨업하세요!
-              </p>
-            </div>
-
-            <!-- Character Selection -->
-            <div class="space-y-2">
-              <label class="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                영웅 클래스 선택
-              </label>
-              <div id="charList" class="grid grid-cols-1 gap-2.5">
-                <button type="button" data-char="knight" class="char-btn text-left p-3 rounded-2xl border-2 border-amber-400 bg-slate-800/90 flex items-center gap-3 transition">
-                  <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-2xl shrink-0">
-                    ⚔️
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm sm:text-base text-white">아서 (성기사)</span>
-                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold">밸런스형</span>
-                    </div>
-                    <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 마법 탄환 + 회전 성검 Lv.1 | 체력 120</p>
-                  </div>
-                </button>
-
-                <button type="button" data-char="mage" class="char-btn text-left p-3 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:bg-slate-800/70 flex items-center gap-3 transition">
-                  <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-2xl shrink-0">
-                    🔮
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm sm:text-base text-white">루나 (아크메이지)</span>
-                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold">원거리 특화</span>
-                    </div>
-                    <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 마법 탄환 Lv.2 + 자석 범위 +35% | 체력 95</p>
-                  </div>
-                </button>
-
-                <button type="button" data-char="invoker" class="char-btn text-left p-3 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:bg-slate-800/70 flex items-center gap-3 transition">
-                  <div class="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-2xl shrink-0">
-                    ⚡
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm sm:text-base text-white">카이 (번개술사)</span>
-                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-semibold">범위·기동형</span>
-                    </div>
-                    <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 마법 탄환 + 번개 낙뢰 Lv.1 | 이동속도 +15%</p>
-                  </div>
-                </button>
-
-                <button type="button" data-char="assassin" class="char-btn text-left p-3 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:bg-slate-800/70 flex items-center gap-3 transition">
-                  <div class="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-2xl shrink-0">
-                    🥷
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm sm:text-base text-white">쉐도우 (암살자)</span>
-                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-semibold">초고속 근접형</span>
-                    </div>
-                    <p class="text-xs text-slate-300 mt-0.5 truncate">기본 무기: 단검 찌르기 Lv.1 (초근접) | 이동속도 매우 빠름</p>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            <!-- How to Play Summary -->
-            <div class="rounded-2xl bg-slate-900/80 border border-slate-800 p-3 text-xs text-slate-300 space-y-1">
-              <div class="font-bold text-slate-200">💡 게임 특징 & 조작법</div>
-              <div>• <strong class="text-amber-300">자동 공격:</strong> 이동만 하면 사거리 내 적을 자동으로 공격합니다.</div>
-              <div>• <strong class="text-cyan-300">3택 1 성장:</strong> 경험치 보석을 모아 레벨업할 때마다 3가지 능력 중 하나를 선택해 진화합니다.</div>
-              <div>• <strong class="text-emerald-300">초월 진화:</strong> 10레벨 무기 2종 조합 시 최강의 초월 무기 완성!</div>
-            </div>
-
-            <button id="startGameBtn" type="button" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.99] text-slate-950 font-black text-base shadow-lg shadow-amber-500/25 transition">
-              전투 시작하기 🚀
-            </button>
-          </div>
-        </div>
-
-        <!-- Level Up (Choose 1 of 3) Modal -->
-        <div id="levelUpModal" class="absolute inset-0 z-30 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-          <div class="w-full max-w-md glass-panel rounded-3xl p-5 border border-amber-400/40 shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto">
-            <div class="text-center space-y-1">
-              <span class="inline-block levelup-badge bg-amber-400 text-slate-950 font-black text-xs px-3 py-0.5 rounded-full uppercase tracking-wider">
-                LEVEL UP!
-              </span>
-              <h2 id="levelUpTitle" class="text-xl sm:text-2xl font-black text-white">
-                레벨 2 달성! 능력을 선택하세요
-              </h2>
-              <p class="text-xs text-slate-300">
-                세 가지 축복 중 하나를 골라 영웅을 강화하세요 (터치하여 즉시 적용)
-              </p>
-            </div>
-            <div id="upgradeChoicesContainer" class="flex flex-col gap-2.5"></div>
-          </div>
-        </div>
-
-        <!-- Pause Modal (Comprehensive Progress & Ability Dashboard) -->
-        <div id="pauseModal" class="absolute inset-0 z-30 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md">
-          <div class="w-full max-w-lg glass-panel rounded-3xl p-5 sm:p-6 border border-slate-700 shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
-              <div class="flex items-center gap-2">
-                <span class="text-2xl">⏸️</span>
-                <div>
-                  <h2 class="text-lg sm:text-xl font-black text-white">전투 일시정지</h2>
-                  <p class="text-[11px] text-slate-400">현재 전투 진행도 및 획득한 능력 현황</p>
-                </div>
-              </div>
-              <button id="closePauseTopBtn" type="button" class="glass-panel hover:bg-slate-800 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 transition">
-                닫기 ✕
-              </button>
-            </div>
-
-            <div id="pauseStatsBox" class="space-y-3.5"></div>
-
-            <div class="flex gap-2 pt-2 border-t border-slate-800">
-              <button id="resumeGameBtn" type="button" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm shadow-lg shadow-amber-500/20 transition">
-                계속하기
-              </button>
-              <button id="restartFromPauseBtn" type="button" class="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition">
-                처음부터 다시 시작
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Game Over Modal -->
-        <div id="gameOverModal" class="absolute inset-0 z-30 hidden items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
-          <div class="w-full max-w-md glass-panel rounded-3xl p-6 border border-rose-500/40 shadow-2xl flex flex-col gap-4 text-center">
-            <div class="space-y-1">
-              <span id="gameOverBadge" class="inline-block text-xs font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                GAME OVER
-              </span>
-              <h2 id="gameOverHeading" class="text-2xl sm:text-3xl font-black text-white">
-                전투 종료!
-              </h2>
-              <p id="gameOverSubtext" class="text-xs sm:text-sm text-slate-300">
-                몰려오는 어둠의 군단에게 쓰러졌습니다.
-              </p>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2 bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800">
-              <div>
-                <div class="text-[11px] text-slate-400">생존 시간</div>
-                <div id="finalTimeStat" class="text-base sm:text-lg font-black text-amber-400 mt-0.5">00:00</div>
-              </div>
-              <div>
-                <div class="text-[11px] text-slate-400">달성 레벨</div>
-                <div id="finalLevelStat" class="text-base sm:text-lg font-black text-cyan-400 mt-0.5">LV. 1</div>
-              </div>
-              <div>
-                <div class="text-[11px] text-slate-400">처치한 적</div>
-                <div id="finalKillStat" class="text-base sm:text-lg font-black text-rose-400 mt-0.5">0</div>
-              </div>
-            </div>
-
-            <div class="text-left space-y-1.5">
-              <div class="text-xs font-bold text-slate-400">획득한 무기 & 능력</div>
-              <div id="finalBuildList" class="flex flex-wrap gap-1.5 bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80 min-h-[44px]"></div>
-            </div>
-
-            <button id="retryGameBtn" type="button" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.99] text-slate-950 font-black text-base shadow-lg shadow-amber-500/25 transition">
-              다시 도전하기 🔄
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 2: Weapon & Evolution Matrix (초월 진화 조합표) -->
-    <section id="section-evolution" class="space-y-6 pt-6 border-t border-slate-800/80">
-      <div class="space-y-1">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold">
-          <span>⚡</span><span>초월 진화 시스템</span>
-        </div>
-        <h2 class="text-2xl sm:text-3xl font-black text-white">무기 & 초월 진화 조합 공식</h2>
-        <p class="text-xs sm:text-sm text-slate-400">
-          연관된 두 무기를 모두 <strong>10레벨</strong>까지 육성하면 레벨업 시 전설적인 <strong>초월 진화 무기</strong>를 해금할 수 있습니다.
-        </p>
-      </div>
-
-      <!-- 3 Ultimate Evolution Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Evo 1 -->
-        <div class="glass-card rounded-2xl p-5 border-2 border-amber-400/40 relative overflow-hidden group hover:border-amber-400 transition shadow-xl">
-          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 select-none">⚡🔥</div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-2xl">⚡🔥</span>
-            <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[11px] font-black">초월 진화 1</span>
-          </div>
-          <h3 class="text-lg font-black text-amber-300 mb-1">뇌화겁화 (화염 낙뢰)</h3>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            벼락이 내리꽂힌 자리에 지옥의 <strong>지속 불장판</strong>이 생성되어 지나는 모든 적들을 지속 화염으로 불태우고 넉백시킵니다.
-          </p>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs font-semibold space-y-1">
-            <div class="text-[11px] text-slate-400 font-bold mb-1">필요 조합 재료:</div>
-            <div class="flex items-center justify-between text-slate-200">
-              <span>⚡ 천벌의 낙뢰</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
-            </div>
-            <div class="flex items-center justify-between text-slate-200">
-              <span>🔥 화염 신성 파동</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Evo 2 -->
-        <div class="glass-card rounded-2xl p-5 border-2 border-amber-400/40 relative overflow-hidden group hover:border-amber-400 transition shadow-xl">
-          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 select-none">🗡️🛡️</div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-2xl">🗡️🛡️</span>
-            <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[11px] font-black">초월 진화 2</span>
-          </div>
-          <h3 class="text-lg font-black text-amber-300 mb-1">성스러운 심판의 폭풍</h3>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            황금 성검 5개가 거대한 궤도로 회전하며, 칼날이 적을 벨 때마다 폭발적인 <strong>신성 심판 충격파</strong>가 연쇄 발동합니다.
-          </p>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs font-semibold space-y-1">
-            <div class="text-[11px] text-slate-400 font-bold mb-1">필요 조합 재료:</div>
-            <div class="flex items-center justify-between text-slate-200">
-              <span>🗡️ 회전 성검</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
-            </div>
-            <div class="flex items-center justify-between text-slate-200">
-              <span>🛡️ 신성한 결계</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Evo 3 -->
-        <div class="glass-card rounded-2xl p-5 border-2 border-amber-400/40 relative overflow-hidden group hover:border-amber-400 transition shadow-xl">
-          <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 select-none">🔪🔹</div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-2xl">🔪🔹</span>
-            <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[11px] font-black">초월 진화 3</span>
-          </div>
-          <h3 class="text-lg font-black text-amber-300 mb-1">환영 비검술</h3>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            원거리 유도 탄환과 초근접 단검 찌르기가 융합되어, 사방으로 초고속 <strong>환영 비검</strong>이 난무하며 관통 폭발 검기를 뿜습니다.
-          </p>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs font-semibold space-y-1">
-            <div class="text-[11px] text-slate-400 font-bold mb-1">필요 조합 재료:</div>
-            <div class="flex items-center justify-between text-slate-200">
-              <span>🔹 마법 탄환</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
-            </div>
-            <div class="flex items-center justify-between text-slate-200">
-              <span>🔪 암살자의 단검</span><span class="text-amber-400 font-mono font-bold">Lv.10</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Base Weapon & Passive Catalog Grid -->
-      <div class="glass-card rounded-2xl p-5 border border-slate-800">
-        <h4 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-1.5">
-          <span>⚔️</span><span>기본 무기 및 패시브 도감</span>
-        </h4>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
-            <div class="font-bold text-cyan-300 flex items-center justify-between">
-              <span>🔹 마법 탄환 (무기)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.10</span>
-            </div>
-            <p class="text-slate-400 text-[11px]">가장 가까운 적에게 유도 탄환 발사. 레벨업 시 탄환 수 및 관통/피해 증가.</p>
-          </div>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
-            <div class="font-bold text-amber-300 flex items-center justify-between">
-              <span>🗡️ 회전 성검 (무기)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.10</span>
-            </div>
-            <p class="text-slate-400 text-[11px]">수축·팽창하며 회전. 홀수 레벨 검 개수 증가, 짝수 레벨 회전속도/피해 증가.</p>
-          </div>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
-            <div class="font-bold text-purple-300 flex items-center justify-between">
-              <span>⚡ 천벌의 낙뢰 (무기)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.10</span>
-            </div>
-            <p class="text-slate-400 text-[11px]">무작위 주변 적에게 범위 번개 강타. 낙뢰 횟수 및 폭발 반경 증가.</p>
-          </div>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
-            <div class="font-bold text-rose-300 flex items-center justify-between">
-              <span>🔪 암살자의 단검 (무기)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.10</span>
-            </div>
-            <p class="text-slate-400 text-[11px]">초근접 좁은 범위 찌르기. 홀수 레벨 개수 증가, 짝수 레벨 공격력 대폭 증가.</p>
-          </div>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
-            <div class="font-bold text-emerald-300 flex items-center justify-between">
-              <span>📖 지혜의 고서 (패시브)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.5</span>
-            </div>
-            <p class="text-slate-400 text-[11px]">경험치 획득량 레벨당 +35% 대폭 증가 (최대 +175%). 빠른 성장의 필수 패시브.</p>
-          </div>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
-            <div class="font-bold text-blue-300 flex items-center justify-between">
-              <span>🧲 고대 자석석 (패시브)</span><span class="text-[11px] font-mono text-slate-400">Max Lv.5</span>
-            </div>
-            <p class="text-slate-400 text-[11px]">보석을 끌어당기는 자석 흡수 반경 +35%씩 확장. 안전한 보석 파밍 보장.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 3: Heroes & Bestiary (영웅 & 몬스터 도감) -->
-    <section id="section-heroes" class="space-y-6 pt-6 border-t border-slate-800/80">
-      <div class="space-y-1">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
-          <span>🦹</span><span>캐릭터 & 몬스터 도감</span>
-        </div>
-        <h2 class="text-2xl sm:text-3xl font-black text-white">4인의 영웅 & 전장 몬스터</h2>
-      </div>
-
-      <!-- 4 Heroes Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="glass-card rounded-2xl p-4 border border-amber-500/30 space-y-2">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-2xl">⚔️</div>
-            <div>
-              <div class="font-black text-sm text-white">아서 (성기사)</div>
-              <div class="text-[11px] text-amber-300 font-semibold">밸런스형 탱커</div>
-            </div>
-          </div>
-          <div class="text-xs text-slate-300 space-y-1 pt-1 border-t border-slate-800">
-            <div>체력: <strong class="text-emerald-400 font-mono">120</strong> | 이동속도: <strong class="text-slate-200 font-mono">175</strong></div>
-            <div>기본 무기: <strong>마법 탄환 + 회전 성검 Lv.1</strong></div>
-          </div>
-        </div>
-
-        <div class="glass-card rounded-2xl p-4 border border-cyan-500/30 space-y-2">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-2xl">🔮</div>
-            <div>
-              <div class="font-black text-sm text-white">루나 (아크메이지)</div>
-              <div class="text-[11px] text-cyan-300 font-semibold">원거리 파밍 특화</div>
-            </div>
-          </div>
-          <div class="text-xs text-slate-300 space-y-1 pt-1 border-t border-slate-800">
-            <div>체력: <strong class="text-rose-400 font-mono">95</strong> | 자석 반경: <strong class="text-cyan-300 font-mono">+35%</strong></div>
-            <div>기본 무기: <strong>마법 탄환 Lv.2 + 자석석 Lv.1</strong></div>
-          </div>
-        </div>
-
-        <div class="glass-card rounded-2xl p-4 border border-purple-500/30 space-y-2">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-2xl">⚡</div>
-            <div>
-              <div class="font-black text-sm text-white">카이 (번개술사)</div>
-              <div class="text-[11px] text-purple-300 font-semibold">범위 타격 & 기동형</div>
-            </div>
-          </div>
-          <div class="text-xs text-slate-300 space-y-1 pt-1 border-t border-slate-800">
-            <div>체력: <strong class="text-slate-200 font-mono">105</strong> | 이동속도: <strong class="text-purple-300 font-mono">198 (+15%)</strong></div>
-            <div>기본 무기: <strong>마법 탄환 + 천벌의 낙뢰 Lv.1</strong></div>
-          </div>
-        </div>
-
-        <div class="glass-card rounded-2xl p-4 border border-rose-500/30 space-y-2">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-2xl">🥷</div>
-            <div>
-              <div class="font-black text-sm text-white">쉐도우 (암살자)</div>
-              <div class="text-[11px] text-rose-300 font-semibold">초고속 근접 딜러</div>
-            </div>
-          </div>
-          <div class="text-xs text-slate-300 space-y-1 pt-1 border-t border-slate-800">
-            <div>체력: <strong class="text-rose-400 font-mono">95</strong> | 이동속도: <strong class="text-rose-300 font-mono">235 (초고속)</strong></div>
-            <div>기본 무기: <strong>암살자의 단검 찌르기 Lv.1</strong></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 4: Controls & Guide (조작 가이드) -->
-    <section id="section-guide" class="space-y-6 pt-6 border-t border-slate-800/80">
-      <div class="space-y-1">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-bold">
-          <span>📖</span><span>플레이 가이드</span>
-        </div>
-        <h2 class="text-2xl sm:text-3xl font-black text-white">조작 방법 & 핵심 생존 팁</h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
-          <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
-            <span>📱</span><span>모바일 스마트폰 조작법</span>
-          </h3>
-          <p class="text-xs text-slate-300 leading-relaxed">
-            화면의 어느 곳이든 <strong>터치 후 원하는 방향으로 드래그</strong>하면 가상 조이스틱이 즉시 나타나 영웅을 자유자재로 조종할 수 있습니다. 손을 떼면 즉시 제자리에 멈춥니다.
-          </p>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1">
-            <div>• 무기는 사거리 내 적을 <strong>100% 자동 조준 사격</strong>하므로 회피 기동에만 집중하세요.</div>
-            <div>• 레벨업 창이나 일시정지 창은 세로 스크롤을 지원하므로 편하게 스와이프할 수 있습니다.</div>
-          </div>
-        </div>
-
-        <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
-          <h3 class="text-sm font-bold text-cyan-300 flex items-center gap-2">
-            <span>💻</span><span>PC 키보드 조작법</span>
-          </h3>
-          <p class="text-xs text-slate-300 leading-relaxed">
-            <kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-amber-400 font-bold">W</kbd>
-            <kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-amber-400 font-bold">A</kbd>
-            <kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-amber-400 font-bold">S</kbd>
-            <kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-amber-400 font-bold">D</kbd> 또는 방향키로 이동할 수 있으며, 마우스로 화면을 드래그해도 이동 조작이 가능합니다.
-          </p>
-          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1">
-            <div>• <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-200">ESC</kbd> 키를 누르면 즉시 일시정지하고 전투 능력 현황 대시보드를 열 수 있습니다.</div>
-            <div>• 나무와 바위 장애물 뒤로 숨어 적들의 탄막과 돌진을 막아내는 카이팅 플레이를 추천합니다.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 5: Live Patch Notes (실시간 패치노트) -->
-    <section id="section-patch" class="space-y-6 pt-6 border-t border-slate-800/80">
-      <div class="flex items-center justify-between">
-        <div class="space-y-1">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold">
-            <span>📋</span><span>업데이트 기록</span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl font-black text-white">공식 패치노트 이력</h2>
-        </div>
-        <span class="px-3 py-1 rounded-xl bg-slate-800 border border-slate-700 text-xs font-mono text-amber-400 font-bold">
-          Current: v1.5.0
-        </span>
-      </div>
-
-      <div class="space-y-3">
-        <!-- v1.5.0 -->
-        <div class="glass-card rounded-2xl p-4 border border-amber-500/40 space-y-2">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-sm font-black text-amber-300 font-mono">v1.5.0</span>
-              <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">LATEST</span>
-            </div>
-            <span class="text-[11px] text-slate-400">2026.11</span>
-          </div>
-          <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
-            <li><strong>레벨업 편의성 대폭 개선:</strong> 요구 경험치 추가 완화, 지혜의 고서 강화(+35%), 전체 자석 룬(🧲) 드랍 및 시간 비례 보석 가치 상승</li>
-            <li><strong>시간대별 다채로운 적 등장:</strong> 고블린, 해골 전사, 골렘, 늑대인간, 사령술사, 망령 등 7종의 몬스터 및 주기별 엘리트 보스</li>
-            <li><strong>일시정지 종합 대시보드:</strong> 보유 무기/패시브 레벨, 초월 진화 진행도, 조합 힌트 및 실시간 전투 스탯 표시</li>
-            <li><strong>버그 수정:</strong> 뇌화겁화 습득 시 렌더링 멈춤 현상 및 패치노트 모달 닫기 버그 완벽 패치</li>
-          </ul>
-        </div>
-
-        <!-- v1.4.0 -->
-        <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-black text-slate-200 font-mono">v1.4.0</span>
-            <span class="text-[11px] text-slate-400">2026.11</span>
-          </div>
-          <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
-            <li><strong>초월 진화 무기 시스템:</strong> 10레벨 무기 2종 조합 시 전설 초월 무기 진화 (뇌화겁화, 성스러운 심판의 폭풍, 환영 비검술)</li>
-            <li><strong>광각 전장 시야:</strong> 줌아웃 카메라(0.76x) 적용으로 사방의 적과 지형을 넓게 확인 가능</li>
-          </ul>
-        </div>
-
-        <!-- v1.3.0 -->
-        <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-black text-slate-200 font-mono">v1.3.0</span>
-            <span class="text-[11px] text-slate-400">2026.11</span>
-          </div>
-          <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
-            <li><strong>신규 클래스 암살자 쉐도우 추가:</strong> 가장 빠른 이동속도 및 초근접 단검 찌르기 기본 공격</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 6: CI/CD & Auto Deployment Guide (자동 배포 가이드) -->
-    <section id="section-cicd" class="space-y-6 pt-6 border-t border-slate-800/80">
-      <div class="space-y-1">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold">
-          <span>🚀</span><span>CI/CD 자동 배포</span>
-        </div>
-        <h2 class="text-2xl sm:text-3xl font-black text-white">수정·패치 시 자동 반영 시스템 안내</h2>
-        <p class="text-xs sm:text-sm text-slate-400">
-          게임이 수정되거나 밸런스 패치될 때마다 수동 업로드 없이 웹사이트에 자동으로 빌드 및 배포되는 원리와 방법입니다.
-        </p>
-      </div>
-
-      <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-            <div class="font-bold text-amber-300 text-sm flex items-center gap-1.5">
-              <span>1️⃣</span><span>단일 번들 아키텍처</span>
-            </div>
-            <p class="text-slate-300 leading-relaxed">
-              게임 엔진, 캔버스 렌더러, 포털 가이드, 패치노트가 하나의 통합 번들로 구동되어, 게임 로직이나 데이터가 수정되면 포털 전체가 즉시 자동 동기화됩니다.
-            </p>
-          </div>
-
-          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-            <div class="font-bold text-cyan-300 text-sm flex items-center gap-1.5">
-              <span>2️⃣</span><span>GitHub Actions CI/CD</span>
-            </div>
-            <p class="text-slate-300 leading-relaxed">
-              제공해 드리는 배포 패키지(`night_survivors_site.zip`)를 GitHub 리포지토리에 푸시하면, `.github/workflows/deploy.yml`이 코드가 바뀔 때마다 30초 내로 GitHub Pages에 자동 배포합니다.
-            </p>
-          </div>
-
-          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-            <div class="font-bold text-emerald-300 text-sm flex items-center gap-1.5">
-              <span>3️⃣</span><span>Vercel / Netlify 1-Click 연동</span>
-            </div>
-            <p class="text-slate-300 leading-relaxed">
-              GitHub 저장소를 Vercel이나 Netlify에 연결해두면 `git push`가 일어날 때마다 자동으로 무중단 배포(Continuous Deployment)가 완료되어 실시간 웹사이트에 즉시 반영됩니다.
-            </p>
-          </div>
-        </div>
-
-        <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-2">
-          <div class="font-bold text-xs text-slate-200">📦 GitHub Pages 무료 호스팅 연동 3단계:</div>
-          <ol class="text-xs text-slate-400 space-y-1 list-decimal list-inside font-mono">
-            <li>GitHub에 새 리포지토리 생성 (예: <span class="text-amber-300">night-survivors</span>)</li>
-            <li>다운로드한 파일들을 리포지토리의 <span class="text-cyan-300">main</span> 브랜치로 커밋 & 푸시 (<span class="text-emerald-400">git push origin main</span>)</li>
-            <li>리포지토리 설정 <span class="text-slate-200">[Settings] → [Pages]</span>에서 Source를 <span class="text-amber-300">GitHub Actions</span>로 선택하면 끝!</li>
-          </ol>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Global Footer -->
-  <footer class="mt-12 border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500 space-y-2">
-    <div class="flex items-center justify-center gap-2 font-bold text-slate-400">
-      <span>나이트 서바이버 (Night Survivors)</span>
-      <span>•</span>
-      <span class="text-emerald-400">Official Web Portal</span>
-      <span>•</span>
-      <span class="font-mono">v1.5.0</span>
-    </div>
-    <p>HTML5 Canvas • Web Audio API • Tailwind CSS • Standalone CI/CD Ready</p>
-  </footer>
+  </div>
 
   <!-- Complete Inlined Game Engine Script -->
   <script>
@@ -832,10 +560,8 @@
 
       function resizeCanvas() {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const container = document.getElementById('gameViewport') || document.body;
-        const rect = container.getBoundingClientRect();
-        viewWidth = Math.max(320, Math.floor(rect.width));
-        viewHeight = Math.max(480, Math.floor(rect.height));
+        viewWidth = window.innerWidth;
+        viewHeight = window.innerHeight;
         canvas.width = Math.floor(viewWidth * dpr);
         canvas.height = Math.floor(viewHeight * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1162,6 +888,7 @@
       let spawnAccumulator = 0;
       let nextBossTime = 45;
       let bossCountSpawned = 0;
+      let finalBossDefeatedCount = 0;
 
       // Weapon cooldown timers
       let timers = {
@@ -1344,6 +1071,7 @@
         spawnAccumulator = 0;
         nextBossTime = 45;
         bossCountSpawned = 0;
+        finalBossDefeatedCount = 0;
 
         timers.daggerThrust = 0;
         timers.magicBolt = 0;
@@ -1444,47 +1172,67 @@
 
       // --- Enemy Spawning ---
       function spawnEnemy(isBoss = false) {
-        const angle = Math.random() * Math.PI * 2;
         const zoom = viewWidth < 640 ? 0.82 : 0.76;
         const margin = (Math.max(viewWidth, viewHeight) / zoom) * 0.54 + 60;
-        const ex = player.x + Math.cos(angle) * margin;
-        const ey = player.y + Math.sin(angle) * margin;
 
-        const difficulty = 1 + elapsedTime / 38;
-        const timeExpScale = Math.floor(elapsedTime / 35);
+        // 시간이 지날수록 체력과 공격력 점진적 강화 (지수/파워 스케일링)
+        const difficulty = 1 + (elapsedTime / 28) + Math.pow(elapsedTime / 58, 1.58);
+        const timeExpScale = Math.floor(elapsedTime / 28);
 
         if (isBoss) {
-          bossCountSpawned++;
           const bossTypes = [
-            { name: '숲의 침입자 거대 구울', color: '#f43f5e', outline: '#fecdd3', hp: 420, speed: 76, dmg: 22, exp: 45, radius: 28 },
-            { name: '심연의 암석 골렘 군주', color: '#8b5cf6', outline: '#fde047', hp: 950, speed: 64, dmg: 30, exp: 75, radius: 32 },
-            { name: '고대 사령 리치 드래곤', color: '#c026d3', outline: '#f0abfc', hp: 1850, speed: 84, dmg: 38, exp: 120, radius: 34 },
-            { name: '황혼의 파멸 학살자', color: '#e11d48', outline: '#fbbf24', hp: 3200, speed: 96, dmg: 48, exp: 180, radius: 36 }
+            { name: '숲의 침입자 거대 구울', color: '#f43f5e', outline: '#fecdd3', hp: 440, speed: 76, dmg: 22, exp: 50, radius: 28 },
+            { name: '심연의 암석 골렘 군주', color: '#8b5cf6', outline: '#fde047', hp: 1000, speed: 64, dmg: 30, exp: 80, radius: 32 },
+            { name: '고대 사령 리치 드래곤', color: '#c026d3', outline: '#f0abfc', hp: 1980, speed: 84, dmg: 38, exp: 130, radius: 34 },
+            { name: '황혼의 파멸 학살자 (마지막 보스)', color: '#e11d48', outline: '#fbbf24', hp: 3600, speed: 96, dmg: 48, exp: 220, radius: 36, isFinal: true }
           ];
-          const bInfo = bossTypes[Math.min(bossCountSpawned - 1, bossTypes.length - 1)];
 
-          enemies.push({
-            x: ex,
-            y: ey,
-            radius: bInfo.radius,
-            hp: Math.round(bInfo.hp * difficulty),
-            maxHp: Math.round(bInfo.hp * difficulty),
-            speed: bInfo.speed,
-            damage: bInfo.dmg,
-            color: bInfo.color,
-            outline: bInfo.outline,
-            name: bInfo.name,
-            expValue: bInfo.exp,
-            isBoss: true,
-            hitFlash: 0
-          });
-          bossBannerText.textContent = `⚠️ [보스 출현] ${bInfo.name}! ⚠️`;
+          const bossIdx = bossCountSpawned % bossTypes.length;
+          bossCountSpawned++;
+          const bInfo = bossTypes[bossIdx];
+          const isFinal = Boolean(bInfo.isFinal);
+
+          // 마지막 보스를 잡을수록 보스가 출현할 때 나오는 마리수를 1마리씩 늘어남!
+          const bossSpawnCount = 1 + finalBossDefeatedCount;
+
+          for (let b = 0; b < bossSpawnCount; b++) {
+            const spreadAngle = (Math.PI * 2 / bossSpawnCount) * b + (Math.random() - 0.5) * 0.35;
+            const bx = player.x + Math.cos(spreadAngle) * margin;
+            const by = player.y + Math.sin(spreadAngle) * margin;
+
+            enemies.push({
+              x: bx,
+              y: by,
+              radius: bInfo.radius,
+              hp: Math.round(bInfo.hp * difficulty),
+              maxHp: Math.round(bInfo.hp * difficulty),
+              speed: bInfo.speed,
+              damage: bInfo.dmg,
+              color: bInfo.color,
+              outline: bInfo.outline,
+              name: bInfo.name,
+              expValue: bInfo.exp,
+              isBoss: true,
+              isFinalBoss: isFinal,
+              hitFlash: 0
+            });
+          }
+
+          if (bossSpawnCount > 1) {
+            bossBannerText.textContent = `⚠️ [보스 출현] ${bInfo.name} x${bossSpawnCount}마리 동시 습격! ⚠️`;
+          } else {
+            bossBannerText.textContent = `⚠️ [보스 출현] ${bInfo.name}! ⚠️`;
+          }
           bossBanner.classList.remove('hidden');
           setTimeout(() => {
             bossBanner.classList.add('hidden');
           }, 4500);
           return;
         }
+
+        const angle = Math.random() * Math.PI * 2;
+        const ex = player.x + Math.cos(angle) * margin;
+        const ey = player.y + Math.sin(angle) * margin;
 
         // 7 Diverse Regular Enemy Archetypes unlocked by time gates
         const roll = Math.random();
@@ -1656,6 +1404,14 @@
           killCount++;
           addBurstParticles(enemy.x, enemy.y, enemy.color, enemy.isBoss ? 16 : 6);
 
+          // 마지막 보스 처치 시 다음 출현 마리수 +1 증가 누적
+          if (enemy.isFinalBoss) {
+            finalBossDefeatedCount++;
+            addFloatingText(player.x, player.y - 35, `👑 마지막 보스 격파 (${finalBossDefeatedCount}회)! 다음 출현 마리수 +1 증가 (총 ${1 + finalBossDefeatedCount}마리)!`, '#fbbf24', 18);
+            addBurstParticles(enemy.x, enemy.y, '#f59e0b', 36);
+            playSound('levelup');
+          }
+
           // Drop EXP gem, heal potion, or vacuum rune
           const isBoss = enemy.isBoss;
           const dropHeal = isBoss || (Math.random() < 0.035 && player.hp < player.maxHp);
@@ -1775,7 +1531,6 @@
 
         levelUpModal.classList.remove('hidden');
         levelUpModal.classList.add('flex');
-        levelUpModal.style.display = 'flex';
       }
 
       function applyUpgradeChoice(skillId) {
@@ -1801,7 +1556,6 @@
         addFloatingText(player.x, player.y - 24, '능력 강화 완료!', '#fbbf24', 15);
         levelUpModal.classList.add('hidden');
         levelUpModal.classList.remove('flex');
-        levelUpModal.style.display = 'none';
 
         renderSkillBadges();
         updateHud();
@@ -1971,7 +1725,8 @@
             const effectiveLv = hasHellfire ? 12 : lightLv;
             timers.lightning = Math.max(hasHellfire ? 0.45 : 0.68, (2.3 - effectiveLv * 0.13) * cdMult);
             const strikeCount = hasHellfire ? 5 : Math.min(5, 1 + Math.floor(effectiveLv / 2));
-            const aoeRadius = (56 + effectiveLv * 7) * (hasHellfire ? 1.35 : 1);
+            // 뇌화겁화 번개 충격파 범위 집중화 (56px) 및 불장판 범위(80px)가 번개보다 넓게 전개되도록 조정
+            const aoeRadius = hasHellfire ? 56 : (56 + effectiveLv * 7);
             const strikeDmg = (24 + effectiveLv * 11) * (hasHellfire ? 1.6 : 1);
 
             const searchRange = hasHellfire ? 580 : 440;
@@ -1991,17 +1746,17 @@
                   isHellfire: hasHellfire
                 });
 
-                // Spawn Hellfire Ground Zone (불장판) upon strike!
-                if (hasHellfire) {
+                // Spawn Hellfire Ground Zone (불장판: 반경 80px로 번개 충격파 56px보다 넓게 타오름)
+                if (hasHellfire && fireZones.length < 4 && (s === 0 || s === 2)) {
                   fireZones.push({
                     x: tx,
                     y: ty,
-                    radius: aoeRadius * 0.85,
-                    duration: 3.8,
-                    tickTimer: 0.12,
-                    dps: 36 + effectiveLv * 5
+                    radius: 80,
+                    duration: 2.2,
+                    tickTimer: 0.18,
+                    dps: 16 + effectiveLv * 2.2
                   });
-                  addBurstParticles(tx, ty, '#f97316', 12);
+                  addBurstParticles(tx, ty, '#f97316', 10);
                 }
 
                 for (let j = enemies.length - 1; j >= 0; j--) {
@@ -2070,10 +1825,10 @@
         // 1. Player Movement (Keyboard or Virtual Joystick)
         let moveX = 0;
         let moveY = 0;
-        if (keys['ArrowUp'] || keys['KeyW'] || keys['w'] || keys['W'] || keys['ㅈ']) moveY -= 1;
-        if (keys['ArrowDown'] || keys['KeyS'] || keys['s'] || keys['S'] || keys['ㄴ']) moveY += 1;
-        if (keys['ArrowLeft'] || keys['KeyA'] || keys['a'] || keys['A'] || keys['ㅁ']) moveX -= 1;
-        if (keys['ArrowRight'] || keys['KeyD'] || keys['d'] || keys['D'] || keys['ㅇ']) moveX += 1;
+        if (keys['ArrowUp'] || keys['KeyW']) moveY -= 1;
+        if (keys['ArrowDown'] || keys['KeyS']) moveY += 1;
+        if (keys['ArrowLeft'] || keys['KeyA']) moveX -= 1;
+        if (keys['ArrowRight'] || keys['KeyD']) moveX += 1;
 
         if (joystick.active && (Math.abs(joystick.dx) > 0.05 || Math.abs(joystick.dy) > 0.05)) {
           moveX = joystick.dx;
@@ -2101,12 +1856,13 @@
           if (obstacles[i].hitFlash > 0) obstacles[i].hitFlash -= dt;
         }
 
-        // 2. Spawn Enemies from All Sides
-        const spawnRate = Math.min(8.5, 1.35 + elapsedTime * 0.045); // enemies per second
+        // 2. Spawn Enemies from All Sides (시간이 지날수록 스폰율 및 적 수 점진적 대폭 증가)
+        const spawnRate = Math.min(26, 1.8 + Math.pow(elapsedTime / 18, 1.45));
+        const maxEnemies = Math.min(320, 130 + Math.floor(elapsedTime * 0.85));
         spawnAccumulator += spawnRate * dt;
         while (spawnAccumulator >= 1) {
           spawnAccumulator -= 1;
-          if (enemies.length < 160) {
+          if (enemies.length < maxEnemies) {
             spawnEnemy(false);
           }
         }
@@ -2255,12 +2011,12 @@
           fz.tickTimer -= dt;
 
           if (fz.tickTimer <= 0) {
-            fz.tickTimer = 0.12;
-            const tickDmg = fz.dps * 0.12;
+            fz.tickTimer = 0.18;
+            const tickDmg = fz.dps * 0.18;
             for (let j = enemies.length - 1; j >= 0; j--) {
               const e = enemies[j];
               if (Math.hypot(e.x - fz.x, e.y - fz.y) <= fz.radius + e.radius) {
-                if (damageEnemy(e, tickDmg, 3)) {
+                if (damageEnemy(e, tickDmg, 1.8)) {
                   enemies.splice(j, 1);
                 }
               }
@@ -2866,43 +2622,24 @@
         animFrameId = requestAnimationFrame(gameLoop);
       }
 
-      // --- Pointer & Touch Virtual Joystick Controls ---
+      // --- Pointer / Touch Virtual Joystick Controls ---
       function handlePointerDown(e) {
         if (gameState !== 'PLAYING') return;
-        if (e.cancelable && e.preventDefault) e.preventDefault();
         ensureAudio();
-        const rect = canvas.getBoundingClientRect();
-        const clientX = (e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0)) - rect.left;
-        const clientY = (e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0)) - rect.top;
-        
-        try {
-          if (canvas.setPointerCapture && e.pointerId !== undefined) {
-            canvas.setPointerCapture(e.pointerId);
-          }
-        } catch (err) {}
-
         joystick.active = true;
-        joystick.pointerId = e.pointerId !== undefined ? e.pointerId : 1;
-        joystick.originX = clientX;
-        joystick.originY = clientY;
-        joystick.currX = clientX;
-        joystick.currY = clientY;
+        joystick.pointerId = e.pointerId;
+        joystick.originX = e.clientX;
+        joystick.originY = e.clientY;
+        joystick.currX = e.clientX;
+        joystick.currY = e.clientY;
         joystick.dx = 0;
         joystick.dy = 0;
       }
 
       function handlePointerMove(e) {
-        if (!joystick.active) return;
-        const pId = e.pointerId !== undefined ? e.pointerId : 1;
-        if (pId !== joystick.pointerId && e.pointerId !== undefined) return;
-        if (e.cancelable && e.preventDefault) e.preventDefault();
-
-        const rect = canvas.getBoundingClientRect();
-        const clientX = (e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0)) - rect.left;
-        const clientY = (e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0)) - rect.top;
-
-        const rawDx = clientX - joystick.originX;
-        const rawDy = clientY - joystick.originY;
+        if (!joystick.active || e.pointerId !== joystick.pointerId) return;
+        const rawDx = e.clientX - joystick.originX;
+        const rawDy = e.clientY - joystick.originY;
         const dist = Math.hypot(rawDx, rawDy);
 
         if (dist === 0) {
@@ -2922,13 +2659,7 @@
       }
 
       function handlePointerUp(e) {
-        const pId = e && e.pointerId !== undefined ? e.pointerId : 1;
-        if (!e || pId === joystick.pointerId || !joystick.pointerId) {
-          try {
-            if (canvas.releasePointerCapture && e && e.pointerId !== undefined) {
-              canvas.releasePointerCapture(e.pointerId);
-            }
-          } catch (err) {}
+        if (e.pointerId === joystick.pointerId) {
           joystick.active = false;
           joystick.pointerId = null;
           joystick.dx = 0;
@@ -2941,57 +2672,9 @@
       window.addEventListener('pointerup', handlePointerUp);
       window.addEventListener('pointercancel', handlePointerUp);
 
-      // Complementary native touch listeners (prevent native mobile browser gesture cancellations)
-      canvas.addEventListener('touchstart', (e) => {
-        if (gameState !== 'PLAYING') return;
-        if (e.touches.length > 0) {
-          if (e.cancelable) e.preventDefault();
-          const t = e.touches[0];
-          handlePointerDown({
-            pointerId: t.identifier,
-            clientX: t.clientX,
-            clientY: t.clientY,
-            cancelable: true,
-            preventDefault: () => {}
-          });
-        }
-      }, { passive: false });
-
-      window.addEventListener('touchmove', (e) => {
-        if (!joystick.active) return;
-        for (let i = 0; i < e.touches.length; i++) {
-          const t = e.touches[i];
-          if (t.identifier === joystick.pointerId || joystick.pointerId === 1) {
-            if (e.cancelable) e.preventDefault();
-            handlePointerMove({
-              pointerId: joystick.pointerId,
-              clientX: t.clientX,
-              clientY: t.clientY,
-              cancelable: true,
-              preventDefault: () => {}
-            });
-            break;
-          }
-        }
-      }, { passive: false });
-
-      window.addEventListener('touchend', (e) => {
-        if (joystick.active) {
-          handlePointerUp({ pointerId: joystick.pointerId });
-        }
-      }, { passive: false });
-
-      // Keyboard Controls (supports English WASD, Arrow keys, and Korean IME ㅈㅁㄴㅇ)
-      const gameKeyCodes = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-      const gameKeyNames = ['w', 'W', 's', 'S', 'a', 'A', 'd', 'D', 'ㅈ', 'ㅁ', 'ㄴ', 'ㅇ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-
+      // Keyboard Controls
       window.addEventListener('keydown', (e) => {
-        if (gameState === 'PLAYING' && (gameKeyCodes.includes(e.code) || gameKeyNames.includes(e.key))) {
-          if (e.cancelable) e.preventDefault();
-        }
         keys[e.code] = true;
-        if (e.key) keys[e.key] = true;
-
         if (e.code === 'Escape') {
           if (!patchNotesPanel.classList.contains('hidden')) {
             closePatchNotes();
@@ -3000,10 +2683,8 @@
           }
         }
       });
-
       window.addEventListener('keyup', (e) => {
         keys[e.code] = false;
-        if (e.key) keys[e.key] = false;
       });
 
       // --- UI Button Listeners ---
@@ -3082,8 +2763,6 @@
         closePatchNotes();
         ensureAudio();
         startModal.classList.add('hidden');
-        startModal.classList.remove('flex');
-        startModal.style.display = 'none';
         initGame();
         gameState = 'PLAYING';
         lastTimestamp = performance.now();
@@ -3250,17 +2929,16 @@
                 <div>이속: <strong class="text-slate-200">${Math.round(getMoveSpeed())}</strong></div>
                 <div>자석 반경: <strong class="text-slate-200">${Math.round(getMagnetRadius())}px</strong></div>
                 <div>경험치: <strong class="text-amber-300">+${((player.skills.growth || 0) * 35)}%</strong></div>
+                <div class="col-span-3 text-amber-400 font-bold mt-1">👑 마지막 보스 격파: <strong>${finalBossDefeatedCount}회</strong> (다음 보스 출현: <strong>${1 + finalBossDefeatedCount}마리</strong> 동시 출격)</div>
               </div>
             </div>
           `;
 
           pauseModal.classList.remove('hidden');
           pauseModal.classList.add('flex');
-          pauseModal.style.display = 'flex';
         } else if (gameState === 'PAUSED') {
           pauseModal.classList.add('hidden');
           pauseModal.classList.remove('flex');
-          pauseModal.style.display = 'none';
           gameState = 'PLAYING';
           lastTimestamp = performance.now();
         }
@@ -3291,72 +2969,66 @@
       };
     })();
 
-    // Portal Navigation & Fullscreen Controls
+    // Main Menu Sub-view Navigation & Fullscreen Logic
     (function () {
-      const gameViewport = document.getElementById('gameViewport');
-      const viewWideBtn = document.getElementById('viewWideBtn');
-      const viewMobileBtn = document.getElementById('viewMobileBtn');
-      const viewFullscreenBtn = document.getElementById('viewFullscreenBtn');
-      const quickPlayBtn = document.getElementById('quickPlayBtn');
+      const titleScreenView = document.getElementById('titleScreenView');
+      const gameGuideView = document.getElementById('gameGuideView');
+      const charSelectView = document.getElementById('charSelectView');
+      
+      const toCharSelectBtn = document.getElementById('toCharSelectBtn');
+      const toGuideBtn = document.getElementById('toGuideBtn');
+      const backToTitleFromGuideBtn = document.getElementById('backToTitleFromGuideBtn');
+      const closeGuideBottomBtn = document.getElementById('closeGuideBottomBtn');
+      const backToTitleFromCharBtn = document.getElementById('backToTitleFromCharBtn');
+      const fullscreenToggleBtn = document.getElementById('fullscreenToggleBtn');
+      const fullscreenIcon = document.getElementById('fullscreenIcon');
 
-      // Navigation tab switching
-      const navButtons = document.querySelectorAll('.nav-tab, .nav-tab-mobile');
-      navButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const target = btn.getAttribute('data-nav');
-          const elem = document.getElementById(`section-${target}`);
-          if (elem) {
-            elem.scrollIntoView({ behavior: 'smooth' });
+      function showView(view) {
+        if (titleScreenView) titleScreenView.classList.add('hidden');
+        if (gameGuideView) gameGuideView.classList.add('hidden');
+        if (charSelectView) charSelectView.classList.add('hidden');
+        if (view) view.classList.remove('hidden');
+      }
+
+      // To Character Selection
+      if (toCharSelectBtn) {
+        toCharSelectBtn.addEventListener('click', () => showView(charSelectView));
+      }
+
+      // To Game Guide
+      if (toGuideBtn) {
+        toGuideBtn.addEventListener('click', () => showView(gameGuideView));
+      }
+
+      // Back to Title
+      if (backToTitleFromGuideBtn) {
+        backToTitleFromGuideBtn.addEventListener('click', () => showView(titleScreenView));
+      }
+      if (closeGuideBottomBtn) {
+        closeGuideBottomBtn.addEventListener('click', () => showView(titleScreenView));
+      }
+      if (backToTitleFromCharBtn) {
+        backToTitleFromCharBtn.addEventListener('click', () => showView(titleScreenView));
+      }
+
+      // Fullscreen Toggle
+      if (fullscreenToggleBtn) {
+        fullscreenToggleBtn.addEventListener('click', () => {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+            if (fullscreenIcon) fullscreenIcon.textContent = '✕';
+          } else {
+            document.exitFullscreen().catch(() => {});
+            if (fullscreenIcon) fullscreenIcon.textContent = '⛶';
           }
-          navButtons.forEach(b => {
-            b.classList.remove('bg-emerald-500/20', 'text-emerald-300', 'border-emerald-500/30', 'text-amber-400');
-            b.classList.add('text-slate-300');
-          });
-          btn.classList.add('bg-emerald-500/20', 'text-emerald-300');
-          btn.classList.remove('text-slate-300');
         });
+      }
+
+      document.addEventListener('fullscreenchange', () => {
+        if (fullscreenIcon) {
+          fullscreenIcon.textContent = document.fullscreenElement ? '✕' : '⛶';
+        }
       });
-
-      if (quickPlayBtn) {
-        quickPlayBtn.addEventListener('click', () => {
-          const playSection = document.getElementById('section-play');
-          if (playSection) playSection.scrollIntoView({ behavior: 'smooth' });
-        });
-      }
-
-      // View mode toggles
-      if (viewWideBtn) {
-        viewWideBtn.addEventListener('click', () => {
-          gameViewport.classList.remove('mobile-frame-mode', 'fullscreen-mode');
-          viewWideBtn.classList.replace('bg-slate-800', 'bg-emerald-500/20');
-          viewWideBtn.classList.replace('text-slate-300', 'text-emerald-300');
-          viewMobileBtn.classList.replace('bg-emerald-500/20', 'bg-slate-800');
-          viewMobileBtn.classList.replace('text-emerald-300', 'text-slate-300');
-          window.dispatchEvent(new Event('resize'));
-        });
-      }
-
-      if (viewMobileBtn) {
-        viewMobileBtn.addEventListener('click', () => {
-          gameViewport.classList.remove('fullscreen-mode');
-          gameViewport.classList.add('mobile-frame-mode');
-          viewMobileBtn.classList.replace('bg-slate-800', 'bg-emerald-500/20');
-          viewMobileBtn.classList.replace('text-slate-300', 'text-emerald-300');
-          viewWideBtn.classList.replace('bg-emerald-500/20', 'bg-slate-800');
-          viewWideBtn.classList.replace('text-emerald-300', 'text-slate-300');
-          window.dispatchEvent(new Event('resize'));
-        });
-      }
-
-      if (viewFullscreenBtn) {
-        viewFullscreenBtn.addEventListener('click', () => {
-          const isFs = gameViewport.classList.toggle('fullscreen-mode');
-          viewFullscreenBtn.innerHTML = isFs
-            ? '<span>✕</span><span>창모드 복귀</span>'
-            : '<span>⛶</span><span>전체화면</span>';
-          window.dispatchEvent(new Event('resize'));
-        });
-      }
     })();
   </script>
 </body>
