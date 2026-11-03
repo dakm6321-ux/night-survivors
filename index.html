@@ -154,7 +154,7 @@
   </div>
 
   <!-- Touch Hint Overlay (fades out once player moves) -->
-  <div id="touchHint" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none transition-opacity duration-500 opacity-90">
+  <div id="touchHint" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none transition-all duration-500 opacity-90">
     <div class="glass-panel rounded-full px-4 py-2 text-xs sm:text-sm text-slate-300 flex items-center gap-2 shadow-lg">
       <span class="text-base">👆</span>
       <span>화면을 터치 후 드래그(또는 WASD/방향키)하여 이동하세요</span>
@@ -168,7 +168,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="glass-panel hover:bg-slate-800/90 active:scale-95 px-3 py-1.5 rounded-2xl border border-amber-400/40 shadow-lg flex items-center gap-2 text-xs font-extrabold text-amber-300 transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">v2.1.0</span>
+        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">v2.1.2</span>
       </button>
     </div>
 
@@ -190,7 +190,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-mono font-bold text-amber-400 tracking-widest">
-            2.1.0
+            2.1.2
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -536,12 +536,42 @@
       <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
       <div class="space-y-3.5 pr-1 text-xs">
         
-                <!-- v2.1.0 -->
+                                <!-- v2.1.2 -->
+        <div class="bg-slate-900/90 rounded-2xl p-4 border border-amber-500/50 space-y-2 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v2.1.2</span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[10px] font-bold">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>이동 조작 멈춤 버그 긴급 픽스:</strong> 이동 안내 함수 호출 시 발생하던 자바스크립트 호출 스택 오류(Stack Overflow)를 완벽히 수정하여 캐릭터 이동(WASD/방향키 및 가상 조이스틱)이 즉각 부드럽게 작동하도록 복구</li>
+            <li><strong>조작 안내 문구 소멸 정상화:</strong> 게임 시작 후 키보드 또는 터치 입력 시 안내 문구가 부드럽게 페이드아웃되며 사라짐</li>
+          </ul>
+        </div>
+
+<!-- v2.1.1 -->
+        <div class="bg-slate-900/90 rounded-2xl p-4 border border-amber-500/50 space-y-2 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v2.1.1</span>
+              <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-[10px] font-bold">UPDATE</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>이동 조작 안내 문구 미소멸 버그 완전 해결:</strong> 게임 시작 후 이동 시 '화면을 터치 후 드래그...' 문구가 화면에 계속 남아있던 현상을 수정하여 조작 입력 즉시 부드럽게 페이드아웃 및 완전 제거되도록 개선</li>
+            <li><strong>다중 입력 감지 & 3.5초 자동 숨김:</strong> 화면 터치, 가상 조이스틱 드래그, 키보드(WASD/방향키) 입력 즉시 소멸되며, 미입력 시에도 3.5초 후 방해되지 않도록 자동 소멸 처리</li>
+          </ul>
+        </div>
+
+<!-- v2.1.0 -->
         <div class="bg-slate-900/90 rounded-2xl p-4 border border-amber-500/50 space-y-2 shadow-lg">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-sm font-black text-amber-300 font-mono">v2.1.0</span>
-              <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[10px] font-bold">LATEST</span>
+              <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-[10px] font-bold">UPDATE</span>
             </div>
             <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
           </div>
@@ -564,7 +594,7 @@
           </div>
           <ul class="text-slate-200 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
             <li><strong>전용 패치노트 모달 팝업 신설:</strong> 메인 화면 상단 '패치노트' 버튼 클릭 시 전체 화면 중앙에 역대 모든 버전의 업데이트 상세 내역을 확인할 수 있는 전용 팝업 창 제공</li>
-            <li><strong>초기 출시(v1.0.0)부터 최신(v2.1.0)까지 전체 이력 지원:</strong> 누락 없이 모든 버전의 세부 변경점과 밸런스 패치 내역 수록</li>
+            <li><strong>초기 출시(v1.0.0)부터 최신(v2.1.2)까지 전체 이력 지원:</strong> 누락 없이 모든 버전의 세부 변경점과 밸런스 패치 내역 수록</li>
           </ul>
         </div>
 
@@ -1285,7 +1315,7 @@
         joystick.dx = 0;
         joystick.dy = 0;
 
-        touchHint.classList.remove('opacity-0');
+        showTouchHint();
         bossBanner.classList.add('hidden');
         updateHud();
         renderSkillBadges();
@@ -1333,6 +1363,34 @@
         const currentOrbitDist = minOrbitDist + (maxOrbitDist - minOrbitDist) * pulse;
         const bladeDmg = 12 + bladeLv * 4.5;
         return { bladeCount, rotSpeed, currentOrbitDist, maxOrbitDist, minOrbitDist, bladeDmg };
+      }
+
+      // --- Touch Hint Control Functions (Bugfix: Ensure complete fade & removal) ---
+      function hideTouchHint() {
+        if (!touchHint || touchHint.classList.contains('opacity-0')) return;
+        touchHint.classList.remove('opacity-90');
+        touchHint.classList.add('opacity-0');
+        touchHint.style.opacity = '0';
+        clearTimeout(window._touchHintHideTimer);
+        window._touchHintHideTimer = setTimeout(() => {
+          touchHint.classList.add('hidden');
+          touchHint.style.display = 'none';
+        }, 500);
+      }
+
+      function showTouchHint() {
+        if (!touchHint) return;
+        clearTimeout(window._touchHintHideTimer);
+        clearTimeout(window._touchHintAutoTimer);
+        touchHint.classList.remove('hidden', 'opacity-0');
+        touchHint.classList.add('opacity-90');
+        touchHint.style.display = '';
+        touchHint.style.opacity = '0.9';
+
+        // Auto-fade after 3.5s even if idle
+        window._touchHintAutoTimer = setTimeout(() => {
+          hideTouchHint();
+        }, 3500);
       }
 
       // --- HUD Updates ---
@@ -2098,7 +2156,7 @@
         }
 
         if (Math.abs(moveX) > 0.05 || Math.abs(moveY) > 0.05) {
-          touchHint.classList.add('opacity-0');
+          hideTouchHint();
           if (Math.abs(moveX) > 0.05) {
             player.facingX = moveX >= 0 ? 1 : -1;
           }
@@ -2862,6 +2920,7 @@
 
       // --- Game Over ---
       function triggerGameOver() {
+        hideTouchHint();
         playSound('gameover');
         gameState = 'GAME_OVER';
         joystick.active = false;
@@ -2910,6 +2969,7 @@
       // --- Pointer / Touch Virtual Joystick Controls ---
       function handlePointerDown(e) {
         if (gameState !== 'PLAYING') return;
+        hideTouchHint();
         ensureAudio();
         joystick.active = true;
         joystick.pointerId = e.pointerId;
@@ -2960,6 +3020,9 @@
       // Keyboard Controls
       window.addEventListener('keydown', (e) => {
         keys[e.code] = true;
+        if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+          hideTouchHint();
+        }
         if (e.code === 'Escape') {
           if (patchNotesModal && !patchNotesModal.classList.contains('hidden')) {
             closePatchNotes();
