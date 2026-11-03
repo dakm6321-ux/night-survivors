@@ -168,7 +168,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="glass-panel hover:bg-slate-800/90 active:scale-95 px-3 py-1.5 rounded-2xl border border-amber-400/40 shadow-lg flex items-center gap-2 text-xs font-extrabold text-amber-300 transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">v2.1.2</span>
+        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">v2.1.3</span>
       </button>
     </div>
 
@@ -190,7 +190,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-mono font-bold text-amber-400 tracking-widest">
-            2.1.2
+            2.1.3
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -536,12 +536,27 @@
       <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
       <div class="space-y-3.5 pr-1 text-xs">
         
-                                <!-- v2.1.2 -->
+                                        <!-- v2.1.3 -->
+        <div class="bg-slate-900/90 rounded-2xl p-4 border border-amber-500/50 space-y-2 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v2.1.3</span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[10px] font-bold">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>체력 회복 구슬(힐링 오브) 드랍 확률 대폭 하향:</strong> 일반 몬스터 처치 시 체력 구슬 드랍율을 기존 3.5%에서 0.7%(약 1/5 수준)로 대폭 낮추어 후반부 대량 학살 시 체력이 무한정 회복되던 현상 방지</li>
+            <li><strong>보스 처치 드랍 밸런스 조정:</strong> 보스 격파 시 체력 구슬 100% 확정 드랍을 50% 확률로 조정하여 보다 치열하고 긴장감 넘치는 서바이벌 생존 난이도 제공</li>
+          </ul>
+        </div>
+
+<!-- v2.1.2 -->
         <div class="bg-slate-900/90 rounded-2xl p-4 border border-amber-500/50 space-y-2 shadow-lg">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-sm font-black text-amber-300 font-mono">v2.1.2</span>
-              <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[10px] font-bold">LATEST</span>
+              <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-[10px] font-bold">UPDATE</span>
             </div>
             <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
           </div>
@@ -594,7 +609,7 @@
           </div>
           <ul class="text-slate-200 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
             <li><strong>전용 패치노트 모달 팝업 신설:</strong> 메인 화면 상단 '패치노트' 버튼 클릭 시 전체 화면 중앙에 역대 모든 버전의 업데이트 상세 내역을 확인할 수 있는 전용 팝업 창 제공</li>
-            <li><strong>초기 출시(v1.0.0)부터 최신(v2.1.2)까지 전체 이력 지원:</strong> 누락 없이 모든 버전의 세부 변경점과 밸런스 패치 내역 수록</li>
+            <li><strong>초기 출시(v1.0.0)부터 최신(v2.1.3)까지 전체 이력 지원:</strong> 누락 없이 모든 버전의 세부 변경점과 밸런스 패치 내역 수록</li>
           </ul>
         </div>
 
@@ -1701,8 +1716,9 @@
 
           // Drop EXP gem, heal potion, or vacuum rune
           const isBoss = enemy.isBoss;
-          const dropHeal = isBoss || (Math.random() < 0.035 && player.hp < player.maxHp);
-          const dropVacuum = isBoss || Math.random() < 0.018;
+          // 체력 회복 구슬 드랍 확률 대폭 하향 (일반 몬스터 3.5% -> 0.7%, 보스 100% -> 50%)
+          const dropHeal = (isBoss && Math.random() < 0.5) || (Math.random() < 0.007 && player.hp < player.maxHp);
+          const dropVacuum = (isBoss && !dropHeal) || Math.random() < 0.015;
 
           if (dropVacuum && !dropHeal) {
             gems.push({

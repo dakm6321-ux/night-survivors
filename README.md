@@ -12,7 +12,7 @@
    ```bash
    git init
    git add .
-   git commit -m "feat: Night Survivors v2.1.2 official release"
+   git commit -m "feat: Night Survivors v2.1.3 official release"
    git branch -M main
    git remote add origin https://github.com/당신의아이디/night-survivors.git
    git push -u origin main
