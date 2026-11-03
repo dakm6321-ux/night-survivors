@@ -133,6 +133,26 @@
     </div>
   </div>
 
+    <!-- Bottom-Left Live DPS Display Widget -->
+  <div id="dpsHudWidget" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 pointer-events-none transition-all duration-300 opacity-0 hidden">
+    <div class="glass-panel rounded-2xl px-3 py-2 border border-rose-500/40 shadow-2xl flex items-center gap-2.5 backdrop-blur-md">
+      <div class="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-400/50 flex items-center justify-center text-sm shadow-inner shrink-0">
+        ⚔️
+      </div>
+      <div class="flex flex-col leading-tight select-none">
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-[10px] font-extrabold text-slate-400 tracking-wider">DPS</span>
+          <span id="dpsValue" class="text-base sm:text-lg font-black font-mono text-rose-400 drop-shadow">0</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-[9px] text-slate-400 font-mono">
+          <span>최고 <strong id="peakDpsValue" class="text-amber-300 font-bold">0</strong></span>
+          <span class="text-slate-600">|</span>
+          <span>누적 <strong id="totalDpsValue" class="text-slate-300 font-medium">0</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Touch Hint Overlay (fades out once player moves) -->
   <div id="touchHint" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none transition-opacity duration-500 opacity-90">
     <div class="glass-panel rounded-full px-4 py-2 text-xs sm:text-sm text-slate-300 flex items-center gap-2 shadow-lg">
@@ -148,7 +168,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="glass-panel hover:bg-slate-800/90 active:scale-95 px-3 py-1.5 rounded-2xl border border-amber-400/40 shadow-lg flex items-center gap-2 text-xs font-extrabold text-amber-300 transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">v2.0.0</span>
+        <span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-[10px] font-mono text-amber-200">v2.1.0</span>
       </button>
     </div>
 
@@ -170,7 +190,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-mono font-bold text-amber-400 tracking-widest">
-            2.0.0
+            2.1.0
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -467,18 +487,22 @@
         </p>
       </div>
 
-      <div class="grid grid-cols-3 gap-2 bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800">
+      <div class="grid grid-cols-4 gap-1.5 sm:gap-2 bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-center">
         <div>
-          <div class="text-[11px] text-slate-400">생존 시간</div>
-          <div id="finalTimeStat" class="text-base sm:text-lg font-black text-amber-400 mt-0.5">00:00</div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400">생존 시간</div>
+          <div id="finalTimeStat" class="text-sm sm:text-base font-black text-amber-400 mt-0.5">00:00</div>
         </div>
         <div>
-          <div class="text-[11px] text-slate-400">달성 레벨</div>
-          <div id="finalLevelStat" class="text-base sm:text-lg font-black text-cyan-400 mt-0.5">LV. 1</div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400">달성 레벨</div>
+          <div id="finalLevelStat" class="text-sm sm:text-base font-black text-cyan-400 mt-0.5">LV. 1</div>
         </div>
         <div>
-          <div class="text-[11px] text-slate-400">처치한 적</div>
-          <div id="finalKillStat" class="text-base sm:text-lg font-black text-rose-400 mt-0.5">0</div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400">처치한 적</div>
+          <div id="finalKillStat" class="text-sm sm:text-base font-black text-rose-400 mt-0.5">0</div>
+        </div>
+        <div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400">최고 DPS</div>
+          <div id="finalPeakDpsStat" class="text-sm sm:text-base font-black text-emerald-400 mt-0.5">0</div>
         </div>
       </div>
 
@@ -512,18 +536,35 @@
       <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
       <div class="space-y-3.5 pr-1 text-xs">
         
-        <!-- v2.0.0 -->
+                <!-- v2.1.0 -->
         <div class="bg-slate-900/90 rounded-2xl p-4 border border-amber-500/50 space-y-2 shadow-lg">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-black text-amber-300 font-mono">v2.0.0</span>
+              <span class="text-sm font-black text-amber-300 font-mono">v2.1.0</span>
               <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[10px] font-bold">LATEST</span>
             </div>
             <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
           </div>
           <ul class="text-slate-200 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+            <li><strong>화면 왼쪽 하단 실시간 전투 DPS 위젯 추가:</strong> 인게임 화면 좌측 하단에 실시간 초당 피해량(DPS)을 즉시 확인할 수 있는 전용 글래스모피즘 HUD 위젯 신설</li>
+            <li><strong>최고 DPS & 누적 평균 DPS 동시 집계:</strong> 현재 1.5초 롤링 실시간 DPS 수치와 함께, 이번 판의 최고 폭딜 기록(최고 DPS) 및 전체 생존 시간 동안의 누적 평균 DPS를 실시간 동시 표시</li>
+            <li><strong>일시정지 및 게임오버 화면 DPS 통계 연동:</strong> 일시정지 대시보드 및 전투 종료 결과창에 최고/실시간 DPS 지표를 추가하여 빌드의 위력을 직관적으로 분석 가능</li>
+            <li><strong>터치 및 모바일 조작 최적화:</strong> 좌측 하단 영역 터치 조작 및 가상 조이스틱 드래그를 전혀 방해하지 않도록 완전 투과(pointer-events-none) 처리</li>
+          </ul>
+        </div>
+
+<!-- v2.0.0 -->
+        <div class="bg-slate-900/90 rounded-2xl p-4 border border-amber-500/50 space-y-2 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v2.0.0</span>
+              <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-[10px] font-bold">MAJOR</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
             <li><strong>전용 패치노트 모달 팝업 신설:</strong> 메인 화면 상단 '패치노트' 버튼 클릭 시 전체 화면 중앙에 역대 모든 버전의 업데이트 상세 내역을 확인할 수 있는 전용 팝업 창 제공</li>
-            <li><strong>초기 출시(v1.0.0)부터 최신(v2.0.0)까지 전체 이력 지원:</strong> 누락 없이 모든 버전의 세부 변경점과 밸런스 패치 내역 수록</li>
+            <li><strong>초기 출시(v1.0.0)부터 최신(v2.1.0)까지 전체 이력 지원:</strong> 누락 없이 모든 버전의 세부 변경점과 밸런스 패치 내역 수록</li>
           </ul>
         </div>
 
@@ -999,6 +1040,10 @@
       let gameState = 'START'; // START | PLAYING | LEVEL_UP | PAUSED | GAME_OVER
       let animFrameId = null;
       let lastTimestamp = 0;
+      let totalDamageDealt = 0;
+      let peakDps = 0;
+      let recentDamageLog = [];
+      let dpsUpdateTimer = 0;
 
       let player = null;
       let enemies = [];
@@ -1202,6 +1247,24 @@
         fireZones = [];
         particles = [];
         initWorldProps();
+
+        // Reset DPS metrics
+        totalDamageDealt = 0;
+        peakDps = 0;
+        recentDamageLog = [];
+        dpsUpdateTimer = 0;
+        const dpsValEl = document.getElementById('dpsValue');
+        const peakDpsValEl = document.getElementById('peakDpsValue');
+        const totalDpsValEl = document.getElementById('totalDpsValue');
+        if (dpsValEl) dpsValEl.textContent = '0';
+        if (peakDpsValEl) peakDpsValEl.textContent = '0';
+        if (totalDpsValEl) totalDpsValEl.textContent = '0';
+
+        const dpsHudWidget = document.getElementById('dpsHudWidget');
+        if (dpsHudWidget) {
+          dpsHudWidget.classList.remove('hidden');
+          dpsHudWidget.classList.remove('opacity-0');
+        }
 
         elapsedTime = 0;
         killCount = 0;
@@ -1550,6 +1613,10 @@
         const dmg = Math.max(1, Math.round(rawAmount * getDamageMultiplier()));
         enemy.hp -= dmg;
         enemy.hitFlash = 0.12;
+
+        // DPS Tracker Record
+        totalDamageDealt += dmg;
+        recentDamageLog.push({ t: elapsedTime, d: dmg });
 
         // Heavy, relentless advance: 적 넉백 대폭 축소 (보스 0.05, 정예 0.15, 일반 0.32)
         const dx = enemy.x - player.x;
@@ -1983,6 +2050,35 @@
       // --- Main Simulation Update ---
       function updateGame(dt) {
         elapsedTime += dt;
+
+        // Prune damage log older than 1.5 seconds
+        const cutoffTime = elapsedTime - 1.5;
+        while (recentDamageLog.length > 0 && recentDamageLog[0].t < cutoffTime) {
+          recentDamageLog.shift();
+        }
+
+        // Periodic Live DPS UI update (every 0.1s)
+        dpsUpdateTimer += dt;
+        if (dpsUpdateTimer >= 0.1) {
+          dpsUpdateTimer = 0;
+          let windowDmg = 0;
+          for (let i = 0; i < recentDamageLog.length; i++) {
+            windowDmg += recentDamageLog[i].d;
+          }
+          const effWindow = Math.min(Math.max(0.1, elapsedTime), 1.5);
+          const currentDps = Math.round(windowDmg / effWindow);
+          if (currentDps > peakDps) {
+            peakDps = currentDps;
+          }
+          const cumDps = Math.round(totalDamageDealt / Math.max(1, elapsedTime));
+
+          const dpsValEl = document.getElementById('dpsValue');
+          const peakDpsValEl = document.getElementById('peakDpsValue');
+          const totalDpsValEl = document.getElementById('totalDpsValue');
+          if (dpsValEl) dpsValEl.textContent = currentDps.toLocaleString();
+          if (peakDpsValEl) peakDpsValEl.textContent = peakDps.toLocaleString();
+          if (totalDpsValEl) totalDpsValEl.textContent = cumDps.toLocaleString();
+        }
 
         // 1. Player Movement (Keyboard or Virtual Joystick)
         let moveX = 0;
@@ -2773,6 +2869,13 @@
         document.getElementById('finalTimeStat').textContent = formatTime(elapsedTime);
         document.getElementById('finalLevelStat').textContent = `LV. ${player.level}`;
         document.getElementById('finalKillStat').textContent = killCount.toLocaleString();
+        const finalPeakEl = document.getElementById('finalPeakDpsStat');
+        if (finalPeakEl) finalPeakEl.textContent = peakDps.toLocaleString();
+
+        const dpsHudWidget = document.getElementById('dpsHudWidget');
+        if (dpsHudWidget) {
+          dpsHudWidget.classList.add('opacity-0');
+        }
 
         const finalBuildList = document.getElementById('finalBuildList');
         finalBuildList.innerHTML = '';
@@ -3094,6 +3197,11 @@
                 <span>📊</span><span>실시간 전투 스탯</span>
               </div>
               <div class="grid grid-cols-3 gap-1.5 text-[11px] bg-slate-900/80 p-2.5 rounded-2xl border border-slate-800">
+                <div>실시간 DPS: <strong class="text-rose-400">${(function(){
+  let w = 0; for (let i = 0; i < recentDamageLog.length; i++) w += recentDamageLog[i].d;
+  return Math.round(w / Math.min(Math.max(0.1, elapsedTime), 1.5)).toLocaleString();
+})()}</strong></div>
+                <div>최고 DPS: <strong class="text-amber-300">${peakDps.toLocaleString()}</strong></div>
                 <div>체력: <strong class="text-emerald-400">${Math.ceil(player.hp)} / ${player.maxHp}</strong></div>
                 <div>공격력: <strong class="text-amber-400">${(getDamageMultiplier() * 100).toFixed(0)}% (Lv.${player.skills.might || 0}/무한)</strong></div>
                 <div>쿨타임: <strong class="text-cyan-400">-${((1 - getCooldownMultiplier()) * 100).toFixed(0)}%</strong></div>
@@ -3123,6 +3231,11 @@
         pauseModal.classList.add('hidden');
         pauseModal.classList.remove('flex');
         startModal.classList.remove('hidden');
+        const dpsHudWidget = document.getElementById('dpsHudWidget');
+        if (dpsHudWidget) {
+          dpsHudWidget.classList.add('opacity-0');
+          dpsHudWidget.classList.add('hidden');
+        }
         initGame();
         gameState = 'START';
       });
