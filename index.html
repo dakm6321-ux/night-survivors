@@ -332,7 +332,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="pixel-btn-slate px-3 py-1.5 flex items-center gap-2 text-xs transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.5.0</span>
+        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.7.0</span>
       </button>
     </div>
 
@@ -921,12 +921,36 @@
       <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
       <div class="space-y-3.5 pr-1 text-xs">
         
+        <!-- v4.7.0 -->
+        <div class="pixel-box p-4 space-y-2 border-2 border-amber-400">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v4.7.0</span>
+              <span class="px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px]">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1.5 list-disc list-inside text-[11px] leading-relaxed font-mono">
+            <li><strong>사신 결전 & 전설보주 방어/공격 밸런스 완성:</strong></li>
+            <li>• <strong>전설보주 절대 가호:</strong> 전설보주 보유 시 사신의 치명적인 일격을 완벽히 차단하여 <strong>거의 데미지를 받지 않고(단 1 피해)</strong>, <strong>사신에게 입히는 공격력이 100배(10,000%)</strong>로 폭증합니다.</li>
+            <li>• <strong>사신 공격력 체력 비례 스케일링:</strong> 사신의 일격 피해가 <strong>캐릭터 현재 최대 체력의 44%</strong>로 계산되어 공정한 긴장감을 부여합니다.</li>
+            <li>• <strong>사신 전용 결전 필드:</strong> 10분 도달 시 사신 외 모든 적이 즉시 소멸하고 추가 스폰이 전면 차단되며, 사신의 이동속도(360 px/s)가 캐릭터보다 항상 빠르게 설정되어 도망칠 수 없습니다.</li>
+            <li>• <strong>승리 축하 게임 클리어 모달:</strong> 사신 처치 시 헌정 축하 멘트, 종합 전투 스탯, <strong>[메인 화면으로]</strong> 및 <strong>[다시 플레이]</strong> 버튼이 제공됩니다.</li>
+            <li><strong>캐릭터 성장 & 서스테인 밸런스:</strong></li>
+            <li>• <strong>레벨업 시 최대 체력 영구 +1 증가:</strong> 일반 레벨업과 만렙 자동 레벨업 모두 레벨이 오를 때마다 최대 체력이 영구 증가하고 즉시 회복됩니다.</li>
+            <li>• <strong>적들의 체력 회복 물약 드랍율 13% 상향:</strong> 일반 적 처치 시 13% 확률로 회복 포션이 드랍되어 안정적인 전투 유지력을 확보했습니다.</li>
+            <li>• <strong>후반부 공격력 성장 상향:</strong> 모든 스킬 마스터 후 레벨업당 공격력 증가폭을 기존 8%에서 <strong>20%</strong>로 2.5배 상향하여 후반부 적들의 체력에 맞서 강력한 화력을 발휘합니다.</li>
+            <li>• <strong>보주 획득 팝업 위치 힌트 제거:</strong> 위치와 방위 스포일러 멘트를 삭제하여 '맵을 잘 살펴보면?' 사망 힌트와 어우러지는 순수 탐색의 재미를 복원했습니다.</li>
+            <li><strong>중후반부 프레임드랍 원천 최적화:</strong></li>
+            <li>• 적 개체수 상한선(MAX_ENEMIES = 150)과 보석 자동 압축(MAX_GEMS = 160), AABB 고속 충돌 필터링을 통해 <strong>16배 이상의 CPU 연산 경감</strong>을 달성, 60 FPS 방어를 완벽 지원합니다.</li>
+          </ul>
+        </div>
+
         <!-- v4.5.0 -->
         <div class="pixel-box p-4 space-y-2">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-sm font-black text-amber-300 font-mono">v4.5.0</span>
-              <span class="px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px]">LATEST</span>
             </div>
             <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
           </div>
@@ -951,7 +975,6 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-sm font-black text-amber-300 font-mono">v4.4.2</span>
-              <span class="px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px]">LATEST</span>
             </div>
             <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
           </div>
