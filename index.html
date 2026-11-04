@@ -349,7 +349,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="pixel-btn-slate px-3 py-1.5 flex items-center gap-2 text-xs transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.7.5</span>
+        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.8.0</span>
       </button>
     </div>
 
@@ -374,7 +374,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-black text-amber-300 tracking-widest mt-0.5">
-            VER 4.7.5
+            VER 4.8.0
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed mt-2">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -449,7 +449,7 @@
               <span class="flex items-center gap-1.5">
                 <span>⚡</span><span>3. 클래스 전용 스킬 (24종) & 융합 공식 (12종)</span>
               </span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">v4.7.5 최종 완성 & 사신 결전 시스템</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">v4.8.0 사운드 전면 개편 & 칩튠 BGM & 사신 결전 시스템</span>
             </div>
             <p class="text-[11px] text-slate-300 leading-snug">
               각 클래스는 <strong>오직 자신만 배울 수 있는 6가지 고유 스킬(최대 Lv.10)</strong>을 가집니다. 연계된 2개 스킬을 모두 <strong>10레벨</strong> 달성하면 최강의 <strong>초월 융합 스킬</strong>이 해금됩니다!
@@ -938,12 +938,29 @@
       <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
       <div class="space-y-3.5 pr-1 text-xs">
         
-                <!-- v4.7.5 -->
+                <!-- v4.8.0 -->
         <div class="pixel-box p-4 space-y-2 border-2 border-amber-400">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-black text-amber-300 font-mono">v4.7.5</span>
+              <span class="text-sm font-black text-amber-300 font-mono">v4.8.0</span>
               <span class="px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px]">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1.5 list-disc list-inside text-[11px] leading-relaxed font-mono">
+            <li><strong>사운드 전면 개편 & 레트로 16비트 BGM 도입:</strong></li>
+            <li>• <strong>레벨업 사운드 정상화 (버그 수정):</strong> 레벨업 시 보스/게임오버 중저음이 재생되던 사운드 트리거 버그를 완전히 수정하여, 찬란하게 상승하는 레벨업 팡파르(C5➔E5➔G5➔C6)가 명확하게 출력됩니다.</li>
+            <li>• <strong>16-Bit 칩튠 인게임 배경음악(BGM) 탑재:</strong> Web Audio API 실시간 신디사이저 기반의 레트로 아케이드 BGM 엔진을 탑재하여, 별도 외부 음원 로딩 없이 전투 시작 시 긴박하고 몰입감 넘치는 레트로 칩튠 멜로디가 자동 재생됩니다.</li>
+            <li>• <strong>전체 효과음 음색 확장:</strong> 피격음(hit), 회복음(heal), 빙결음(freeze), 폭발음(explosion), 레벨업음(levelup), 승리음(victory) 등 모든 효과음의 주파수와 음색 밸런스를 쾌적하게 튜닝했습니다.</li>
+            <li>• <strong>음소거 및 일시정지 연동:</strong> 일시정지, 게임오버, 클리어, 메인화면 이동 및 우측 상단 음소거 버튼 조작 시 BGM이 매끄럽게 정지 및 재개됩니다.</li>
+          </ul>
+        </div>
+
+        <!-- v4.7.5 -->
+        <div class="pixel-box p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v4.7.5</span>
             </div>
             <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
           </div>
@@ -3470,12 +3487,13 @@ const PIXEL_ENGINE = (function() {
       window.addEventListener('resize', resizeCanvas);
       resizeCanvas();
 
-      // --- Synthesized Web Audio System ---
+      // --- Synthesized Web Audio & 16-Bit Chiptune Engine ---
       let audioCtx = null;
       let isMuted = false;
+      let bgmIntervalId = null;
+      let bgmStep = 0;
 
       function ensureAudio() {
-        if (isMuted) return null;
         if (!audioCtx) {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
           if (AudioContextClass) {
@@ -3488,7 +3506,96 @@ const PIXEL_ENGINE = (function() {
         return audioCtx;
       }
 
+      // 16-Bit Chiptune BGM Generator (배경음악 실시간 합성 엔진)
+      // 레트로 아케이드 감성의 긴박하고 몰입감 넘치는 신디사이저 멜로디 루프
+      const BGM_BASS_LINE = [
+        110.00, 110.00, 130.81, 146.83, 110.00, 110.00, 164.81, 146.83,
+        98.00,  98.00,  110.00, 130.81, 98.00,  98.00,  146.83, 130.81,
+        87.31,  87.31,  98.00,  110.00, 87.31,  87.31,  130.81, 110.00,
+        82.41,  82.41,  98.00,  110.00, 123.47, 130.81, 146.83, 164.81
+      ];
+
+      const BGM_LEAD_LINE = [
+        440.00, 0, 523.25, 587.33, 440.00, 0, 659.25, 587.33,
+        392.00, 0, 440.00, 523.25, 392.00, 0, 587.33, 523.25,
+        349.23, 0, 392.00, 440.00, 349.23, 0, 523.25, 440.00,
+        329.63, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25, 880.00
+      ];
+
+      function startBgm() {
+        if (bgmIntervalId) return;
+        bgmStep = 0;
+        bgmIntervalId = setInterval(() => {
+          if (isMuted || gameState !== 'PLAYING') return;
+          const actx = ensureAudio();
+          if (!actx) return;
+          const now = actx.currentTime;
+
+          const stepIdx = bgmStep % BGM_BASS_LINE.length;
+          const bassFreq = BGM_BASS_LINE[stepIdx];
+          const leadFreq = BGM_LEAD_LINE[stepIdx];
+          bgmStep++;
+
+          // 1. Bass Track (Pulse / Triangle)
+          if (bassFreq > 0) {
+            try {
+              const bassOsc = actx.createOscillator();
+              const bassGain = actx.createGain();
+              bassOsc.type = 'triangle';
+              bassOsc.frequency.setValueAtTime(bassFreq, now);
+              bassGain.gain.setValueAtTime(0.045, now);
+              bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+              bassOsc.connect(bassGain);
+              bassGain.connect(actx.destination);
+              bassOsc.start(now);
+              bassOsc.stop(now + 0.135);
+            } catch (e) {}
+          }
+
+          // 2. Melody Lead Track (Square / Pulse Arpeggio)
+          if (leadFreq > 0 && Math.random() < 0.88) {
+            try {
+              const leadOsc = actx.createOscillator();
+              const leadGain = actx.createGain();
+              leadOsc.type = 'square';
+              leadOsc.frequency.setValueAtTime(leadFreq, now);
+              leadGain.gain.setValueAtTime(0.022, now);
+              leadGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+              leadOsc.connect(leadGain);
+              leadGain.connect(actx.destination);
+              leadOsc.start(now);
+              leadOsc.stop(now + 0.115);
+            } catch (e) {}
+          }
+
+          // 3. Hi-Hat / Percussion Tick (Short White Noise Burst on 16th beat)
+          if (stepIdx % 2 === 0) {
+            try {
+              const hatOsc = actx.createOscillator();
+              const hatGain = actx.createGain();
+              hatOsc.type = 'sawtooth';
+              hatOsc.frequency.setValueAtTime(2400, now);
+              hatOsc.frequency.exponentialRampToValueAtTime(400, now + 0.035);
+              hatGain.gain.setValueAtTime(0.015, now);
+              hatGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+              hatOsc.connect(hatGain);
+              hatGain.connect(actx.destination);
+              hatOsc.start(now);
+              hatOsc.stop(now + 0.04);
+            } catch (e) {}
+          }
+        }, 140); // ~107 BPM 16th-note rhythmic drive
+      }
+
+      function stopBgm() {
+        if (bgmIntervalId) {
+          clearInterval(bgmIntervalId);
+          bgmIntervalId = null;
+        }
+      }
+
       function playSound(type) {
+        if (isMuted) return;
         const actx = ensureAudio();
         if (!actx) return;
         const now = actx.currentTime;
@@ -3518,6 +3625,57 @@ const PIXEL_ENGINE = (function() {
             gain.connect(actx.destination);
             osc.start(now);
             osc.stop(now + 0.07);
+          } else if (type === 'hit') {
+            const osc = actx.createOscillator();
+            const gain = actx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(160, now);
+            osc.frequency.exponentialRampToValueAtTime(60, now + 0.08);
+            gain.gain.setValueAtTime(0.09, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+            osc.connect(gain);
+            gain.connect(actx.destination);
+            osc.start(now);
+            osc.stop(now + 0.08);
+          } else if (type === 'heal') {
+            const notes = [440, 554.37, 659.25, 880];
+            notes.forEach((freq, idx) => {
+              const osc = actx.createOscillator();
+              const gain = actx.createGain();
+              osc.type = 'sine';
+              const startTime = now + idx * 0.05;
+              osc.frequency.setValueAtTime(freq, startTime);
+              gain.gain.setValueAtTime(0.08, startTime);
+              gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+              osc.connect(gain);
+              gain.connect(actx.destination);
+              osc.start(startTime);
+              osc.stop(startTime + 0.18);
+            });
+          } else if (type === 'freeze') {
+            const osc = actx.createOscillator();
+            const gain = actx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1200, now);
+            osc.frequency.linearRampToValueAtTime(2400, now + 0.15);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+            osc.connect(gain);
+            gain.connect(actx.destination);
+            osc.start(now);
+            osc.stop(now + 0.22);
+          } else if (type === 'explosion') {
+            const osc = actx.createOscillator();
+            const gain = actx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(140, now);
+            osc.frequency.exponentialRampToValueAtTime(35, now + 0.28);
+            gain.gain.setValueAtTime(0.14, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+            osc.connect(gain);
+            gain.connect(actx.destination);
+            osc.start(now);
+            osc.stop(now + 0.28);
           } else if (type === 'gem') {
             const osc = actx.createOscillator();
             const gain = actx.createGain();
@@ -3530,7 +3688,8 @@ const PIXEL_ENGINE = (function() {
             gain.connect(actx.destination);
             osc.start(now);
             osc.stop(now + 0.08);
-                    } else if (type === 'boss') {
+          } else if (type === 'boss') {
+            // 위엄 넘치는 중저음 보스 포효 팡파르
             const notes = [130.81, 116.54, 98.00, 82.41];
             notes.forEach((freq, idx) => {
               const osc = actx.createOscillator();
@@ -3557,7 +3716,8 @@ const PIXEL_ENGINE = (function() {
             gain.connect(actx.destination);
             osc.start(now);
             osc.stop(now + 0.16);
-                    } else if (type === 'victory') {
+          } else if (type === 'victory') {
+            // 승리의 화려한 메이저 코드 팡파르 (C5 -> E5 -> G5 -> C6 -> E6)
             const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
             notes.forEach((freq, idx) => {
               const osc = actx.createOscillator();
@@ -3573,34 +3733,36 @@ const PIXEL_ENGINE = (function() {
               osc.stop(startTime + 0.35);
             });
           } else if (type === 'levelup') {
-            const notes = [440, 554.37, 659.25, 880];
+            // 찬란한 상승 아르페지오 (C5 -> E5 -> G5 -> C6)
+            const notes = [523.25, 659.25, 783.99, 1046.50];
             notes.forEach((freq, idx) => {
               const osc = actx.createOscillator();
               const gain = actx.createGain();
               osc.type = 'triangle';
-              const startTime = now + idx * 0.07;
+              const startTime = now + idx * 0.06;
               osc.frequency.setValueAtTime(freq, startTime);
-              gain.gain.setValueAtTime(0.11, startTime);
-              gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.22);
+              gain.gain.setValueAtTime(0.10, startTime);
+              gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.24);
               osc.connect(gain);
               gain.connect(actx.destination);
               osc.start(startTime);
-              osc.stop(startTime + 0.22);
+              osc.stop(startTime + 0.24);
             });
           } else if (type === 'gameover') {
-            const notes = [330, 293.66, 261.63, 196];
+            // 쓸쓸한 하강 단조 코드 (E4 -> D4 -> C4 -> G3)
+            const notes = [329.63, 293.66, 261.63, 196.00];
             notes.forEach((freq, idx) => {
               const osc = actx.createOscillator();
               const gain = actx.createGain();
               osc.type = 'sawtooth';
-              const startTime = now + idx * 0.12;
+              const startTime = now + idx * 0.14;
               osc.frequency.setValueAtTime(freq, startTime);
               gain.gain.setValueAtTime(0.09, startTime);
-              gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+              gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.32);
               osc.connect(gain);
               gain.connect(actx.destination);
               osc.start(startTime);
-              osc.stop(startTime + 0.25);
+              osc.stop(startTime + 0.32);
             });
           }
         } catch (err) {
@@ -4480,7 +4642,7 @@ const PIXEL_ENGINE = (function() {
           player.maxHp += 1;
           player.hp = Math.min(player.maxHp, player.hp + 1);
           addFloatingText(player.x, player.y - 35, `👑 레벨 ${player.level} 달성! (최대체력 +1)`, '#fde047', 18);
-          playSound('boss');
+          playSound('levelup');
           player.expToNext = Math.round(player.expToNext * 1.06 + 2);
           updateHud();
           isChoosingBossChest = false;
@@ -5724,7 +5886,7 @@ const PIXEL_ENGINE = (function() {
           player.maxHp += 1;
           player.hp = Math.min(player.maxHp, player.hp + 1);
           addFloatingText(player.x, player.y - 35, `👑 레벨 ${player.level} 달성! (최대체력 +1)`, '#fde047', 18);
-          playSound('boss');
+          playSound('levelup');
           player.expToNext = Math.round(player.expToNext * 1.06 + 2);
           updateHud();
           isUpgradingChoice = false;
@@ -6061,7 +6223,7 @@ const PIXEL_ENGINE = (function() {
             timers.absoluteZeroGlacier -= dt;
             if (timers.absoluteZeroGlacier <= 0) {
               timers.absoluteZeroGlacier = 3.6;
-              playSound('boss');
+              playSound('freeze');
               const glacierRad = 260; // 절대영도 빙하 고유 발동 반경
               addFloatingText(player.x, player.y - 35, '❄️ 절대영도 빙하 발동!', '#7dd3fc', 18);
 
@@ -6909,7 +7071,7 @@ const PIXEL_ENGINE = (function() {
           m.y += m.vy * dt;
           if (m.life <= 0) {
             // Impact explosion!
-            playSound('boss');
+            playSound('explosion');
             addBurstParticles(m.targetX, m.targetY, '#f97316', m.isSupernova ? 36 : 22);
             for (let j = enemies.length - 1; j >= 0; j--) {
               const e = enemies[j];
@@ -7211,7 +7373,7 @@ const PIXEL_ENGINE = (function() {
                   player.maxHp += 1;
                   player.hp = Math.min(player.maxHp, player.hp + 1);
                   addFloatingText(player.x, player.y - 35, `👑 레벨 ${player.level} 달성! (최대체력 +1)`, '#fde047', 18);
-                  playSound('boss');
+                  playSound('levelup');
                   player.expToNext = Math.round(player.expToNext * 1.06 + 2);
                   updateHud();
                   triggerLevelUp();
@@ -7777,6 +7939,7 @@ const PIXEL_ENGINE = (function() {
       function triggerGameClear() {
         if (gameState === 'CLEAR' || gameState === 'GAME_OVER') return;
         gameState = 'CLEAR';
+        stopBgm();
         joystick.active = false;
         joystick.dx = 0;
         joystick.dy = 0;
@@ -7864,6 +8027,7 @@ const PIXEL_ENGINE = (function() {
       }
 
       function returnToMainMenu() {
+        stopBgm();
         const gameClearModal = document.getElementById('gameClearModal');
         if (gameClearModal) {
           gameClearModal.classList.add('hidden');
@@ -7921,11 +8085,13 @@ const PIXEL_ENGINE = (function() {
         ensureAudio();
         initGame();
         gameState = 'PLAYING';
+        startBgm();
         lastTimestamp = performance.now();
       }
 
       function triggerGameOver() {
         if (gameState === 'GAME_OVER' || gameState === 'CLEAR') return;
+        stopBgm();
         hideTouchHint();
         playSound('gameover');
         gameState = 'GAME_OVER';
@@ -8241,6 +8407,7 @@ const PIXEL_ENGINE = (function() {
         startModal.classList.add('hidden');
         initGame();
         gameState = 'PLAYING';
+        startBgm();
         lastTimestamp = performance.now();
       }
       startGameBtn.addEventListener('click', startBattle);
@@ -8269,12 +8436,14 @@ const PIXEL_ENGINE = (function() {
         gameOverModal.classList.remove('flex');
         initGame();
         gameState = 'PLAYING';
+        startBgm();
         lastTimestamp = performance.now();
       });
 
       function togglePause() {
         if (gameState === 'PLAYING') {
           gameState = 'PAUSED';
+          stopBgm();
           joystick.active = false;
 
           // 1. Battle Summary Cards
@@ -8412,6 +8581,7 @@ const PIXEL_ENGINE = (function() {
           pauseModal.classList.add('hidden');
           pauseModal.classList.remove('flex');
           gameState = 'PLAYING';
+          startBgm();
           lastTimestamp = performance.now();
         }
       }
@@ -8421,6 +8591,7 @@ const PIXEL_ENGINE = (function() {
       if (closePauseTopBtn) closePauseTopBtn.addEventListener('click', togglePause);
 
       restartFromPauseBtn.addEventListener('click', () => {
+        stopBgm();
         pauseModal.classList.add('hidden');
         pauseModal.classList.remove('flex');
         startModal.classList.remove('hidden');
@@ -8436,6 +8607,11 @@ const PIXEL_ENGINE = (function() {
       muteBtn.addEventListener('click', () => {
         isMuted = !isMuted;
         muteIcon.textContent = isMuted ? '🔇' : '🔊';
+        if (isMuted) {
+          stopBgm();
+        } else if (gameState === 'PLAYING') {
+          startBgm();
+        }
       });
 
       // Main Menu Sub-view Navigation & Fullscreen & Dedicated Patch Notes Modal Logic
@@ -8511,7 +8687,7 @@ const PIXEL_ENGINE = (function() {
         getNextBossTime: () => nextBossTime,
         getElapsedTime: () => elapsedTime,
         setElapsedTime: (t) => { elapsedTime = t; },
-        triggerBossChestModal,
+        triggerBossChestModal, startBgm, stopBgm, isBgmPlaying: () => Boolean(bgmIntervalId),
         getPendingBossChestCount: () => pendingBossChestCount,
         chooseBossChest,
         getBossChestMightBonus: () => (player ? player.bossChestMightBonus : 0),
