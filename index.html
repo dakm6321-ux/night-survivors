@@ -349,7 +349,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="pixel-btn-slate px-3 py-1.5 flex items-center gap-2 text-xs transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.7.1</span>
+        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.7.2</span>
       </button>
     </div>
 
@@ -374,7 +374,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-black text-amber-300 tracking-widest mt-0.5">
-            VER 4.7.1
+            VER 4.7.2
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed mt-2">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -449,7 +449,7 @@
               <span class="flex items-center gap-1.5">
                 <span>⚡</span><span>3. 클래스 전용 스킬 (24종) & 융합 공식 (12종)</span>
               </span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">v4.7.1 최종 완성 & 사신 결전 시스템</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">v4.7.2 최종 완성 & 사신 결전 시스템</span>
             </div>
             <p class="text-[11px] text-slate-300 leading-snug">
               각 클래스는 <strong>오직 자신만 배울 수 있는 6가지 고유 스킬(최대 Lv.10)</strong>을 가집니다. 연계된 2개 스킬을 모두 <strong>10레벨</strong> 달성하면 최강의 <strong>초월 융합 스킬</strong>이 해금됩니다!
@@ -938,12 +938,27 @@
       <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
       <div class="space-y-3.5 pr-1 text-xs">
         
-                <!-- v4.7.1 -->
+                <!-- v4.7.2 -->
         <div class="pixel-box p-4 space-y-2 border-2 border-amber-400">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-black text-amber-300 font-mono">v4.7.1</span>
+              <span class="text-sm font-black text-amber-300 font-mono">v4.7.2</span>
               <span class="px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px]">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1.5 list-disc list-inside text-[11px] leading-relaxed font-mono">
+            <li><strong>보스 몬스터 체력 난이도 하향 밸런스 패치:</strong></li>
+            <li>• <strong>보스 기본 체력 약 47% 하향:</strong> 45초마다 출현하는 4대 보스 몬스터(거대 구울 1,800→950, 골렘 군주 3,800→2,000, 리치 드래곤 7,200→3,800, 파멸 학살자 14,000→7,500)의 체력을 약 45~47% 하향 조정했습니다.</li>
+            <li>• <strong>보스전 피로도 완화:</strong> 무기 빌드 완성 전 초중반 구간에서도 보스를 시원하고 쾌적하게 격파할 수 있도록 전투 난이도를 최적화했습니다.</li>
+          </ul>
+        </div>
+
+        <!-- v4.7.1 -->
+        <div class="pixel-box p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v4.7.1</span>
             </div>
             <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
           </div>
@@ -4978,10 +4993,10 @@ const PIXEL_ENGINE = (function() {
 
         if (isBoss) {
           const bossTypes = [
-            { name: '숲의 침입자 거대 구울', color: '#f43f5e', outline: '#fecdd3', hp: 1800, speed: 155, dmg: 24, exp: 80, radius: 28 },
-            { name: '심연의 암석 골렘 군주', color: '#8b5cf6', outline: '#fde047', hp: 3800, speed: 140, dmg: 32, exp: 120, radius: 32 },
-            { name: '고대 사령 리치 드래곤', color: '#c026d3', outline: '#f0abfc', hp: 7200, speed: 145, dmg: 38, exp: 180, radius: 34 },
-            { name: '황혼의 파멸 학살자 (마지막 보스)', color: '#e11d48', outline: '#fbbf24', hp: 14000, speed: 165, dmg: 48, exp: 280, radius: 36, isFinal: true }
+            { name: '숲의 침입자 거대 구울', color: '#f43f5e', outline: '#fecdd3', hp: 950, speed: 155, dmg: 22, exp: 80, radius: 28 },
+            { name: '심연의 암석 골렘 군주', color: '#8b5cf6', outline: '#fde047', hp: 2000, speed: 140, dmg: 30, exp: 120, radius: 32 },
+            { name: '고대 사령 리치 드래곤', color: '#c026d3', outline: '#f0abfc', hp: 3800, speed: 145, dmg: 36, exp: 180, radius: 34 },
+            { name: '황혼의 파멸 학살자 (마지막 보스)', color: '#e11d48', outline: '#fbbf24', hp: 7500, speed: 165, dmg: 44, exp: 280, radius: 36, isFinal: true }
           ];
 
           const bossIdx = bossCountSpawned % bossTypes.length;
