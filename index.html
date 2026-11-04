@@ -349,7 +349,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="pixel-btn-slate px-3 py-1.5 flex items-center gap-2 text-xs transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.7.3</span>
+        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.7.5</span>
       </button>
     </div>
 
@@ -374,7 +374,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-black text-amber-300 tracking-widest mt-0.5">
-            VER 4.7.3
+            VER 4.7.5
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed mt-2">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -449,7 +449,7 @@
               <span class="flex items-center gap-1.5">
                 <span>⚡</span><span>3. 클래스 전용 스킬 (24종) & 융합 공식 (12종)</span>
               </span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">v4.7.3 최종 완성 & 사신 결전 시스템</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">v4.7.5 최종 완성 & 사신 결전 시스템</span>
             </div>
             <p class="text-[11px] text-slate-300 leading-snug">
               각 클래스는 <strong>오직 자신만 배울 수 있는 6가지 고유 스킬(최대 Lv.10)</strong>을 가집니다. 연계된 2개 스킬을 모두 <strong>10레벨</strong> 달성하면 최강의 <strong>초월 융합 스킬</strong>이 해금됩니다!
@@ -938,12 +938,42 @@
       <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
       <div class="space-y-3.5 pr-1 text-xs">
         
-                <!-- v4.7.3 -->
+                <!-- v4.7.5 -->
         <div class="pixel-box p-4 space-y-2 border-2 border-amber-400">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-black text-amber-300 font-mono">v4.7.3</span>
+              <span class="text-sm font-black text-amber-300 font-mono">v4.7.5</span>
               <span class="px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px]">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1.5 list-disc list-inside text-[11px] leading-relaxed font-mono">
+            <li><strong>초월 융합 무기 [뇌화겁화] 낙뢰 직격 넉백 원복:</strong></li>
+            <li>• <strong>낙뢰 직격 넉백 4.0 복구:</strong> 뇌화겁화 발동 시 적자색 벼락이 내리꽂힐 때의 강렬한 타격감과 넉백(4.0)을 요청에 따라 원래대로 완벽하게 복원했습니다.</li>
+            <li>• <strong>화염 장판 틱 피해 유지:</strong> 바닥에 생성되는 지옥의 화염 장판 틱 데미지는 넉백 0을 유지하여, 벼락에 맞은 몬스터가 장판 위에서 지속 화염 피해를 받도록 설계했습니다.</li>
+          </ul>
+        </div>
+
+        <!-- v4.7.4 -->
+        <div class="pixel-box p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v4.7.4</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1.5 list-disc list-inside text-[11px] leading-relaxed font-mono">
+            <li><strong>초월 융합 무기 [뇌화겁화] 넉백 완전 삭제:</strong></li>
+            <li>• <strong>화염 장판 집약 타격:</strong> 번개술사의 초월 무기 '뇌화겁화'의 낙뢰 타격 및 생성되는 화염 지대 피격 시 넉백을 완전히 제거(0)했습니다.</li>
+            <li>• <strong>지속 피해 극대화:</strong> 몬스터가 벼락에 맞아 장판 밖으로 밀려나지 않고 제자리에서 지옥불 지속 소멸 피해를 온전히 받도록 타격 판정을 완벽히 개선했습니다.</li>
+          </ul>
+        </div>
+
+        <!-- v4.7.3 -->
+        <div class="pixel-box p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v4.7.3</span>
             </div>
             <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
           </div>
@@ -6207,7 +6237,7 @@ const PIXEL_ENGINE = (function() {
                   const e = enemies[j];
                   if (!e || e.hp <= 0) continue;
                   if (Math.hypot(e.x - t.x, e.y - t.y) <= strikeRad + e.radius) {
-                    if (damageEnemy(e, strikeDmg, 4.0)) {
+                    if (damageEnemy(e, strikeDmg, 4.0)) { // 뇌화겁화 낙뢰 직격 넉백 4.0 원복
                       enemies.splice(j, 1);
                     }
                   }
@@ -7204,7 +7234,7 @@ const PIXEL_ENGINE = (function() {
             const e = enemies[j];
             if (!e || e.hp <= 0) continue;
             if (Math.hypot(e.x - fz.x, e.y - fz.y) <= fz.radius + e.radius) {
-              if (damageEnemy(e, fz.damage * dt * 2.8, 0.4)) {
+              if (damageEnemy(e, fz.damage * dt * 2.8, 0.0)) { // 화염 장판 넉백 0 (지속 피해)
                 enemies.splice(j, 1);
               }
             }
