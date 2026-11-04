@@ -79,7 +79,7 @@
     }
 
     /* Modals & Dialog Cards */
-    #mainModalCard, #levelUpModal > div, #bossChestModal > div, #pauseModal > div, #gameOverModal > div, #patchNotesModal > div {
+    #mainModalCard, #levelUpModal > div, #bossChestModal > div, #pauseModal > div, #gameOverModal > div, #patchNotesModal > div, #gameClearModal > div, #orbShardModal > div {
       border: 4px solid #000000 !important;
       box-shadow: 
         inset -4px -4px 0px 0px #020617,
@@ -332,7 +332,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="pixel-btn-slate px-3 py-1.5 flex items-center gap-2 text-xs transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.4.2</span>
+        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.5.0</span>
       </button>
     </div>
 
@@ -357,7 +357,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-black text-amber-300 tracking-widest mt-0.5">
-            VER 4.4.2
+            VER 4.5.0
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed mt-2">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -723,6 +723,44 @@
     </div>
   </div>
 
+  <!-- Orb Shard & Legendary Orb Acquisition Modal -->
+  <div id="orbShardModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md pointer-events-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
+    <div class="w-full max-w-md pixel-box p-5 flex flex-col gap-4 max-h-[92vh] overflow-y-auto text-center">
+      <div class="space-y-1.5">
+        <span id="orbShardModalBadge" class="inline-block px-3 py-0.5 font-black text-xs uppercase tracking-wider bg-indigo-500 text-slate-950">
+          고대 유물 발견
+        </span>
+        <div class="text-4xl py-1 animate-pulse" id="orbShardModalIcon">
+          🔮
+        </div>
+        <h2 id="orbShardModalTitle" class="text-xl sm:text-2xl font-black text-cyan-300">
+          고대 보주조각 [1/4] 획득!
+        </h2>
+        <p id="orbShardModalSubtitle" class="text-xs text-amber-300 font-bold">
+          고대의 신비로운 제단에서 발견했습니다.
+        </p>
+      </div>
+
+      <!-- Shard Slot Progress Bar -->
+      <div id="orbShardSlotsContainer" class="flex justify-center gap-2 py-1">
+        <div class="w-12 h-12 pixel-box flex items-center justify-center text-xl border-2" id="shardSlot1">🔮</div>
+        <div class="w-12 h-12 pixel-box flex items-center justify-center text-xl border-2 opacity-40" id="shardSlot2">🔒</div>
+        <div class="w-12 h-12 pixel-box flex items-center justify-center text-xl border-2 opacity-40" id="shardSlot3">🔒</div>
+        <div class="w-12 h-12 pixel-box flex items-center justify-center text-xl border-2 opacity-40" id="shardSlot4">🔒</div>
+      </div>
+
+      <div class="bg-slate-900/90 p-3.5 border-2 border-slate-700 text-left text-xs space-y-1.5 leading-relaxed text-slate-200">
+        <div id="orbShardDescText">
+          사신의 일격을 막아낼 고대의 신비로운 보주 조각입니다. 숨겨진 4개의 조각을 모두 모으면 '전설보주'가 완성됩니다.
+        </div>
+      </div>
+
+      <button id="closeOrbShardModalBtn" type="button" class="w-full py-4 pixel-btn-gold text-base font-black flex items-center justify-center gap-2 transition">
+        <span>✓</span><span>확인 (CONFIRM)</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Pause Modal (Comprehensive Progress & Ability Dashboard) -->
   <div id="pauseModal" class="fixed inset-0 z-30 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md">
     <div class="w-full max-w-lg glass-panel rounded-3xl p-5 sm:p-6 border border-slate-700 shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
@@ -797,6 +835,73 @@
     </div>
   </div>
 
+  <!-- Game Clear Modal (사신 최종보스 처치 축하 & 메인화면 이동) -->
+  <div id="gameClearModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/90 backdrop-blur-md pointer-events-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
+    <div class="w-full max-w-lg pixel-box p-5 sm:p-6 border-4 border-amber-400 shadow-2xl flex flex-col gap-4 text-center max-h-[92vh] overflow-y-auto">
+      <div class="space-y-1.5">
+        <span id="gameClearBadge" class="inline-block px-3 py-1 font-black text-xs uppercase tracking-widest bg-amber-400 text-slate-950 animate-pulse border-2 border-amber-200">
+          👑 VICTORY · 최종 보스 토벌 완료 👑
+        </span>
+        <div class="text-5xl py-1 animate-bounce" id="gameClearIcon">
+          🏆✨
+        </div>
+        <h2 id="gameClearHeading" class="text-2xl sm:text-3xl font-black text-amber-300 drop-shadow">
+          🎉 GAME CLEAR! 🎉
+        </h2>
+        <div id="gameClearMessageCard" class="bg-amber-950/60 p-3 sm:p-3.5 border-2 border-amber-500/60 text-left text-xs sm:text-sm space-y-1.5 leading-relaxed text-amber-100">
+          <div class="font-black text-amber-300 flex items-center gap-1.5 text-sm">
+            <span>✨</span><span>축하합니다! 어둠의 사신을 물리치고 게임을 클리어하셨습니다!</span>
+          </div>
+          <p class="text-xs text-slate-200">
+            끝없는 악몽의 밤을 지배하던 <strong>최종보스 사신</strong>을 격파하고 영원한 새벽을 맞이했습니다.
+          </p>
+          <p class="text-xs text-amber-200/90">
+            고대 전설보주의 신성한 가호와 불굴의 의지로 밤의 모든 시련을 완벽하게 극복하셨습니다. 진정한 영웅으로 등극하신 것을 진심으로 축하드립니다!
+          </p>
+        </div>
+      </div>
+
+      <!-- Stats Summary (생존 시간, 달성 레벨, 처치한 적, 최고 DPS) -->
+      <div class="grid grid-cols-4 gap-1.5 sm:gap-2 bg-slate-900/95 p-3 border-2 border-slate-700 text-center">
+        <div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400 font-bold">생존 시간</div>
+          <div id="clearTimeStat" class="text-sm sm:text-base font-black text-amber-400 mt-0.5">10:00</div>
+        </div>
+        <div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400 font-bold">달성 레벨</div>
+          <div id="clearLevelStat" class="text-sm sm:text-base font-black text-cyan-400 mt-0.5">LV. 1</div>
+        </div>
+        <div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400 font-bold">처치한 적</div>
+          <div id="clearKillStat" class="text-sm sm:text-base font-black text-rose-400 mt-0.5">0</div>
+        </div>
+        <div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400 font-bold">최고 DPS</div>
+          <div id="clearPeakDpsStat" class="text-sm sm:text-base font-black text-emerald-400 mt-0.5">0</div>
+        </div>
+      </div>
+
+      <!-- Final Build Summary -->
+      <div class="text-left space-y-1.5">
+        <div class="text-xs font-bold text-amber-300 flex items-center gap-1">
+          <span>⚔️</span><span>클리어 당시 최종 무기 & 초월 빌드</span>
+        </div>
+        <div id="clearBuildList" class="flex flex-wrap gap-1.5 bg-slate-900/70 p-2.5 border-2 border-slate-800 min-h-[44px]"></div>
+      </div>
+
+      <!-- Action Buttons: Main Menu button & Play Again button -->
+      <div class="flex flex-col sm:flex-row gap-2 pt-1">
+        <button id="clearToMainMenuBtn" type="button" class="flex-1 py-3.5 pixel-btn-gold text-sm sm:text-base font-black flex items-center justify-center gap-2 transition">
+          <span>🏠</span><span>메인 화면으로 (MAIN MENU)</span>
+        </button>
+        <button id="clearPlayAgainBtn" type="button" class="py-3.5 px-4 pixel-btn-slate text-sm sm:text-base font-black flex items-center justify-center gap-2 transition">
+          <span>🔄</span><span>다시 플레이</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
   <!-- DEDICATED FULL PATCH NOTES POPUP MODAL -->
   <div id="patchNotesModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md">
     <div class="w-full max-w-lg glass-panel rounded-3xl p-5 sm:p-6 border border-slate-700 shadow-2xl flex flex-col gap-4 max-h-[92vh] overflow-y-auto" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
@@ -816,6 +921,30 @@
       <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
       <div class="space-y-3.5 pr-1 text-xs">
         
+        <!-- v4.5.0 -->
+        <div class="pixel-box p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v4.5.0</span>
+              <span class="px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px]">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1.5 list-disc list-inside text-[11px] leading-relaxed font-mono">
+            <li><strong>10분 최종보스 [사신] 강림 시스템:</strong></li>
+            <li>• 10분(600초) 도달 시 경고 배너 <strong>'최종보스 출현 !'</strong>과 함께 사신이 출현합니다.</li>
+            <li>• 사신의 체력은 플레이어가 지금까지 가한 <strong>누적 피해량의 11배</strong>로 생성되며, <strong>기본 공격력 44</strong>의 치명적인 참격을 가합니다.</li>
+            <li>• 사신 등장 후 사망 시 게임 오버 문구가 <strong>'맵을 잘 살펴보면?'</strong>으로 변경되어 공략 힌트를 제공합니다.</li>
+            <li><strong>유한 맵 경계선 & 4대 고대 보주조각상자 배치:</strong></li>
+            <li>• 맵의 상·하·좌·우 끝(4800x4800)에 고대 룬 결계벽이 생성되며 캐릭터는 중앙(0,0)에서 전투를 시작합니다.</li>
+            <li>• 맵 곳곳의 고대 제단에 <strong>보주조각상자</strong>가 숨겨져 배치됩니다.</li>
+            <li>• 상자 접촉 시 <strong>'보주조각 획득창'</strong>이 팝업되며, 보주조각 능력은 최대 레벨 4입니다.</li>
+            <li>• 4개의 조각을 모두 모아 레벨 4가 되는 즉시 <strong>'전설보주'</strong>로 진화 각성하며, 사신의 공격력 44의 <strong>단 10%(4 피해)</strong>만 받고 <strong>사신에게 입히는 피해량이 100배 증가</strong>합니다.</li>
+            <li>• <strong>최종보스 사신 전용 결전 필드:</strong> 사신 출현 시 다른 모든 적이 소멸하고 신규 스폰이 중단되며, 캐릭터가 도망갈 수 없도록 사신의 이동속도가 대폭 상승합니다.</li>
+            <li>• <strong>최종보스 사신 처치 시 게임 클리어:</strong> 사신 격파 시 승리 축하 문구 및 전투 기록이 포함된 <strong>'게임 클리어'</strong> 팝업창이 뜨며, 메인 화면으로 돌아갈 수 있는 버튼이 제공됩니다.</li>
+          </ul>
+        </div>
+
         <!-- v4.4.2 -->
         <div class="pixel-box p-4 space-y-2">
           <div class="flex items-center justify-between">
@@ -2061,6 +2190,36 @@ const PIXEL_ENGINE = (function() {
     ];
     S.boss_slayer = makeSprite(20, 20, slayerData, PAL_BOSS_SLAYER);
 
+    // 12b. True Final Boss (사신 - Reaper)
+    const PAL_BOSS_REAPER = [
+      '#00000000', '#020617', '#0f172a', '#1e293b', '#334155',
+      '#450a0a', '#991b1b', '#dc2626', '#ef4444', '#f87171',
+      '#f8fafc', '#94a3b8', '#cbd5e1', '#581c87', '#a855f7'
+    ];
+    const reaperData = [
+      [0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1],
+      [0,0,0,0,0,1,2,2,2,2,2,2,1,0,0,1,12,11,10,1],
+      [0,0,0,0,1,2,3,3,3,3,3,2,2,1,0,1,12,11,1,0],
+      [0,0,0,1,2,3,1,1,1,1,3,3,2,1,1,12,11,1,0,0],
+      [0,0,1,2,3,1,10,8,8,10,1,3,2,1,12,11,1,0,0,0],
+      [0,0,1,2,3,1,8,7,7,8,1,3,2,1,12,1,0,0,0,0],
+      [0,0,1,2,2,1,10,10,10,10,1,2,2,1,11,1,0,0,0,0],
+      [0,0,0,1,2,2,1,1,1,1,2,2,1,1,11,1,0,0,0,0,0],
+      [0,0,0,1,1,2,2,2,2,2,2,1,1,1,11,1,0,0,0,0,0],
+      [0,0,1,2,14,2,2,2,2,2,14,2,1,1,11,1,0,0,0,0,0],
+      [0,1,2,14,14,2,2,2,2,2,14,14,2,1,11,1,0,0,0,0,0],
+      [1,2,2,14,2,2,2,2,2,2,2,14,2,2,11,1,0,0,0,0,0],
+      [1,2,2,2,2,2,2,2,2,2,2,2,2,2,11,1,0,0,0,0,0],
+      [1,2,2,2,2,2,2,2,2,2,2,2,2,2,11,1,0,0,0,0,0],
+      [0,1,2,2,2,2,2,2,2,2,2,2,2,1,11,1,0,0,0,0,0],
+      [0,1,2,2,2,2,2,2,2,2,2,2,2,1,11,1,0,0,0,0,0],
+      [0,0,1,2,2,1,2,2,1,2,2,1,1,0,11,1,0,0,0,0,0],
+      [0,0,1,2,1,0,1,1,0,1,2,1,0,0,11,1,0,0,0,0,0],
+      [0,0,1,1,1,0,0,0,0,1,1,1,0,0,11,1,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,11,1,0,0,0,0,0]
+    ];
+    S.boss_reaper = makeSprite(20, 20, reaperData, PAL_BOSS_REAPER);
+
     // 13. Trees & Rocks & Plants (Nature)
     // Oak Tree (20x24)
     const oakData = [
@@ -2585,7 +2744,11 @@ const PIXEL_ENGINE = (function() {
 
     const eName = e.name || '';
     if (isBoss) {
-      if (eName.includes('구울')) spriteName = 'boss_ghoul';
+      if (e.isReaper || eName.includes('사신')) {
+        spriteName = 'boss_reaper';
+        scale = 4.2;
+      }
+      else if (eName.includes('구울')) spriteName = 'boss_ghoul';
       else if (eName.includes('골렘')) spriteName = 'boss_golem';
       else if (eName.includes('드래곤')) spriteName = 'boss_dragon';
       else spriteName = 'boss_slayer';
@@ -2655,18 +2818,26 @@ const PIXEL_ENGINE = (function() {
 
     // Boss Pixel Health Bar
     if (isBoss) {
-      const bw = 46;
-      const bh = 5;
+      const isR = Boolean(e.isReaper || eName.includes('사신'));
+      const bw = isR ? 72 : 46;
+      const bh = isR ? 7 : 5;
       const bx = e.x - bw / 2;
-      const by = e.y - e.radius - 14;
+      const by = e.y - e.radius - (isR ? 18 : 14);
       const hpPct = Math.max(0, e.hp / e.maxHp);
 
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(bx - 1, by - 1, bw + 2, bh + 2);
-      ctx.fillStyle = '#334155';
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(bx - 2, by - 2, bw + 4, bh + 4);
+      ctx.fillStyle = '#1e293b';
       ctx.fillRect(bx, by, bw, bh);
-      ctx.fillStyle = '#f43f5e';
+      ctx.fillStyle = isR ? '#dc2626' : '#f43f5e';
       ctx.fillRect(bx, by, Math.round(bw * hpPct), bh);
+
+      if (isR) {
+        ctx.font = 'bold 10px monospace';
+        ctx.fillStyle = '#fde047';
+        ctx.textAlign = 'center';
+        ctx.fillText('👑 사신 (최종보스)', e.x, by - 5);
+      }
     }
 
     ctx.restore();
@@ -3258,6 +3429,21 @@ const PIXEL_ENGINE = (function() {
             gain.connect(actx.destination);
             osc.start(now);
             osc.stop(now + 0.16);
+                    } else if (type === 'victory') {
+            const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+            notes.forEach((freq, idx) => {
+              const osc = actx.createOscillator();
+              const gain = actx.createGain();
+              osc.type = 'triangle';
+              const startTime = now + idx * 0.10;
+              osc.frequency.setValueAtTime(freq, startTime);
+              gain.gain.setValueAtTime(0.12, startTime);
+              gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+              osc.connect(gain);
+              gain.connect(actx.destination);
+              osc.start(startTime);
+              osc.stop(startTime + 0.35);
+            });
           } else if (type === 'levelup') {
             const notes = [440, 554.37, 659.25, 880];
             notes.forEach((freq, idx) => {
@@ -3717,6 +3903,20 @@ const PIXEL_ENGINE = (function() {
       Object.keys(CLASS_SKILLS).forEach(k => {
         CLASS_SKILLS[k].forEach(s => { ALL_SKILLS_MAP[s.id] = s; });
       });
+      ALL_SKILLS_MAP['orbShard'] = {
+        id: 'orbShard',
+        name: '보주조각',
+        icon: '🔮',
+        category: '고대 유물',
+        maxLevel: 4
+      };
+      ALL_SKILLS_MAP['legendaryOrb'] = {
+        id: 'legendaryOrb',
+        name: '전설보주',
+        icon: '🔮✨',
+        category: '전설 유물',
+        maxLevel: 1
+      };
       ALL_SKILLS_MAP['mightBoost'] = {
         id: 'mightBoost',
         name: '투지의 문장 (공격력 영구 증가)',
@@ -3849,9 +4049,21 @@ const PIXEL_ENGINE = (function() {
 
       let elapsedTime = 0;
       let killCount = 0;
+      const MAX_ENEMIES = 150; // 모바일/PC 60fps 프레임드랍 방지 최대 적 개체수 제한
+      const MAX_GEMS = 160;    // 필드 경험치 보석 최대 제한 (초과 시 경험치 자동 합산 압축)
       let spawnAccumulator = 0;
       let waveTimer = 0;
       let nextBossTime = 45;
+      let reaperSpawned = false; // 10분 이후 최종보스(사신) 출현 플래그
+      const MAP_HALF = 2400; // 맵의 끝 경계 반경 (4800 x 4800 유한 맵)
+
+      // 중앙(0,0) 기준 맵끝 상하좌우(북,남,서,동) 고대 보주조각상자
+      let orbChests = [
+        { id: 'north', name: '북쪽 보주조각상자', direction: '북쪽 (상)', x: 0, y: -MAP_HALF + 160, opened: false },
+        { id: 'south', name: '남쪽 보주조각상자', direction: '남쪽 (하)', x: 0, y: MAP_HALF - 160, opened: false },
+        { id: 'west',  name: '서쪽 보주조각상자', direction: '서쪽 (좌)', x: -MAP_HALF + 160, y: 0, opened: false },
+        { id: 'east',  name: '동쪽 보주조각상자', direction: '동쪽 (우)', x: MAP_HALF - 160, y: 0, opened: false }
+      ];
       let bossCountSpawned = 0;
       let finalBossDefeatedCount = 0;
 
@@ -3946,6 +4158,15 @@ const PIXEL_ENGINE = (function() {
       const startGameBtn = document.getElementById('startGameBtn');
       const togglePatchNotesBtn = document.getElementById('togglePatchNotesBtn');
       const patchNotesModal = document.getElementById('patchNotesModal');
+      const closeOrbShardModalBtn = document.getElementById('closeOrbShardModalBtn');
+      if (closeOrbShardModalBtn) {
+        closeOrbShardModalBtn.addEventListener('click', closeOrbShardModal);
+        closeOrbShardModalBtn.addEventListener('touchend', (e) => {
+          if (e && e.preventDefault) e.preventDefault();
+          closeOrbShardModal();
+        });
+      }
+
       const closePatchNotesModalTopBtn = document.getElementById('closePatchNotesModalTopBtn');
       const closePatchNotesModalBottomBtn = document.getElementById('closePatchNotesModalBottomBtn');
       const resumeGameBtn = document.getElementById('resumeGameBtn');
@@ -4290,6 +4511,15 @@ const PIXEL_ENGINE = (function() {
         tempestSpeedBoostTimer = 0;
         zeroGlacierFreezeTimer = 0;
 
+        // 맵 끝 상하좌우 4대 고대 보주조각상자 초기화
+        reaperSpawned = false;
+        orbChests = [
+          { id: 'north', name: '북쪽 보주조각상자', direction: '북쪽 (상)', x: 0, y: -MAP_HALF + 160, opened: false },
+          { id: 'south', name: '남쪽 보주조각상자', direction: '남쪽 (하)', x: 0, y: MAP_HALF - 160, opened: false },
+          { id: 'west',  name: '서쪽 보주조각상자', direction: '서쪽 (좌)', x: -MAP_HALF + 160, y: 0, opened: false },
+          { id: 'east',  name: '동쪽 보주조각상자', direction: '동쪽 (우)', x: MAP_HALF - 160, y: 0, opened: false }
+        ];
+
         // Reset DPS metrics
         totalDamageDealt = 0;
         peakDps = 0;
@@ -4466,6 +4696,27 @@ const PIXEL_ENGINE = (function() {
             skillIconsBar.appendChild(badge);
           }
         });
+
+        // Relic badges: Legendary Orb or Orb Shards
+        if (player.skills.legendaryOrb || (player.skills.orbShard >= 4)) {
+          const badge = document.createElement('div');
+          badge.className = 'glass-panel px-2 py-1 text-[11px] font-black flex items-center gap-1 shrink-0 border-2 border-cyan-400 bg-cyan-950/90 text-cyan-300 shadow animate-pulse';
+          badge.innerHTML = `<span>🔮✨</span><span>전설보주 (사신 피해 90% 경감 & 공격력 100배)</span>`;
+          skillIconsBar.appendChild(badge);
+        } else if (player.skills.orbShard > 0) {
+          const badge = document.createElement('div');
+          badge.className = 'glass-panel px-2 py-1 text-[11px] font-bold flex items-center gap-1 shrink-0 border-2 border-indigo-400 bg-indigo-950/90 text-indigo-300';
+          badge.innerHTML = `<span>🔮</span><span>보주조각 [${player.skills.orbShard}/4]</span>`;
+          skillIconsBar.appendChild(badge);
+        }
+
+        // Might boost badge if acquired
+        if (player.skills.mightBoost > 0) {
+          const badge = document.createElement('div');
+          badge.className = 'glass-panel px-2 py-1 text-[11px] font-black flex items-center gap-1 shrink-0 border-2 border-amber-400 bg-amber-950/90 text-amber-300';
+          badge.innerHTML = `<span>⚔️</span><span>공격력 Lv.${player.skills.mightBoost} (+${player.skills.mightBoost * 8}%)</span>`;
+          skillIconsBar.appendChild(badge);
+        }
       }
 
       // --- Enemy Spawning ---
@@ -4485,7 +4736,140 @@ const PIXEL_ENGINE = (function() {
         };
       }
 
+      function spawnReaperBoss() {
+        // 사신의 체력은 캐릭터가 지금까지 넣은 데미지의 11배 (totalDamageDealt * 11)
+        const reaperHp = Math.max(100000, Math.round(totalDamageDealt * 11));
+        const spawnAngle = Math.random() * Math.PI * 2;
+        const bPos = getScreenEdgePos(spawnAngle, 75);
+
+        const reaper = {
+          x: bPos.x,
+          y: bPos.y,
+          radius: 38,
+          hp: reaperHp,
+          maxHp: reaperHp,
+          speed: 360, // 사신의 이동속도 대폭 증가 (도망 불가)
+          damage: 44, // 사신의 데미지는 44
+          color: '#0f172a',
+          outline: '#e11d48',
+          name: '사신 (최종보스)',
+          expValue: 2500,
+          isBoss: true,
+          isFinalBoss: true,
+          isReaper: true,
+          hitFlash: 0
+        };
+
+        // 사신 출현 시 사신 외의 모든 적 즉시 소멸 & 삭제 이펙트
+        for (let i = 0; i < enemies.length; i++) {
+          addBurstParticles(enemies[i].x, enemies[i].y, '#0f172a', 6);
+        }
+        enemies = [reaper];
+
+        bossBannerText.textContent = '최종보스 출현 !';
+        bossBanner.classList.remove('hidden');
+        playSound('boss');
+        addFloatingText(player.x, player.y - 45, '⚠️ 최종보스 [사신] 강림! ⚠️', '#e11d48', 22);
+        setTimeout(() => {
+          bossBanner.classList.add('hidden');
+        }, 5500);
+      }
+
+      function openOrbShardModal(currentLevel, direction, isLegendary) {
+        joystick.active = false;
+        joystick.dx = 0;
+        joystick.dy = 0;
+        gameState = 'ORB_SHARD';
+
+        const modal = document.getElementById('orbShardModal');
+        const badge = document.getElementById('orbShardModalBadge');
+        const icon = document.getElementById('orbShardModalIcon');
+        const title = document.getElementById('orbShardModalTitle');
+        const subtitle = document.getElementById('orbShardModalSubtitle');
+        const desc = document.getElementById('orbShardDescText');
+        const btn = document.getElementById('closeOrbShardModalBtn');
+
+        for (let s = 1; s <= 4; s++) {
+          const slot = document.getElementById(`shardSlot${s}`);
+          if (slot) {
+            if (s <= currentLevel) {
+              slot.textContent = '🔮';
+              slot.classList.remove('opacity-40');
+              slot.classList.add('border-cyan-400', 'bg-cyan-950/80', 'text-cyan-300');
+            } else {
+              slot.textContent = '🔒';
+              slot.classList.add('opacity-40');
+              slot.classList.remove('border-cyan-400', 'bg-cyan-950/80');
+            }
+          }
+        }
+
+        if (isLegendary) {
+          if (badge) {
+            badge.textContent = '✨ 전설보주 각성! ✨';
+            badge.className = 'inline-block px-3 py-0.5 font-black text-xs uppercase tracking-wider bg-amber-400 text-slate-950 animate-pulse';
+          }
+          if (icon) icon.textContent = '🔮✨';
+          if (title) {
+            title.textContent = '✨ 전설보주 각성! (고대 유물 완성) ✨';
+            title.className = 'text-xl sm:text-2xl font-black text-amber-300';
+          }
+          if (subtitle) subtitle.textContent = '4개의 조각이 공명하여 찬란한 【전설보주】가 깨어났습니다!';
+          if (desc) {
+            desc.innerHTML = `
+              <div class="text-amber-300 font-bold mb-1">【전설보주의 신성한 가호 발동】</div>
+              <div>10분 이후 강림할 <strong class="text-rose-400">최종보스(사신)의 치명적인 참격 피해(44)를 90% 흡수</strong>하여 <strong class="text-emerald-400">단 10%(4)의 피해</strong>만 받습니다!</div>
+              <div class="text-amber-300 font-bold mt-1">⚔️ 사신에게 가하는 공격 피해량 100배(10,000%) 증가!</div>
+              <div class="text-[11px] text-slate-400 mt-1.5">사신을 물리치고 밤의 진정한 지배자가 되세요!</div>
+            `;
+          }
+          if (btn) {
+            btn.innerHTML = '<span>🛡️</span><span>전설보주 가호 수령 & 확인</span>';
+          }
+        } else {
+          if (badge) {
+            badge.textContent = '고대 유물 발견';
+            badge.className = 'inline-block px-3 py-0.5 font-black text-xs uppercase tracking-wider bg-indigo-500 text-slate-950';
+          }
+          if (icon) icon.textContent = '🔮';
+          if (title) {
+            title.textContent = `고대 보주조각 [${currentLevel}/4] 획득!`;
+            title.className = 'text-xl sm:text-2xl font-black text-cyan-300';
+          }
+          if (subtitle) subtitle.textContent = '고대의 신비로운 제단에서 발견했습니다.';
+          if (desc) {
+            desc.innerHTML = `
+              <div>사신의 일격을 막아낼 고대의 신비로운 보주 조각입니다.</div>
+              <div class="text-amber-300 mt-1">숨겨진 4개의 조각을 모두 모으면 <strong>'전설보주'</strong>가 완성됩니다.</div>
+              <div class="text-[11px] text-slate-400 mt-1">남은 보주 조각: <strong class="text-white">${4 - currentLevel}개</strong></div>
+            `;
+          }
+          if (btn) {
+            btn.innerHTML = '<span>✓</span><span>확인 (CONFIRM)</span>';
+          }
+        }
+
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          modal.style.display = 'flex';
+        }
+      }
+
+      function closeOrbShardModal() {
+        const modal = document.getElementById('orbShardModal');
+        if (modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+          modal.style.display = 'none';
+        }
+        gameState = 'PLAYING';
+        lastTimestamp = performance.now();
+      }
+
       function spawnEnemy(isBoss = false, customAngle = null) {
+        if (reaperSpawned) return; // 사신 출현 시 더 이상 적 생성 금지
+        if (!isBoss && enemies.length >= MAX_ENEMIES) return; // 프레임드랍 방지: 최대 적 개체수 초과 시 스폰 제한
         const zoom = viewWidth < 640 ? 0.82 : 0.76;
         // 체력 스케일링: 초반(0~60초)은 부드럽게 시작, 후반(75초+, 만렙 근접)은 플레이어의 초월 융합 무기 화력에 맞추어 급격히 강화
         const baseDiff = 1 + (elapsedTime / 16) + Math.pow(elapsedTime / 26, 1.92);
@@ -4735,7 +5119,14 @@ const PIXEL_ENGINE = (function() {
       // --- Damage & Kill Handling ---
       function damageEnemy(enemy, rawAmount, knockback = 10) {
         if (!enemy || enemy.hp <= 0) return false;
-        const dmg = Math.max(1, Math.round(rawAmount * getDamageMultiplier()));
+        let dmg = Math.max(1, Math.round(rawAmount * getDamageMultiplier()));
+
+        // 캐릭터가 전설 보주 보유 시 사신에게 입히는 데미지 100배 증가
+        const hasLegendary = Boolean(player && (player.skills.legendaryOrb || (player.skills.orbShard >= 4)));
+        if (enemy.isReaper && hasLegendary) {
+          dmg = Math.round(dmg * 100);
+        }
+
         enemy.hp -= dmg;
         enemy.hitFlash = 0.12;
 
@@ -4743,18 +5134,15 @@ const PIXEL_ENGINE = (function() {
         totalDamageDealt += dmg;
         recentDamageLog.push({ t: elapsedTime, d: dmg });
 
-        // 밸런스 넉백 시스템 (적 등급/체급별 차등 저항력 및 시원한 타격감 구현)
+        // 밸런스 넉백 시스템 (사신은 넉백 완전 면역, 거침없는 추적)
         const dx = enemy.x - player.x;
         const dy = enemy.y - player.y;
         const dist = Math.hypot(dx, dy) || 1;
 
-        // 적 등급/체급별 넉백 저항 계수:
-        // - 보스: 0.22 (묵직한 경직 및 미세 밀림 ~4~8px, 화면 밖으로 날아가지 않도록 견고함 유지)
-        // - 대형 정예/탱커 (골렘, 공허거수, 파멸기사): 0.40 (~8~16px)
-        // - 중형 보병 (해골, 사령술사, 늑대인간): 0.65 (~12~24px)
-        // - 소형 무리 (박쥐, 슬라임, 고블린): 1.00 (~18~38px, 확실한 포위망 탈출 공간 확보)
         let weightMult = 1.0;
-        if (enemy.isBoss) {
+        if (enemy.isReaper) {
+          weightMult = 0.0; // 사신은 넉백 면역
+        } else if (enemy.isBoss) {
           weightMult = 0.22;
         } else if (enemy.radius >= 20 || (enemy.expValue || 0) >= 24) {
           weightMult = 0.40;
@@ -4764,16 +5152,28 @@ const PIXEL_ENGINE = (function() {
           weightMult = 1.00;
         }
 
-        const pushAmount = Math.max(1.0, Math.min(48.0, knockback * 6.2 * weightMult));
-        enemy.x += (dx / dist) * pushAmount;
-        enemy.y += (dy / dist) * pushAmount;
-        resolveObstacleCollision(enemy, 2);
+        const pushAmount = Math.max(0.0, Math.min(48.0, knockback * 6.2 * weightMult));
+        if (pushAmount > 0) {
+          enemy.x += (dx / dist) * pushAmount;
+          enemy.y += (dy / dist) * pushAmount;
+          resolveObstacleCollision(enemy, 2);
+        }
 
-        addFloatingText(enemy.x, enemy.y - enemy.radius, dmg, enemy.isBoss ? '#fde047' : '#f8fafc', enemy.isBoss ? 15 : 12);
+        if (enemy.isReaper && hasLegendary) {
+          addFloatingText(enemy.x, enemy.y - enemy.radius, `💥 ${dmg.toLocaleString()}`, '#fde047', 18);
+        } else {
+          addFloatingText(enemy.x, enemy.y - enemy.radius, dmg, enemy.isBoss ? '#fde047' : '#f8fafc', enemy.isBoss ? 15 : 12);
+        }
 
         if (enemy.hp <= 0) {
           killCount++;
           addBurstParticles(enemy.x, enemy.y, enemy.color, enemy.isBoss ? 16 : 6);
+
+          // 사신(최종보스) 처치 시 게임 클리어 모달 출력
+          if (enemy.isReaper) {
+            triggerGameClear();
+            return true; // killed
+          }
 
           // 마지막 보스 처치 시 다음 출현 마리수 +1 증가 누적
           if (enemy.isFinalBoss) {
@@ -4821,15 +5221,34 @@ const PIXEL_ENGINE = (function() {
               radius: isBoss ? 10 : 6
             });
           } else {
-            // 경험치 보석 드랍 (레벨 제한 없음, 무제한 레벨업)
-            gems.push({
-              x: enemy.x,
-              y: enemy.y,
-              val: enemy.expValue,
-              value: enemy.expValue,
-              type: 'exp',
-              radius: isBoss ? 10 : (enemy.expValue >= 10 ? 8 : (enemy.expValue >= 4 ? 6.5 : 5))
-            });
+            // 경험치 보석 드랍 & 최대 보석 수 제한 및 가치 합산 압축 (프레임드랍 완전 방지)
+            if (gems.length >= MAX_GEMS) {
+              // 가장 오래된 일반 경험치 보석을 찾아 그 자리에 가치를 합산
+              const oldestExp = gems.find(g => g.type === 'exp' && !g._magnetized);
+              if (oldestExp) {
+                oldestExp.val = (oldestExp.val || 1) + enemy.expValue;
+                oldestExp.value = oldestExp.val;
+                oldestExp.radius = Math.min(12, 6 + Math.log10(oldestExp.val) * 2);
+              } else {
+                gems.push({
+                  x: enemy.x,
+                  y: enemy.y,
+                  val: enemy.expValue,
+                  value: enemy.expValue,
+                  type: 'exp',
+                  radius: isBoss ? 10 : (enemy.expValue >= 10 ? 8 : (enemy.expValue >= 4 ? 6.5 : 5))
+                });
+              }
+            } else {
+              gems.push({
+                x: enemy.x,
+                y: enemy.y,
+                val: enemy.expValue,
+                value: enemy.expValue,
+                type: 'exp',
+                radius: isBoss ? 10 : (enemy.expValue >= 10 ? 8 : (enemy.expValue >= 4 ? 6.5 : 5))
+              });
+            }
           }
           return true; // killed
         }
@@ -5200,7 +5619,9 @@ const PIXEL_ENGINE = (function() {
             for (let j = enemies.length - 1; j >= 0; j--) {
               const e = enemies[j];
               if (!e || e.hp <= 0) continue;
-              if (Math.hypot(e.x - bx, e.y - by) <= e.radius + bRadius) {
+              const maxR = e.radius + bRadius;
+              if (Math.abs(e.x - bx) > maxR || Math.abs(e.y - by) > maxR) continue;
+              if (Math.hypot(e.x - bx, e.y - by) <= maxR) {
                 if (!e._bladeHitCooldown || elapsedTime > e._bladeHitCooldown) {
                   e._bladeHitCooldown = elapsedTime + 0.28;
                   const finalDmg = (bladeDmg + (hasSanctuary ? 48 : 0)) * dmgMult;
@@ -5295,7 +5716,9 @@ const PIXEL_ENGINE = (function() {
             for (let j = enemies.length - 1; j >= 0; j--) {
               const e = enemies[j];
               if (!e || e.hp <= 0) continue;
-              if (Math.hypot(e.x - sx, e.y - sy) <= e.radius + sRadius) {
+              const maxSR = e.radius + sRadius;
+              if (Math.abs(e.x - sx) > maxSR || Math.abs(e.y - sy) > maxSR) continue;
+              if (Math.hypot(e.x - sx, e.y - sy) <= maxSR) {
                 if (!e._shieldHitCooldown || elapsedTime > e._shieldHitCooldown) {
                   e._shieldHitCooldown = elapsedTime + 0.32;
                   const shieldDmg = (18 + shieldLv * 8 + (hasAegis ? 48 : 0)) * dmgMult;
@@ -6113,38 +6536,78 @@ const PIXEL_ENGINE = (function() {
           player.walkTimer = 0;
         }
 
+        // 맵의 끝(경계) 제한: 항상 플레이어를 유한 맵 경계 내로 제한
+        player.x = Math.max(-MAP_HALF + player.radius + 16, Math.min(MAP_HALF - player.radius - 16, player.x));
+        player.y = Math.max(-MAP_HALF + player.radius + 16, Math.min(MAP_HALF - player.radius - 16, player.y));
+
         if (player.invulnTimer > 0) {
           player.invulnTimer -= dt;
         }
 
-        // 2. Wave Spawning (시간에 따른 동적 물량 & 기습 돌진 러시)
-        spawnAccumulator += dt;
-        waveTimer += dt;
-        const waveInterval = Math.max(0.36, 1.15 - (elapsedTime / 150) * 0.75);
+        // 2. Wave Spawning (사신 미출현 시에만 웨이브 생성)
+        if (!reaperSpawned) {
+          spawnAccumulator += dt;
+          waveTimer += dt;
+        const waveInterval = Math.max(0.55, 1.25 - (elapsedTime / 180) * 0.60);
         if (spawnAccumulator >= waveInterval) {
           spawnAccumulator = 0;
-          const waveCount = Math.min(68, Math.floor(6 + (elapsedTime / 8) * 2.4));
-          for (let i = 0; i < waveCount; i++) {
-            const ang = (i * Math.PI * 2) / waveCount;
-            spawnEnemy(false, ang);
+          const spawnSlots = Math.max(0, MAX_ENEMIES - enemies.length);
+          if (spawnSlots > 0) {
+            const waveTarget = Math.min(18, Math.floor(6 + (elapsedTime / 24) * 2.0));
+            const waveCount = Math.min(spawnSlots, waveTarget);
+            for (let i = 0; i < waveCount; i++) {
+              const ang = (i * Math.PI * 2) / waveCount;
+              spawnEnemy(false, ang);
+            }
           }
-          if (Math.random() < 0.65) spawnEnemy(false);
 
-          // 후반부 (120초 이상) 돌진 무리 기습 출현 (Ambush Swarm)
-          if (elapsedTime >= 120 && Math.random() < 0.40) {
-            const ambushCount = Math.min(16, Math.floor(4 + (elapsedTime - 120) / 12));
+          // 후반부 (120초 이상) 돌진 무리 기습 출현 (스폰 슬롯 여유 시에만 발동)
+          const remainingSlots = MAX_ENEMIES - enemies.length;
+          if (elapsedTime >= 120 && remainingSlots > 5 && Math.random() < 0.35) {
+            const ambushCount = Math.min(remainingSlots, Math.min(10, Math.floor(4 + (elapsedTime - 120) / 18)));
             const ambushAng = Math.random() * Math.PI * 2;
             for (let j = 0; j < ambushCount; j++) {
-              spawnEnemy(false, ambushAng + (Math.random() - 0.5) * 0.4);
+              spawnEnemy(false, ambushAng + (Math.random() - 0.5) * 0.35);
             }
           }
         }
 
-        // 2b. Boss Spawning Check (매 45초마다 보스 몬스터 확정 출현)
-        if (elapsedTime >= nextBossTime) {
+        } // End of !reaperSpawned wave spawning
+
+        // 2b. Boss Spawning Check (사신 출현 전 매 45초마다 보스 몬스터 출현)
+        if (!reaperSpawned && elapsedTime >= nextBossTime) {
           spawnEnemy(true);
           playSound('boss');
           nextBossTime += 45;
+        }
+
+        // 2c. True Final Boss (사신 - 10분/600초 이후 출현)
+        if (elapsedTime >= 600 && !reaperSpawned) {
+          reaperSpawned = true;
+          spawnReaperBoss();
+        }
+
+        // Check Orb Shard Chests (맵 끝 상하좌우 보주조각상자)
+        for (let i = 0; i < orbChests.length; i++) {
+          const oc = orbChests[i];
+          if (!oc.opened) {
+            const dist = Math.hypot(player.x - oc.x, player.y - oc.y);
+            if (dist <= player.radius + 28) {
+              oc.opened = true;
+              player.skills.orbShard = (player.skills.orbShard || 0) + 1;
+              const currentLevel = player.skills.orbShard;
+              const isLegendary = currentLevel >= 4;
+              if (isLegendary) {
+                player.skills.legendaryOrb = 1;
+              }
+
+              playSound('levelup');
+              addBurstParticles(oc.x, oc.y, isLegendary ? '#fde047' : '#38bdf8', 36);
+              openOrbShardModal(currentLevel, oc.direction, isLegendary);
+              renderSkillBadges();
+              break;
+            }
+          }
         }
 
         // 3. Update Weapons
@@ -6436,6 +6899,10 @@ const PIXEL_ENGINE = (function() {
             enemies.splice(i, 1);
             continue;
           }
+          if (reaperSpawned && !e.isReaper) {
+            enemies.splice(i, 1);
+            continue;
+          }
           if (e.hitFlash > 0) e.hitFlash -= dt;
 
           // Poison damage tick
@@ -6455,34 +6922,56 @@ const PIXEL_ENGINE = (function() {
           const dist = Math.hypot(dx, dy) || 1;
 
           const zoom = viewWidth < 640 ? 0.82 : 0.76;
-          const cullDist = (Math.max(viewWidth, viewHeight) / zoom) * 1.1;
+          const cullDist = (Math.max(viewWidth, viewHeight) / zoom) * 1.15;
           if (dist > cullDist && !e.isBoss) {
-            const ang = Math.random() * Math.PI * 2;
-            const relocated = getScreenEdgePos(ang, 35);
-            e.x = relocated.x;
-            e.y = relocated.y;
-            continue;
+            if (enemies.length > 90) {
+              // 화면 밖 원거리 몬스터 안전 정리 (프레임드랍 방지)
+              enemies.splice(i, 1);
+              continue;
+            } else {
+              // 화면 가장자리로 재배치하여 끊김 없는 전투 유지
+              const ang = Math.random() * Math.PI * 2;
+              const relocated = getScreenEdgePos(ang, 35);
+              e.x = relocated.x;
+              e.y = relocated.y;
+              continue;
+            }
           }
 
-          // Enemy Movement (개별 빙결 타이머 검사: 범위 내 빙결된 적만 정지)
-          if ((e._frozenTimer || 0) > 0) {
+          // Enemy Movement (사신은 빙결 면역 및 캐릭터보다 항상 빠른 맹렬한 추적)
+          if ((e._frozenTimer || 0) > 0 && !e.isReaper) {
             e._frozenTimer -= dt;
             // 빙결된 적은 제자리에서 이동 불가
           } else {
-            // 빙하 범위 밖의 적은 정상 이동
-            e.x += (dx / dist) * e.speed * dt;
-            e.y += (dy / dist) * e.speed * dt;
+            // 빙하 범위 밖의 적은 정상 이동 (사신은 캐릭터가 도망갈 수 없도록 이동속도 대폭 증가)
+            let moveSpeed = e.speed;
+            if (e.isReaper) {
+              const playerSpd = getMoveSpeed();
+              moveSpeed = Math.max(e.speed, playerSpd * 1.15 + 30);
+            }
+            e.x += (dx / dist) * moveSpeed * dt;
+            e.y += (dy / dist) * moveSpeed * dt;
             resolveObstacleCollision(e, e.radius);
           }
 
           // Contact with Player
           if (dist < player.radius + e.radius) {
             if (player.invulnTimer <= 0) {
-              const dmg = e.isBoss ? 28 : (e.expValue >= 8 ? 16 : 8);
+              let dmg = e.damage || (e.isBoss ? 28 : (e.expValue >= 8 ? 16 : 8));
+              if (e.isReaper) {
+                const hasLegendary = Boolean(player.skills.legendaryOrb || (player.skills.orbShard >= 4));
+                if (hasLegendary) {
+                  dmg = Math.round(44 * 0.10); // 전설보주 보유 시 사신의 데미지(44)의 10% (4 피해)
+                  addFloatingText(player.x, player.y - 28, '🛡️ 전설보주 가호! 피해 90% 흡수 (-4 HP)', '#38bdf8', 16);
+                } else {
+                  dmg = 44; // 사신의 데미지는 44 (전설보주 미보유 시 치명타)
+                  addFloatingText(player.x, player.y - 28, '💀 사신의 파멸 참격! (-44 HP)', '#ef4444', 16);
+                }
+              }
               player.hp -= dmg;
               player.invulnTimer = 0.55;
               playSound('hit');
-              addBurstParticles(player.x, player.y, '#ef4444', 8);
+              addBurstParticles(player.x, player.y, e.isReaper ? '#e11d48' : '#ef4444', 10);
 
               if (player.hp <= 0) {
                 player.hp = 0;
@@ -6638,12 +7127,94 @@ const PIXEL_ENGINE = (function() {
         ctx.scale(zoom, zoom);
         ctx.translate(-player.x, -player.y);
 
-        // 1. Floor (Seamless 16-bit RPG Grass)
+        // 1. Floor (Clamped to 4800x4800 Map Boundary)
         const minWX = player.x - cullW;
         const minWY = player.y - cullH;
         const worldW = cullW * 2;
         const worldH = cullH * 2;
         PIXEL_ENGINE.drawFloor(ctx, minWX, minWY, worldW, worldH);
+
+        // Draw Void and Ancient Barrier Walls outside Map Boundary [-MAP_HALF, MAP_HALF]
+        ctx.save();
+        ctx.fillStyle = '#020617';
+        if (minWY < -MAP_HALF) ctx.fillRect(minWX - 10, minWY - 10, worldW + 20, -MAP_HALF - minWY + 10);
+        if (minWY + worldH > MAP_HALF) ctx.fillRect(minWX - 10, MAP_HALF, worldW + 20, (minWY + worldH) - MAP_HALF + 10);
+        if (minWX < -MAP_HALF) ctx.fillRect(minWX - 10, minWY - 10, -MAP_HALF - minWX + 10, worldH + 20);
+        if (minWX + worldW > MAP_HALF) ctx.fillRect(MAP_HALF, minWY - 10, (minWX + worldW) - MAP_HALF + 10, worldH + 20);
+
+        // Glowing Boundary Border & Stone Pillar Runes
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 6;
+        ctx.shadowColor = '#dc2626';
+        ctx.shadowBlur = 10;
+        ctx.strokeRect(-MAP_HALF, -MAP_HALF, MAP_HALF * 2, MAP_HALF * 2);
+        ctx.strokeStyle = '#fde047';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-MAP_HALF + 6, -MAP_HALF + 6, (MAP_HALF - 6) * 2, (MAP_HALF - 6) * 2);
+        ctx.restore();
+
+        // Draw 4 Ancient Orb Shard Chests (보주조각상자)
+        for (let i = 0; i < orbChests.length; i++) {
+          const oc = orbChests[i];
+          if (Math.abs(oc.x - player.x) > cullW || Math.abs(oc.y - player.y) > cullH) continue;
+          
+          ctx.save();
+          // Shrine Pedestal
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.arc(oc.x, oc.y, 36, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = oc.opened ? '#475569' : '#38bdf8';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          // Sacred Beacon Beam if unopened
+          if (!oc.opened) {
+            const bGrad = ctx.createLinearGradient(oc.x, oc.y, oc.x, oc.y - 180);
+            bGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+            bGrad.addColorStop(0.5, 'rgba(129, 140, 248, 0.25)');
+            bGrad.addColorStop(1, 'rgba(56, 189, 248, 0.0)');
+            ctx.fillStyle = bGrad;
+            ctx.beginPath();
+            ctx.moveTo(oc.x - 14, oc.y);
+            ctx.lineTo(oc.x + 14, oc.y);
+            ctx.lineTo(oc.x + 28, oc.y - 180);
+            ctx.lineTo(oc.x - 28, oc.y - 180);
+            ctx.closePath();
+            ctx.fill();
+          }
+
+          // Chest Box
+          const cw = 32; const ch = 24;
+          const cx = oc.x - cw / 2; const cy = oc.y - ch / 2;
+          ctx.fillStyle = oc.opened ? '#1e293b' : '#0284c7';
+          ctx.fillRect(cx, cy, cw, ch);
+          ctx.strokeStyle = oc.opened ? '#475569' : '#fde047';
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(cx, cy, cw, ch);
+          ctx.fillStyle = oc.opened ? '#334155' : '#f59e0b';
+          ctx.fillRect(cx + 4, cy + 4, cw - 8, 4);
+
+          // Hovering Orb Shard above chest
+          if (!oc.opened) {
+            const floatY = oc.y - 30 + Math.sin(elapsedTime * 4) * 4;
+            ctx.font = '22px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🔮', oc.x, floatY);
+
+            ctx.font = 'bold 11px monospace';
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillText('[ 🔮 고대 보주조각상자 ]', oc.x, oc.y - 48);
+          } else {
+            ctx.font = 'bold 10px monospace';
+            ctx.fillStyle = '#94a3b8';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('[ ✓ 보주조각 획득 완료 ]', oc.x, oc.y - 24);
+          }
+          ctx.restore();
+        }
 
         // 1a. Fire Zones (Animated 8-bit flames)
         for (let i = 0; i < fireZones.length; i++) {
@@ -6977,7 +7548,159 @@ const PIXEL_ENGINE = (function() {
         }
       }
 
+      // --- Game Clear (사신 처치) & Main Menu Navigation ---
+      function triggerGameClear() {
+        if (gameState === 'CLEAR' || gameState === 'GAME_OVER') return;
+        gameState = 'CLEAR';
+        joystick.active = false;
+        joystick.dx = 0;
+        joystick.dy = 0;
+        for (const k in keys) delete keys[k];
+
+        playSound('victory');
+
+        // Burst victory particles around player
+        for (let i = 0; i < 70; i++) {
+          const ang = Math.random() * Math.PI * 2;
+          const spd = 60 + Math.random() * 200;
+          particles.push({
+            x: player.x,
+            y: player.y,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd,
+            radius: 3 + Math.random() * 4,
+            color: ['#fde047', '#38bdf8', '#fbbf24', '#f43f5e', '#a855f7', '#34d399'][Math.floor(Math.random() * 6)],
+            life: 1.5 + Math.random() * 1.0
+          });
+        }
+
+        const clearHeading = document.getElementById('gameClearHeading');
+        if (clearHeading) {
+          clearHeading.textContent = '🎉 GAME CLEAR! 🎉';
+        }
+        const msgCard = document.getElementById('gameClearMessageCard');
+        if (msgCard) {
+          msgCard.innerHTML = `
+            <div class="font-black text-amber-300 flex items-center gap-1.5 text-sm">
+              <span>✨</span><span>축하합니다! 어둠의 사신을 물리치고 게임을 클리어하셨습니다!</span>
+            </div>
+            <p class="text-xs text-slate-200 mt-1">
+              끝없는 악몽의 밤을 지배하던 <strong>최종보스 사신</strong>을 격파하고 영원한 새벽을 맞이했습니다.
+            </p>
+            <p class="text-xs text-amber-200/90 mt-1">
+              고대 전설보주의 신성한 가호와 불굴의 의지로 밤의 모든 시련을 완벽하게 극복하셨습니다. 진정한 영웅으로 등극하신 것을 진심으로 축하드립니다!
+            </p>
+          `;
+        }
+        const clearTimeEl = document.getElementById('clearTimeStat');
+        const clearLevelEl = document.getElementById('clearLevelStat');
+        const clearKillEl = document.getElementById('clearKillStat');
+        const clearPeakDpsEl = document.getElementById('clearPeakDpsStat');
+
+        if (clearTimeEl) clearTimeEl.textContent = formatTime(elapsedTime);
+        if (clearLevelEl) clearLevelEl.textContent = `LV. ${player.level}`;
+        if (clearKillEl) clearKillEl.textContent = killCount.toLocaleString();
+        if (clearPeakDpsEl) clearPeakDpsEl.textContent = peakDps.toLocaleString();
+
+        const clearBuildList = document.getElementById('clearBuildList');
+        if (clearBuildList) {
+          clearBuildList.innerHTML = '';
+          const charKey = (player && player.charKey) ? player.charKey : selectedCharKey;
+          const allItems = [...(CLASS_EVOLUTIONS[charKey] || []), ...(CLASS_SKILLS[charKey] || [])];
+          allItems.forEach(item => {
+            const lv = player.skills[item.id] || 0;
+            if (lv > 0) {
+              const isEvo = item.category === '초월 진화 무기';
+              const chip = document.createElement('div');
+              chip.className = `px-2.5 py-1 text-xs font-bold flex items-center gap-1.5 border ${isEvo ? 'bg-amber-950/70 border-amber-400 text-amber-300' : 'bg-slate-800 border-slate-700 text-slate-200'}`;
+              chip.innerHTML = `<span>${item.icon}</span><span>${item.name}</span><span class="text-amber-400 font-mono">${isEvo ? '★초월' : `Lv.${lv}`}</span>`;
+              clearBuildList.appendChild(chip);
+            }
+          });
+          if (player.skills.legendaryOrb || player.skills.orbShard >= 4) {
+            const orbChip = document.createElement('div');
+            orbChip.className = 'px-2.5 py-1 text-xs font-bold flex items-center gap-1.5 border bg-amber-900/80 border-amber-300 text-amber-200 animate-pulse';
+            orbChip.innerHTML = '<span>🔮✨</span><span>전설보주</span><span class="text-cyan-300 font-mono">완성</span>';
+            clearBuildList.prepend(orbChip);
+          }
+        }
+
+        const dpsHudWidget = document.getElementById('dpsHudWidget');
+        if (dpsHudWidget) {
+          dpsHudWidget.classList.add('opacity-0');
+        }
+
+        const modal = document.getElementById('gameClearModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          modal.style.display = 'flex';
+        }
+      }
+
+      function returnToMainMenu() {
+        const gameClearModal = document.getElementById('gameClearModal');
+        if (gameClearModal) {
+          gameClearModal.classList.add('hidden');
+          gameClearModal.classList.remove('flex');
+          gameClearModal.style.display = 'none';
+        }
+        if (gameOverModal) {
+          gameOverModal.classList.add('hidden');
+          gameOverModal.classList.remove('flex');
+          gameOverModal.style.display = 'none';
+        }
+        if (pauseModal) {
+          pauseModal.classList.add('hidden');
+          pauseModal.classList.remove('flex');
+          pauseModal.style.display = 'none';
+        }
+        if (levelUpModal) {
+          levelUpModal.classList.add('hidden');
+          levelUpModal.classList.remove('flex');
+          levelUpModal.style.display = 'none';
+        }
+        if (bossChestModal) {
+          bossChestModal.classList.add('hidden');
+          bossChestModal.classList.remove('flex');
+          bossChestModal.style.display = 'none';
+        }
+        const osm = document.getElementById('orbShardModal');
+        if (osm) {
+          osm.classList.add('hidden');
+          osm.classList.remove('flex');
+          osm.style.display = 'none';
+        }
+        const dpsHudWidget = document.getElementById('dpsHudWidget');
+        if (dpsHudWidget) {
+          dpsHudWidget.classList.add('opacity-0');
+          dpsHudWidget.classList.add('hidden');
+        }
+        showView(titleScreenView);
+        if (startModal) {
+          startModal.classList.remove('hidden');
+          startModal.classList.add('flex');
+          startModal.style.display = 'flex';
+        }
+        initGame();
+        gameState = 'START';
+      }
+
+      function retryFromClear() {
+        const gameClearModal = document.getElementById('gameClearModal');
+        if (gameClearModal) {
+          gameClearModal.classList.add('hidden');
+          gameClearModal.classList.remove('flex');
+          gameClearModal.style.display = 'none';
+        }
+        ensureAudio();
+        initGame();
+        gameState = 'PLAYING';
+        lastTimestamp = performance.now();
+      }
+
       function triggerGameOver() {
+        if (gameState === 'GAME_OVER' || gameState === 'CLEAR') return;
         hideTouchHint();
         playSound('gameover');
         gameState = 'GAME_OVER';
@@ -6988,6 +7711,26 @@ const PIXEL_ENGINE = (function() {
         document.getElementById('finalKillStat').textContent = killCount.toLocaleString();
         const finalPeakEl = document.getElementById('finalPeakDpsStat');
         if (finalPeakEl) finalPeakEl.textContent = peakDps.toLocaleString();
+
+        const headingEl = document.getElementById('gameOverHeading');
+        const subtextEl = document.getElementById('gameOverSubtext');
+        if (reaperSpawned) {
+          if (headingEl) {
+            headingEl.textContent = '맵을 잘 살펴보면?';
+            headingEl.className = 'text-2xl sm:text-3xl font-black text-amber-300';
+          }
+          if (subtextEl) {
+            subtextEl.textContent = '사신의 절대적인 일격(44)은 고대 전설보주의 가호 없이는 버텨낼 수 없습니다...';
+          }
+        } else {
+          if (headingEl) {
+            headingEl.textContent = '전투 종료!';
+            headingEl.className = 'text-2xl sm:text-3xl font-black text-white';
+          }
+          if (subtextEl) {
+            subtextEl.textContent = '몰려오는 어둠의 군단에게 쓰러졌습니다.';
+          }
+        }
 
         const dpsHudWidget = document.getElementById('dpsHudWidget');
         if (dpsHudWidget) {
@@ -7181,6 +7924,18 @@ const PIXEL_ENGINE = (function() {
           }
         }
 
+        if (gameState === 'ORB_SHARD') {
+          if (e.code === 'Enter' || e.code === 'Space' || e.code === 'Escape') {
+            closeOrbShardModal();
+          }
+        }
+
+        if (gameState === 'CLEAR') {
+          if (e.code === 'Enter' || e.code === 'Space' || e.code === 'Escape') {
+            returnToMainMenu();
+          }
+        }
+
         if (e.code === 'Escape') {
           if (patchNotesModal && !patchNotesModal.classList.contains('hidden')) {
             closePatchNotes();
@@ -7265,6 +8020,23 @@ const PIXEL_ENGINE = (function() {
       }
       startGameBtn.addEventListener('click', startBattle);
       startGameBtn.addEventListener('pointerup', startBattle);
+
+      const clearToMainMenuBtn = document.getElementById('clearToMainMenuBtn');
+      const clearPlayAgainBtn = document.getElementById('clearPlayAgainBtn');
+      if (clearToMainMenuBtn) {
+        clearToMainMenuBtn.addEventListener('click', returnToMainMenu);
+        clearToMainMenuBtn.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          returnToMainMenu();
+        });
+      }
+      if (clearPlayAgainBtn) {
+        clearPlayAgainBtn.addEventListener('click', retryFromClear);
+        clearPlayAgainBtn.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          retryFromClear();
+        });
+      }
 
       retryGameBtn.addEventListener('click', () => {
         ensureAudio();
@@ -7541,9 +8313,18 @@ const PIXEL_ENGINE = (function() {
         getKillCount: () => killCount,
         getTotalDamage: () => totalDamageDealt,
         spawnEnemy,
-        getDamageMultiplier
-      ,
-        areAllSkillsMaxed};
+        getDamageMultiplier,
+        areAllSkillsMaxed,
+        getOrbChests: () => orbChests,
+        getReaperSpawned: () => reaperSpawned,
+        spawnReaperBoss,
+        openOrbShardModal,
+        closeOrbShardModal,
+        triggerGameClear,
+        returnToMainMenu,
+        retryFromClear,
+        getGameState: () => gameState
+      };
 
       window.onload = function () {
         initGame();
