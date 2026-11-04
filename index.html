@@ -349,7 +349,7 @@
     <div class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 pointer-events-auto">
       <button id="togglePatchNotesBtn" type="button" class="pixel-btn-slate px-3 py-1.5 flex items-center gap-2 text-xs transition">
         <span>📋 패치노트</span>
-        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.7.2</span>
+        <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 font-mono text-[10px] font-black">v4.7.3</span>
       </button>
     </div>
 
@@ -374,7 +374,7 @@
             나이트 서바이버
           </h1>
           <div class="text-xs font-black text-amber-300 tracking-widest mt-0.5">
-            VER 4.7.2
+            VER 4.7.3
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-xs mx-auto leading-relaxed mt-2">
             사방에서 몰려오는 어둠의 군단에 맞서 끝까지 살아남아 전설의 영웅이 되세요!
@@ -449,7 +449,7 @@
               <span class="flex items-center gap-1.5">
                 <span>⚡</span><span>3. 클래스 전용 스킬 (24종) & 융합 공식 (12종)</span>
               </span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">v4.7.2 최종 완성 & 사신 결전 시스템</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">v4.7.3 최종 완성 & 사신 결전 시스템</span>
             </div>
             <p class="text-[11px] text-slate-300 leading-snug">
               각 클래스는 <strong>오직 자신만 배울 수 있는 6가지 고유 스킬(최대 Lv.10)</strong>을 가집니다. 연계된 2개 스킬을 모두 <strong>10레벨</strong> 달성하면 최강의 <strong>초월 융합 스킬</strong>이 해금됩니다!
@@ -938,12 +938,28 @@
       <!-- Chronological Version Cards (v2.0.0 down to v1.0.0) -->
       <div class="space-y-3.5 pr-1 text-xs">
         
-                <!-- v4.7.2 -->
+                <!-- v4.7.3 -->
         <div class="pixel-box p-4 space-y-2 border-2 border-amber-400">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-black text-amber-300 font-mono">v4.7.2</span>
+              <span class="text-sm font-black text-amber-300 font-mono">v4.7.3</span>
               <span class="px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px]">LATEST</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
+          </div>
+          <ul class="text-slate-200 space-y-1.5 list-disc list-inside text-[11px] leading-relaxed font-mono">
+            <li><strong>과도한 스킬 넉백 밸런스 정밀 조정:</strong></li>
+            <li>• <strong>스킬 넉백 정상화:</strong> 빛의 방패(6.0→2.4), 성기사의 기도(5.5→2.4), 급소 절단(6.0→2.5), 정의의 망치(5.0→2.6), 메테오(6.0→2.8) 등 적을 화면 밖으로 과도하게 튕겨내던 스킬들의 넉백 수치를 최적화했습니다.</li>
+            <li>• <strong>연계 공격 및 오라 적중 안정화:</strong> 몬스터가 무기 사거리 밖으로 너무 멀리 날아가지 않고 자연스럽게 밀려나도록 최대 넉백 상한선을 조정하여, 근접 공격과 성역 오라의 후속타가 안정적으로 적중합니다.</li>
+            <li>• <strong>전체 버전 및 README 점검 완료:</strong> v1.0.0부터 v4.7.3까지의 패치 내역과 공식 프로젝트 README 문서를 완벽하게 최신화했습니다.</li>
+          </ul>
+        </div>
+
+        <!-- v4.7.2 -->
+        <div class="pixel-box p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-amber-300 font-mono">v4.7.2</span>
             </div>
             <span class="text-[11px] text-slate-400 font-mono">2026.11</span>
           </div>
@@ -5258,7 +5274,7 @@ const PIXEL_ENGINE = (function() {
           weightMult = 1.00;
         }
 
-        const pushAmount = Math.max(0.0, Math.min(48.0, knockback * 6.2 * weightMult));
+        const pushAmount = Math.max(0.0, Math.min(38.0, knockback * 6.2 * weightMult)); // 과도한 화면 밖 튕김 방지 상한선
         if (pushAmount > 0) {
           enemy.x += (dx / dist) * pushAmount;
           enemy.y += (dy / dist) * pushAmount;
@@ -5832,7 +5848,7 @@ const PIXEL_ENGINE = (function() {
                 if (!e._shieldHitCooldown || elapsedTime > e._shieldHitCooldown) {
                   e._shieldHitCooldown = elapsedTime + 0.32;
                   const shieldDmg = (18 + shieldLv * 8 + (hasAegis ? 48 : 0)) * dmgMult;
-                  if (damageEnemy(e, shieldDmg, 6.0)) {
+                  if (damageEnemy(e, shieldDmg, 2.4)) {
                     enemies.splice(j, 1);
                   }
                   addBurstParticles(sx, sy, '#fde047', 4);
@@ -5874,7 +5890,7 @@ const PIXEL_ENGINE = (function() {
                   const e = enemies[j];
                   if (!e || e.hp <= 0) continue;
                   if (Math.hypot(e.x - sx, e.y - sy) <= sRad + e.radius) {
-                    if (damageEnemy(e, smiteDmg, 4.5)) {
+                    if (damageEnemy(e, smiteDmg, 2.5)) {
                       enemies.splice(j, 1);
                     }
                   }
@@ -5911,7 +5927,7 @@ const PIXEL_ENGINE = (function() {
               const e = enemies[j];
               if (!e || e.hp <= 0) continue;
               if (Math.hypot(e.x - player.x, e.y - player.y) <= pRad + e.radius) {
-                if (damageEnemy(e, pDmg, 5.5)) {
+                if (damageEnemy(e, pDmg, 2.4)) {
                   enemies.splice(j, 1);
                 }
               }
@@ -6045,7 +6061,7 @@ const PIXEL_ENGINE = (function() {
                   if (!e || e.hp <= 0) continue;
                   if (Math.hypot(e.x - t.x, e.y - t.y) <= 55 + e.radius) {
                     e._frozenTimer = 1.8;
-                    if (damageEnemy(e, 85 * dmgMult, 5.0)) {
+                    if (damageEnemy(e, 85 * dmgMult, 2.4)) {
                       enemies.splice(j, 1);
                     }
                   }
@@ -6145,7 +6161,7 @@ const PIXEL_ENGINE = (function() {
               const e = enemies[j];
               if (!e || e.hp <= 0) continue;
               if (Math.hypot(e.x - player.x, e.y - player.y) <= surgeRad + e.radius) {
-                if (damageEnemy(e, surgeDmg, 5.0)) {
+                if (damageEnemy(e, surgeDmg, 2.4)) {
                   enemies.splice(j, 1);
                 }
               }
@@ -6337,7 +6353,7 @@ const PIXEL_ENGINE = (function() {
               const e = enemies[j];
               if (!e || e.hp <= 0) continue;
               if (Math.hypot(e.x - player.x, e.y - player.y) <= sRad + e.radius) {
-                if (damageEnemy(e, sDmg, 4.5)) {
+                if (damageEnemy(e, sDmg, 2.5)) {
                   enemies.splice(j, 1);
                 }
               }
@@ -6573,7 +6589,7 @@ const PIXEL_ENGINE = (function() {
                 });
 
                 addBurstParticles(t.x, t.y, '#f43f5e', 14);
-                if (damageEnemy(t, slashDmg, 6.0)) {
+                if (damageEnemy(t, slashDmg, 2.5)) {
                   const idx = enemies.indexOf(t);
                   if (idx !== -1) enemies.splice(idx, 1);
                 }
@@ -6784,7 +6800,7 @@ const PIXEL_ENGINE = (function() {
               h.hitSet.add(e);
               h.pierce--;
               addBurstParticles(h.x, h.y, '#fde047', 4);
-              if (damageEnemy(e, h.damage, 5.0)) {
+              if (damageEnemy(e, h.damage, 2.6)) {
                 enemies.splice(j, 1);
               }
               if (h.pierce <= 0) {
@@ -6869,7 +6885,7 @@ const PIXEL_ENGINE = (function() {
               const e = enemies[j];
               if (!e || e.hp <= 0) continue;
               if (Math.hypot(e.x - m.targetX, e.y - m.targetY) <= m.radius + e.radius) {
-                if (damageEnemy(e, m.damage, 6.0)) {
+                if (damageEnemy(e, m.damage, 2.8)) {
                   enemies.splice(j, 1);
                 }
               }
