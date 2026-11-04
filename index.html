@@ -933,13 +933,13 @@
           <ul class="text-slate-200 space-y-1.5 list-disc list-inside text-[11px] leading-relaxed font-mono">
             <li><strong>10분 최종보스 [사신] 강림 시스템:</strong></li>
             <li>• 10분(600초) 도달 시 경고 배너 <strong>'최종보스 출현 !'</strong>과 함께 사신이 출현합니다.</li>
-            <li>• 사신의 체력은 플레이어가 지금까지 가한 <strong>누적 피해량의 11배</strong>로 생성되며, <strong>기본 공격력 44</strong>의 치명적인 참격을 가합니다.</li>
+            <li>• 사신의 체력은 플레이어가 지금까지 가한 <strong>누적 피해량의 11배</strong>로 생성되며, <strong>캐릭터 최대체력의 44%</strong>에 달하는 치명적인 참격을 가합니다.</li>
             <li>• 사신 등장 후 사망 시 게임 오버 문구가 <strong>'맵을 잘 살펴보면?'</strong>으로 변경되어 공략 힌트를 제공합니다.</li>
             <li><strong>유한 맵 경계선 & 4대 고대 보주조각상자 배치:</strong></li>
             <li>• 맵의 상·하·좌·우 끝(4800x4800)에 고대 룬 결계벽이 생성되며 캐릭터는 중앙(0,0)에서 전투를 시작합니다.</li>
             <li>• 맵 곳곳의 고대 제단에 <strong>보주조각상자</strong>가 숨겨져 배치됩니다.</li>
             <li>• 상자 접촉 시 <strong>'보주조각 획득창'</strong>이 팝업되며, 보주조각 능력은 최대 레벨 4입니다.</li>
-            <li>• 4개의 조각을 모두 모아 레벨 4가 되는 즉시 <strong>'전설보주'</strong>로 진화 각성하며, 사신의 공격력 44의 <strong>단 10%(4 피해)</strong>만 받고 <strong>사신에게 입히는 피해량이 100배 증가</strong>합니다.</li>
+            <li>• 4개의 조각을 모두 모아 레벨 4가 되는 즉시 <strong>'전설보주'</strong>로 진화 각성하며, 사신의 공격력(최대체력의 44%)의 <strong>단 10%</strong>만 받고 <strong>사신에게 입히는 피해량이 100배 증가</strong>합니다.</li>
             <li>• <strong>최종보스 사신 전용 결전 필드:</strong> 사신 출현 시 다른 모든 적이 소멸하고 신규 스폰이 중단되며, 캐릭터가 도망갈 수 없도록 사신의 이동속도가 대폭 상승합니다.</li>
             <li>• <strong>최종보스 사신 처치 시 게임 클리어:</strong> 사신 격파 시 승리 축하 문구 및 전투 기록이 포함된 <strong>'게임 클리어'</strong> 팝업창이 뜨며, 메인 화면으로 돌아갈 수 있는 버튼이 제공됩니다.</li>
           </ul>
@@ -4348,7 +4348,9 @@ const PIXEL_ENGINE = (function() {
         if (player.exp >= player.expToNext) {
           player.exp -= player.expToNext;
           player.level++;
-          addFloatingText(player.x, player.y - 35, `👑 레벨 ${player.level} 달성!`, '#fde047', 18);
+          player.maxHp += 1;
+          player.hp = Math.min(player.maxHp, player.hp + 1);
+          addFloatingText(player.x, player.y - 35, `👑 레벨 ${player.level} 달성! (최대체력 +1)`, '#fde047', 18);
           playSound('boss');
           player.expToNext = Math.round(player.expToNext * 1.06 + 2);
           updateHud();
@@ -4749,7 +4751,7 @@ const PIXEL_ENGINE = (function() {
           hp: reaperHp,
           maxHp: reaperHp,
           speed: 360, // 사신의 이동속도 대폭 증가 (도망 불가)
-          damage: 44, // 사신의 데미지는 44
+          damage: Math.max(1, Math.round((player ? player.maxHp : 100) * 0.44)), // 사신의 공격력은 캐릭터 최대체력의 44%
           color: '#0f172a',
           outline: '#e11d48',
           name: '사신 (최종보스)',
@@ -4818,7 +4820,7 @@ const PIXEL_ENGINE = (function() {
           if (desc) {
             desc.innerHTML = `
               <div class="text-amber-300 font-bold mb-1">【전설보주의 신성한 가호 발동】</div>
-              <div>10분 이후 강림할 <strong class="text-rose-400">최종보스(사신)의 치명적인 참격 피해(44)를 90% 흡수</strong>하여 <strong class="text-emerald-400">단 10%(4)의 피해</strong>만 받습니다!</div>
+              <div>10분 이후 강림할 <strong class="text-rose-400">최종보스(사신)의 치명적인 참격 피해(최대체력의 44%)를 90% 흡수</strong>하여 <strong class="text-emerald-400">단 10%의 피해</strong>만 받습니다!</div>
               <div class="text-amber-300 font-bold mt-1">⚔️ 사신에게 가하는 공격 피해량 100배(10,000%) 증가!</div>
               <div class="text-[11px] text-slate-400 mt-1.5">사신을 물리치고 밤의 진정한 지배자가 되세요!</div>
             `;
@@ -5186,10 +5188,10 @@ const PIXEL_ENGINE = (function() {
           // Drop Heal Potion, Magnet, or EXP Gem (보스 선택상자 제거 & 무제한 레벨업)
           const isBoss = enemy.isBoss;
 
-          // 체력 회복 물약 드랍 (일반 0.7%, 보스 25%)
-          const dropHeal = (isBoss && Math.random() < 0.25) || (Math.random() < 0.007 && player.hp < player.maxHp);
+          // 체력 회복 물약 드랍 확률 13%로 변경 (보스는 25% 유지)
+          const dropHeal = (isBoss && Math.random() < 0.25) || (Math.random() < 0.13);
           // 자석 아이템 (보스 50% or 일반 1.5%)
-          const dropVacuum = (isBoss && !dropHeal && Math.random() < 0.5) || Math.random() < 0.015;
+          const dropVacuum = !dropHeal && ((isBoss && Math.random() < 0.5) || Math.random() < 0.015);
 
           if (dropVacuum && !dropHeal) {
             // 자석 아이템은 캐릭터 주위(반경 45~95px 내)에 드랍되어 즉시 확인 및 손쉬운 습득 가능
@@ -5550,10 +5552,12 @@ const PIXEL_ENGINE = (function() {
             while (player.exp >= player.expToNext && areAllSkillsMaxed()) {
               player.exp -= player.expToNext;
               player.level++;
+              player.maxHp += 1;
+              player.hp = Math.min(player.maxHp, player.hp + 1);
               player.skills.mightBoost = (player.skills.mightBoost || 0) + 1;
               player.expToNext = Math.round(player.expToNext * 1.06 + 2);
               const totalMight = Math.round(player.skills.mightBoost * 8);
-              addFloatingText(player.x, player.y - 35, `👑 LV.${player.level} 달성! ⚔️ 공격력 +8% 자동 증가 (누적 +${totalMight}%)`, '#fde047', 16);
+              addFloatingText(player.x, player.y - 35, `👑 LV.${player.level} 달성! ⚔️ 공격력 +8% & ❤️ 최대체력 +1 (HP: ${player.maxHp})`, '#fde047', 16);
               addBurstParticles(player.x, player.y, '#f59e0b', 20);
               playSound('levelup');
             }
@@ -5567,7 +5571,9 @@ const PIXEL_ENGINE = (function() {
 
           player.exp -= player.expToNext;
           player.level++;
-          addFloatingText(player.x, player.y - 35, `👑 레벨 ${player.level} 달성!`, '#fde047', 18);
+          player.maxHp += 1;
+          player.hp = Math.min(player.maxHp, player.hp + 1);
+          addFloatingText(player.x, player.y - 35, `👑 레벨 ${player.level} 달성! (최대체력 +1)`, '#fde047', 18);
           playSound('boss');
           player.expToNext = Math.round(player.expToNext * 1.06 + 2);
           updateHud();
@@ -6959,13 +6965,16 @@ const PIXEL_ENGINE = (function() {
             if (player.invulnTimer <= 0) {
               let dmg = e.damage || (e.isBoss ? 28 : (e.expValue >= 8 ? 16 : 8));
               if (e.isReaper) {
+                // 사신의 공격력: 캐릭터 최대체력의 44%
+                const baseReaperDmg = Math.max(1, Math.round(player.maxHp * 0.44));
+                e.damage = baseReaperDmg;
                 const hasLegendary = Boolean(player.skills.legendaryOrb || (player.skills.orbShard >= 4));
                 if (hasLegendary) {
-                  dmg = Math.round(44 * 0.10); // 전설보주 보유 시 사신의 데미지(44)의 10% (4 피해)
-                  addFloatingText(player.x, player.y - 28, '🛡️ 전설보주 가호! 피해 90% 흡수 (-4 HP)', '#38bdf8', 16);
+                  dmg = Math.max(1, Math.round(baseReaperDmg * 0.10)); // 전설보주 보유 시 사신의 데미지(최대체력의 44%)의 10%만 받음
+                  addFloatingText(player.x, player.y - 28, `🛡️ 전설보주 가호! 피해 90% 흡수 (-${dmg} HP)`, '#38bdf8', 16);
                 } else {
-                  dmg = 44; // 사신의 데미지는 44 (전설보주 미보유 시 치명타)
-                  addFloatingText(player.x, player.y - 28, '💀 사신의 파멸 참격! (-44 HP)', '#ef4444', 16);
+                  dmg = baseReaperDmg; // 사신의 데미지는 캐릭터 최대체력의 44%
+                  addFloatingText(player.x, player.y - 28, `💀 사신의 파멸 참격! (-${dmg} HP)`, '#ef4444', 16);
                 }
               }
               player.hp -= dmg;
@@ -7017,14 +7026,16 @@ const PIXEL_ENGINE = (function() {
               playSound('gem');
               if (player.exp >= player.expToNext) {
                 if (areAllSkillsMaxed()) {
-                  // 모든 스킬 마스터 상태: 선택창 팝업 없이 레벨업마다 공격력 +8% 자동 증가
+                  // 모든 스킬 마스터 상태: 선택창 팝업 없이 레벨업마다 공격력 +8% & 최대체력 +1 자동 증가
                   while (player.exp >= player.expToNext && areAllSkillsMaxed()) {
                     player.exp -= player.expToNext;
                     player.level++;
+                    player.maxHp += 1;
+                    player.hp = Math.min(player.maxHp, player.hp + 1);
                     player.skills.mightBoost = (player.skills.mightBoost || 0) + 1;
                     player.expToNext = Math.round(player.expToNext * 1.06 + 2);
                     const totalMight = Math.round(player.skills.mightBoost * 8);
-                    addFloatingText(player.x, player.y - 35, `👑 LV.${player.level} 달성! ⚔️ 공격력 +8% 자동 증가 (누적 +${totalMight}%)`, '#fde047', 16);
+                    addFloatingText(player.x, player.y - 35, `👑 LV.${player.level} 달성! ⚔️ 공격력 +8% & ❤️ 최대체력 +1 (HP: ${player.maxHp})`, '#fde047', 16);
                     addBurstParticles(player.x, player.y, '#f59e0b', 20);
                     playSound('levelup');
                   }
@@ -7034,7 +7045,9 @@ const PIXEL_ENGINE = (function() {
                 } else {
                   player.exp -= player.expToNext;
                   player.level++;
-                  addFloatingText(player.x, player.y - 35, `👑 레벨 ${player.level} 달성!`, '#fde047', 18);
+                  player.maxHp += 1;
+                  player.hp = Math.min(player.maxHp, player.hp + 1);
+                  addFloatingText(player.x, player.y - 35, `👑 레벨 ${player.level} 달성! (최대체력 +1)`, '#fde047', 18);
                   playSound('boss');
                   player.expToNext = Math.round(player.expToNext * 1.06 + 2);
                   updateHud();
@@ -7720,7 +7733,7 @@ const PIXEL_ENGINE = (function() {
             headingEl.className = 'text-2xl sm:text-3xl font-black text-amber-300';
           }
           if (subtextEl) {
-            subtextEl.textContent = '사신의 절대적인 일격(44)은 고대 전설보주의 가호 없이는 버텨낼 수 없습니다...';
+            subtextEl.textContent = '사신의 절대적인 일격(최대체력의 44%)은 고대 전설보주의 가호 없이는 버텨낼 수 없습니다...';
           }
         } else {
           if (headingEl) {
